@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #8A1538;
+  --color-brand-dark: #6b1029;
+  --color-gold: #A29475;
+  --color-gold-light: #b8aa90;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Clients slider animation */
+@keyframes slider-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.clients-track {
+  animation: slider-scroll 35s linear infinite;
+}
+
+.clients-track:hover {
+  animation-play-state: paused;
+}
