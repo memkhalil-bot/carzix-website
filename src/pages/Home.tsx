@@ -2,16 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Sparkles, Shield, Clock, Star, ChevronRight, Phone } from "lucide-react";
 import ClientsSlider from "@/components/ClientsSlider";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
-};
+import { fadeUp, staggerSlow as stagger } from "@/lib/motion";
 
 /* ── Inline SVG: abstract car-wash illustration ── */
 function CarArt() {

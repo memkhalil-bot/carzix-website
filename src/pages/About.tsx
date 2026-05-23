@@ -1,12 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Heart, Award, Users, Leaf, ChevronRight } from "lucide-react";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
+import { fadeUp, staggerSlow as stagger } from "@/lib/motion";
 
 const values = [
   {

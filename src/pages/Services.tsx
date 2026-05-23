@@ -3,12 +3,7 @@ import { Link } from "wouter";
 import {
   Droplets, Sparkles, Shield, Zap, Eye, Wind, ChevronRight, CheckCircle,
 } from "lucide-react";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
+import { fadeUp, stagger } from "@/lib/motion";
 
 const services = [
   {

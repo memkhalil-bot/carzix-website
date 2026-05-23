@@ -3,14 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, X, CheckCircle, Loader2, Package } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
-
-const CATEGORIES = ["All"] as const;
+import { fadeUp, stagger } from "@/lib/motion";
 
 interface RequestForm {
   name: string;

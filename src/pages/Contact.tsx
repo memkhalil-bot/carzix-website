@@ -2,12 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, CheckCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
+import { fadeUp, stagger } from "@/lib/motion";
 
 const contactInfo = [
   { icon: Phone, label: "Phone", value: "+974 72252572", href: "tel:+97472252572" },
