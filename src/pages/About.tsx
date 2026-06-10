@@ -128,11 +128,11 @@ export default function About() {
             whileInView="show"
             viewport={{ once: true }}
             variants={stagger}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center"
           >
             {stats.map(({ n, labelEn, labelAr }) => (
-              <motion.div key={labelEn} variants={fadeUp}>
-                <div className="text-4xl font-black text-[#8A1538] mb-1">{n}</div>
+              <motion.div key={labelEn} variants={fadeUp} className="glass card-shine rounded-xl py-6 px-3">
+                <div className="text-gradient-gold text-4xl font-black mb-1">{n}</div>
                 <div className="text-white/50 text-sm">{isAr ? labelAr : labelEn}</div>
               </motion.div>
             ))}
@@ -160,7 +160,7 @@ export default function About() {
             <div className="relative pl-8 border-l border-[#8A1538]/30 space-y-8">
               {milestones.map(({ yearEn, yearAr, eventEn, eventAr }) => (
                 <motion.div key={yearEn} variants={fadeUp} className="relative">
-                  <div className="absolute -left-[1.65rem] w-3 h-3 rounded-full bg-[#8A1538] ring-4 ring-zinc-950" />
+                  <div className="absolute -left-[1.65rem] w-3 h-3 rounded-full bg-[#8A1538] ring-4 ring-zinc-950 shadow-[0_0_8px_rgba(138,21,56,0.6)]" />
                   <p className="text-[#8A1538] text-xs font-bold tracking-widest uppercase mb-1">
                     {isAr ? yearAr : yearEn}
                   </p>
@@ -195,7 +195,7 @@ export default function About() {
                 <motion.div
                   key={titleEn}
                   variants={fadeUp}
-                  className="p-7 rounded-xl border border-white/8 bg-white/3 hover:border-[#8A1538]/30 transition-colors"
+                  className="glass card-shine p-7 rounded-xl hover:border-[#8A1538]/35 transition-colors"
                 >
                   <div className="w-11 h-11 rounded-lg bg-[#8A1538]/15 flex items-center justify-center mb-4">
                     <Icon size={20} className="text-[#8A1538]" />

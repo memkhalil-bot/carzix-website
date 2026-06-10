@@ -29,14 +29,14 @@ export default function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-black/95 backdrop-blur-md border-b border-white/10" : "bg-transparent"
+        scrolled ? "bg-black/85 backdrop-blur-xl border-b border-white/10 shadow-[0_1px_20px_rgba(0,0,0,0.4)]" : "bg-transparent"
       )}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded bg-[#8A1538] flex items-center justify-center">
+            <div className="w-8 h-8 rounded bg-[#8A1538] flex items-center justify-center ring-1 ring-[#8A1538]/40 shadow-[0_0_12px_rgba(138,21,56,0.45)]">
               <span className="text-white font-black text-xs tracking-tight">CZ</span>
             </div>
             <span className="text-white font-black text-xl tracking-widest uppercase">
@@ -70,7 +70,7 @@ export default function Navbar() {
             </button>
             <Link
               href="/contact"
-              className="px-5 py-2.5 bg-[#8A1538] hover:bg-[#6b1029] text-white text-sm font-semibold rounded transition-colors"
+              className="btn-brand px-5 py-2.5 text-white text-sm font-semibold rounded"
             >
               {t("Request Quote", "طلب عرض سعر")}
             </Link>
