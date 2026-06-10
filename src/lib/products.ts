@@ -1,0 +1,155 @@
+export interface StaticProduct {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  category: string;
+  featuresEn: string[];
+  featuresAr: string[];
+  sizes?: string[];
+}
+
+export const staticProducts: StaticProduct[] = [
+  {
+    id: "snow-foam-100",
+    nameEn: "Snow Foam Shampoo",
+    nameAr: "شامبو الثلج الرغوي",
+    descriptionEn: "High concentration phosphate-free shampoo, safe for all surfaces. Delivers exceptional foam coverage for a gentle yet thorough wash.",
+    descriptionAr: "شامبو عالي التركيز خالي من الفوسفات، آمن على جميع الأسطح. يوفر تغطية رغوية استثنائية لغسيل لطيف وشامل.",
+    category: "Shampoos",
+    sizes: ["100ml", "200ml", "400ml"],
+    featuresEn: ["High concentration formula", "Phosphate-free", "Safe on all surfaces", "Streak-free finish"],
+    featuresAr: ["تركيز عالي", "خالي من الفوسفات", "آمن على جميع الأسطح", "لا يترك آثاراً"],
+  },
+  {
+    id: "pure-glide",
+    nameEn: "Pure Glide Pre-wash Shampoo",
+    nameAr: "بيور جليد - شامبو التنظيف المسبق",
+    descriptionEn: "Foaming cleaner for self-service stations, dissolves dirt, oils, and grease. Ideal pre-wash for heavy contamination.",
+    descriptionAr: "منظف رغوي لمحطات الغسيل الذاتية، يذيب الأوساخ والزيوت والشحوم. مثالي للتنظيف المسبق.",
+    category: "Shampoos",
+    featuresEn: ["Heavy-duty foam", "Removes oil and grease", "Easy rinsing", "Professional grade"],
+    featuresAr: ["رغوة كثيفة", "يزيل الزيوت والشحوم", "سهل الشطف", "درجة احترافية"],
+  },
+  {
+    id: "spray-detailer-wax",
+    nameEn: "Spray Detailer & Wax",
+    nameAr: "رذاذ التفاصيل والشمع",
+    descriptionEn: "Quick shine and instant protection in a single spray. Perfect for maintaining a showroom finish between washes.",
+    descriptionAr: "لمعة سريعة وحماية فورية في رشة واحدة. مثالي للحفاظ على مظهر الصالة بين الغسيلات.",
+    category: "Polishing",
+    featuresEn: ["Instant shine", "Quick protection", "Easy application", "Water beading effect"],
+    featuresAr: ["لمعة فورية", "حماية سريعة", "سهل التطبيق", "تأثير ترقيق الماء"],
+  },
+  {
+    id: "gloss-pro",
+    nameEn: "Gloss Pro Detailer Wax",
+    nameAr: "جلوس برو - ملمع الشمع",
+    descriptionEn: "High gloss finish with long-lasting protection. Advanced formula bonds to paint for months of protection.",
+    descriptionAr: "لمعان عالي مع حماية طويلة الأمد. تركيبة متقدمة ترتبط بالطلاء لأشهر من الحماية.",
+    category: "Polishing",
+    featuresEn: ["High gloss finish", "Long-lasting protection", "Easy application", "UV shield"],
+    featuresAr: ["لمعان عالي", "حماية طويلة الأمد", "سهل التطبيق", "حماية من الأشعة فوق البنفسجية"],
+  },
+  {
+    id: "quick-detailer-2in1",
+    nameEn: "Quick Detailer & Wax 2-in-1",
+    nameAr: "ملمع سريع 2 في 1",
+    descriptionEn: "Cleans and waxes in one step. Water-repellent formula saves time without compromising on results.",
+    descriptionAr: "ينظف ويلمع في خطوة واحدة. تركيبة مقاومة للماء توفر الوقت دون المساومة على النتائج.",
+    category: "Polishing",
+    featuresEn: ["Clean & wax in one step", "Water-repellent", "Fast application", "Professional results"],
+    featuresAr: ["تنظيف وتلميع معاً", "مقاوم للماء", "تطبيق سريع", "نتائج احترافية"],
+  },
+  {
+    id: "glass-cleaner",
+    nameEn: "Glass Cleaner",
+    nameAr: "منظف الزجاج",
+    descriptionEn: "Streak-free glass cleaner with anti-fog properties. Safe for all glass types, tinted windows, and plastics.",
+    descriptionAr: "منظف زجاج خالي من الخطوط مع خصائص مضادة للضباب. آمن على جميع أنواع الزجاج والزجاج المظلل والبلاستيك.",
+    category: "Glass Care",
+    featuresEn: ["Streak-free formula", "Anti-fog properties", "Safe on tinted glass", "Safe on plastics"],
+    featuresAr: ["خالي من الخطوط", "مضاد للضباب", "آمن على الزجاج المظلل", "آمن على البلاستيك"],
+  },
+  {
+    id: "interior-cleaner",
+    nameEn: "Interior Cleaner",
+    nameAr: "منظف المقصورة الداخلية",
+    descriptionEn: "For leather, fabric seats, plastic, and dashboard. Removes nicotine stains and odors leaving a fresh clean scent.",
+    descriptionAr: "لتنظيف المقاعد الجلدية والقماشية والبلاستيك والتابلوه. يزيل بقع ورائحة النيكوتين.",
+    category: "Interior Care",
+    featuresEn: ["Safe on leather & fabric", "Cleans dashboard", "Removes smoke odors", "Fresh natural scent"],
+    featuresAr: ["آمن على الجلد والقماش", "ينظف التابلوه", "يزيل رائحة الدخان", "عطر طبيعي منعش"],
+  },
+  {
+    id: "all-purpose-dressing",
+    nameEn: "All Purpose Dressing",
+    nameAr: "منتج العناية الشامل",
+    descriptionEn: "For leather and plastic surfaces. Protects from UV rays, prevents cracking, and restores original appearance.",
+    descriptionAr: "للجلد والبلاستيك. يحمي من أشعة الشمس ويمنع التشقق ويستعيد المظهر الأصلي.",
+    category: "Interior Care",
+    featuresEn: ["UV protection", "Prevents cracking", "Natural appearance", "Long-lasting"],
+    featuresAr: ["حماية من الأشعة فوق البنفسجية", "يمنع التشقق", "مظهر طبيعي", "دائم المفعول"],
+  },
+  {
+    id: "leather-conditioner",
+    nameEn: "Leather Conditioner",
+    nameAr: "مرطب ومنعم الجلد",
+    descriptionEn: "Contains lanolin and beeswax to restore flexibility and natural look. Deeply nourishes and protects leather.",
+    descriptionAr: "يحتوي على لانولين وشمع النحل لاستعادة المرونة والمظهر الطبيعي. يغذي الجلد ويحميه.",
+    category: "Interior Care",
+    featuresEn: ["Lanolin & beeswax formula", "Restores flexibility", "Deep nourishment", "Luxury finish"],
+    featuresAr: ["لانولين وشمع النحل", "يستعيد المرونة", "تغذية عميقة", "مظهر فاخر"],
+  },
+  {
+    id: "super-max-degreaser",
+    nameEn: "Super Max Degreaser",
+    nameAr: "سوبر ماكس - منظف الشحوم",
+    descriptionEn: "Heavy-duty degreaser for engines, rims, and industrial grease. Powerful formula safe for automotive use.",
+    descriptionAr: "منظف شحوم قوي للمحركات والحواف والشحوم الثقيلة. تركيبة قوية آمنة للاستخدام في السيارات.",
+    category: "Multi-Purpose",
+    featuresEn: ["Heavy-duty formula", "Engine safe", "Removes heavy grease", "Industrial strength"],
+    featuresAr: ["تركيبة قوية", "آمن للمحرك", "يزيل الشحوم الثقيلة", "قوة صناعية"],
+  },
+  {
+    id: "wheel-tire-cleaner",
+    nameEn: "Road Ready Wheel & Tire Cleaner",
+    nameAr: "منظف الحواف والكفرات",
+    descriptionEn: "Specially formulated for rims and tires. Removes brake dust, road grime, and restores a professional shine.",
+    descriptionAr: "مصاغ خصيصاً لتنظيف الحواف والكفرات. يزيل غبار الفرامل وأوساخ الطريق ويعيد اللمعان الاحترافي.",
+    category: "Multi-Purpose",
+    featuresEn: ["Removes brake dust", "Safe on all rim types", "Professional shine", "Non-corrosive"],
+    featuresAr: ["يزيل غبار الفرامل", "آمن على جميع أنواع الحواف", "لمعة احترافية", "غير آكل"],
+  },
+  {
+    id: "quick-renew",
+    nameEn: "Quick Renew Rubber & Plastic Restorer",
+    nameAr: "ملمع ومرطب المطاط والبلاستيك",
+    descriptionEn: "Restores the original look of plastic and rubber parts both inside and outside the vehicle.",
+    descriptionAr: "يستعيد المظهر الأصلي لأجزاء المطاط والبلاستيك داخل وخارج السيارة.",
+    category: "Interior Care",
+    featuresEn: ["Restores original look", "UV protection", "Interior & exterior", "Long-lasting"],
+    featuresAr: ["يستعيد المظهر الأصلي", "حماية من الأشعة فوق البنفسجية", "داخلي وخارجي", "دائم المفعول"],
+  },
+  {
+    id: "tire-shine",
+    nameEn: "Tire Shine",
+    nameAr: "ملمع الكفرات",
+    descriptionEn: "Long-lasting, water-resistant high gloss tire shine. Non-greasy formula that won't sling onto bodywork.",
+    descriptionAr: "ملمع كفرات عالي اللمعان مقاوم للماء. تركيبة غير دهنية لا تتطاير على جسم السيارة.",
+    category: "Tire Care",
+    featuresEn: ["Long-lasting gloss", "Water-resistant", "Non-greasy formula", "No sling"],
+    featuresAr: ["لمعان طويل الأمد", "مقاوم للماء", "غير دهني", "لا يتطاير"],
+  },
+];
+
+export const staticCategories = [
+  { id: "all", nameEn: "All Products", nameAr: "جميع المنتجات" },
+  { id: "Shampoos", nameEn: "Shampoos & Washing", nameAr: "الشامبوهات والغسيل" },
+  { id: "Polishing", nameEn: "Polishing & Waxing", nameAr: "التلميع والشمع" },
+  { id: "Glass Care", nameEn: "Glass Care", nameAr: "عناية الزجاج" },
+  { id: "Interior Care", nameEn: "Interior Care", nameAr: "العناية الداخلية" },
+  { id: "Multi-Purpose", nameEn: "Multi-Purpose Cleaners", nameAr: "منظفات متعددة الأغراض" },
+  { id: "Tire Care", nameEn: "Tire Care", nameAr: "عناية الكفرات" },
+];

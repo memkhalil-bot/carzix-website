@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { Client } from "@/lib/types";
+import { useLang } from "@/contexts/LanguageContext";
 
 export default function ClientsSlider() {
+  const { t } = useLang();
   const [clients, setClients] = useState<Client[]>([]);
 
   useEffect(() => {
@@ -24,16 +26,15 @@ export default function ClientsSlider() {
     <section className="py-16 border-y border-white/10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-8">
         <p className="text-center text-white/40 text-sm font-medium tracking-widest uppercase">
-          Trusted by leading businesses in Qatar
+          {t("Trusted by leading businesses in Qatar", "موثوق من قِبل كبرى الشركات في قطر")}
         </p>
       </div>
 
-      {/* Fade edges */}
       <div className="relative">
         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
 
-        <div className="flex">
+        <div className="flex overflow-hidden">
           <div className="clients-track flex items-center gap-10 whitespace-nowrap">
             {doubled.map((client, i) => (
               <div

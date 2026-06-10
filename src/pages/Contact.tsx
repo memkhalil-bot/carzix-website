@@ -3,32 +3,33 @@ import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, CheckCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { fadeUp, stagger } from "@/lib/motion";
-
-const contactInfo = [
-  { icon: Phone, label: "Phone", value: "+974 72252572", href: "tel:+97472252572" },
-  { icon: Mail, label: "Email", value: "hello@carzix.qa", href: "mailto:hello@carzix.qa" },
-  { icon: MapPin, label: "Location", value: "Doha, Qatar", href: undefined },
-  { icon: Clock, label: "Hours", value: "Sat–Thu: 8am – 8pm", href: undefined },
-];
+import { useLang } from "@/contexts/LanguageContext";
 
 interface Form {
-  name: string;
+  full_name: string;
   email: string;
   phone: string;
-  subject: string;
   message: string;
 }
 
-const emptyForm: Form = { name: "", email: "", phone: "", subject: "", message: "" };
+const emptyForm: Form = { full_name: "", email: "", phone: "", message: "" };
 
 export default function Contact() {
+  const { t, isAr } = useLang();
   const [form, setForm] = useState<Form>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
 
+  const contactInfo = [
+    { icon: Phone, labelEn: "Phone", labelAr: "الهاتف", value: "+974 72252572", href: "tel:+97472252572" },
+    { icon: Mail, labelEn: "Email", labelAr: "البريد الإلكتروني", value: "hello@carzix.qa", href: "mailto:hello@carzix.qa" },
+    { icon: MapPin, labelEn: "Location", labelAr: "الموقع", value: t("Doha, Qatar", "الدوحة، قطر"), href: undefined },
+    { icon: Clock, labelEn: "Hours", labelAr: "ساعات العمل", value: t("Sat–Thu: 8am – 8pm", "السبت-الخميس: 8ص – 8م"), href: undefined },
+  ];
+
   function set(key: keyof Form) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [key]: e.target.value }));
   }
 
@@ -38,16 +39,18 @@ export default function Contact() {
     setError("");
 
     const { error: err } = await supabase.from("contact_messages").insert({
-      name: form.name,
+      full_name: form.full_name,
       email: form.email,
       phone: form.phone || null,
-      subject: form.subject || null,
       message: form.message,
     });
 
     setSubmitting(false);
     if (err) {
-      setError("Something went wrong. Please try again or contact us directly.");
+      setError(t(
+        "Something went wrong. Please try again or contact us directly.",
+        "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل معنا مباشرةً."
+      ));
     } else {
       setSubmitted(true);
       setForm(emptyForm);
@@ -66,13 +69,16 @@ export default function Contact() {
           className="relative max-w-7xl mx-auto px-6 lg:px-8 text-center"
         >
           <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
-            Get in Touch
+            {t("Get in Touch", "تواصل معنا")}
           </motion.p>
           <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl font-black text-white mb-5">
-            Contact Us
+            {t("Contact Us", "اتصل بنا")}
           </motion.h1>
           <motion.p variants={fadeUp} className="text-white/50 max-w-xl mx-auto text-lg">
-            Have a question, want a quote, or ready to book? We'd love to hear from you.
+            {t(
+              "Have a question or want to request a product? We'd love to hear from you.",
+              "هل لديك سؤال أو تريد طلب منتج؟ نحن هنا للمساعدة."
+            )}
           </motion.p>
         </motion.div>
       </section>
@@ -90,15 +96,18 @@ export default function Contact() {
               className="lg:col-span-2 flex flex-col gap-4"
             >
               <motion.h2 variants={fadeUp} className="text-2xl font-black text-white mb-2">
-                Let's Talk
+                {t("Let's Talk", "لنتحدث")}
               </motion.h2>
               <motion.p variants={fadeUp} className="text-white/50 text-sm leading-relaxed mb-4">
-                Whether you need a same-day wash or a full multi-day detailing package, our team is ready to help. Response time is usually within a few hours.
+                {t(
+                  "Whether you need product information, a bulk quote, or a custom order — our team is ready to help. Typical response time is within 24 hours.",
+                  "سواء كنت بحاجة إلى معلومات عن المنتج أو عرض سعر بالجملة أو طلب مخصص — فريقنا جاهز للمساعدة. وقت الاستجابة المعتاد خلال 24 ساعة."
+                )}
               </motion.p>
 
-              {contactInfo.map(({ icon: Icon, label, value, href }) => (
+              {contactInfo.map(({ icon: Icon, labelEn, labelAr, value, href }) => (
                 <motion.div
-                  key={label}
+                  key={labelEn}
                   variants={fadeUp}
                   className="flex items-start gap-4 p-4 rounded-xl border border-white/8 bg-white/3"
                 >
@@ -106,7 +115,7 @@ export default function Contact() {
                     <Icon size={16} className="text-[#8A1538]" />
                   </div>
                   <div>
-                    <p className="text-white/40 text-xs mb-0.5">{label}</p>
+                    <p className="text-white/40 text-xs mb-0.5">{isAr ? labelAr : labelEn}</p>
                     {href ? (
                       <a href={href} className="text-white text-sm font-medium hover:text-[#A29475] transition-colors">
                         {value}
@@ -125,7 +134,7 @@ export default function Contact() {
               >
                 <div className="text-center">
                   <MapPin size={24} className="text-[#8A1538] mx-auto mb-2" />
-                  <p className="text-white/30 text-xs">Doha, Qatar</p>
+                  <p className="text-white/30 text-xs">{t("Doha, Qatar", "الدوحة، قطر")}</p>
                 </div>
               </motion.div>
             </motion.div>
@@ -142,15 +151,20 @@ export default function Contact() {
                 {submitted ? (
                   <div className="flex flex-col items-center py-12 text-center">
                     <CheckCircle size={44} className="text-[#8A1538] mb-4" />
-                    <h3 className="text-white font-bold text-2xl mb-2">Message Sent!</h3>
+                    <h3 className="text-white font-bold text-2xl mb-2">
+                      {t("Message Sent!", "تم إرسال الرسالة!")}
+                    </h3>
                     <p className="text-white/50 max-w-sm">
-                      Thank you for reaching out. Our team will respond to you within a few hours.
+                      {t(
+                        "Thank you for reaching out. Our team will respond within 24 hours.",
+                        "شكراً لتواصلك. سيرد فريقنا خلال 24 ساعة."
+                      )}
                     </p>
                     <button
                       onClick={() => setSubmitted(false)}
                       className="mt-8 px-6 py-2.5 border border-white/20 text-white text-sm rounded hover:border-white/40 transition-colors"
                     >
-                      Send Another Message
+                      {t("Send Another Message", "إرسال رسالة أخرى")}
                     </button>
                   </div>
                 ) : (
@@ -158,20 +172,20 @@ export default function Contact() {
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-white/60 text-xs font-medium mb-1.5">
-                          Full Name *
+                          {t("Full Name *", "الاسم الكامل *")}
                         </label>
                         <input
                           type="text"
                           required
-                          value={form.name}
-                          onChange={set("name")}
-                          placeholder="Your name"
+                          value={form.full_name}
+                          onChange={set("full_name")}
+                          placeholder={t("Your name", "اسمك")}
                           className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#8A1538] transition-colors"
                         />
                       </div>
                       <div>
                         <label className="block text-white/60 text-xs font-medium mb-1.5">
-                          Email *
+                          {t("Email *", "البريد الإلكتروني *")}
                         </label>
                         <input
                           type="email"
@@ -184,55 +198,37 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-5">
-                      <div>
-                        <label className="block text-white/60 text-xs font-medium mb-1.5">
-                          Phone
-                        </label>
-                        <input
-                          type="tel"
-                          value={form.phone}
-                          onChange={set("phone")}
-                          placeholder="+974 …"
-                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#8A1538] transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-white/60 text-xs font-medium mb-1.5">
-                          Subject
-                        </label>
-                        <select
-                          value={form.subject}
-                          onChange={set("subject")}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors appearance-none"
-                        >
-                          <option value="" className="bg-zinc-900">Select a subject</option>
-                          <option value="General Inquiry" className="bg-zinc-900">General Inquiry</option>
-                          <option value="Book a Service" className="bg-zinc-900">Book a Service</option>
-                          <option value="Get a Quote" className="bg-zinc-900">Get a Quote</option>
-                          <option value="Product Request" className="bg-zinc-900">Product Request</option>
-                          <option value="Feedback" className="bg-zinc-900">Feedback</option>
-                        </select>
-                      </div>
+                    <div>
+                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                        {t("Phone", "رقم الهاتف")}
+                      </label>
+                      <input
+                        type="tel"
+                        value={form.phone}
+                        onChange={set("phone")}
+                        placeholder="+974 XXXX XXXX"
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#8A1538] transition-colors"
+                      />
                     </div>
 
                     <div>
                       <label className="block text-white/60 text-xs font-medium mb-1.5">
-                        Message *
+                        {t("Message *", "الرسالة *")}
                       </label>
                       <textarea
                         required
-                        rows={5}
+                        rows={6}
                         value={form.message}
                         onChange={set("message")}
-                        placeholder="Tell us about your vehicle and what you need…"
+                        placeholder={t(
+                          "Tell us about your inquiry or product request…",
+                          "أخبرنا عن استفسارك أو طلب المنتج…"
+                        )}
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#8A1538] transition-colors resize-none"
                       />
                     </div>
 
-                    {error && (
-                      <p className="text-red-400 text-sm">{error}</p>
-                    )}
+                    {error && <p className="text-red-400 text-sm">{error}</p>}
 
                     <button
                       type="submit"
@@ -240,9 +236,9 @@ export default function Contact() {
                       className="w-full py-4 bg-[#8A1538] hover:bg-[#6b1029] disabled:opacity-60 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       {submitting ? (
-                        <><Loader2 size={16} className="animate-spin" /> Sending…</>
+                        <><Loader2 size={16} className="animate-spin" /> {t("Sending…", "جارٍ الإرسال…")}</>
                       ) : (
-                        "Send Message"
+                        t("Send Message", "إرسال الرسالة")
                       )}
                     </button>
                   </form>
@@ -256,7 +252,7 @@ export default function Contact() {
       {/* Quick-action strip */}
       <section className="py-12 bg-zinc-950 border-t border-white/8">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-center sm:text-left">
-          <p className="text-white/50 text-sm">Prefer to call or WhatsApp?</p>
+          <p className="text-white/50 text-sm">{t("Prefer to call or WhatsApp?", "تفضل الاتصال أو واتساب؟")}</p>
           <a
             href="tel:+97472252572"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#8A1538] hover:bg-[#6b1029] text-white font-semibold text-sm rounded transition-colors"

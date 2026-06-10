@@ -2,19 +2,20 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
-  { href: "/products", label: "Products" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
+import { useLang } from "@/contexts/LanguageContext";
 
 export default function Navbar() {
+  const { t, toggleLang, lang } = useLang();
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const links = [
+    { href: "/", label: t("Home", "الرئيسية") },
+    { href: "/products", label: t("Products", "المنتجات") },
+    { href: "/about", label: t("About", "من نحن") },
+    { href: "/contact", label: t("Contact", "اتصل بنا") },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -34,7 +35,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded bg-[#8A1538] flex items-center justify-center">
               <span className="text-white font-black text-xs tracking-tight">CZ</span>
             </div>
@@ -51,30 +52,46 @@ export default function Navbar() {
                 href={href}
                 className={cn(
                   "text-sm font-medium tracking-wide transition-colors",
-                  location === href
-                    ? "text-[#A29475]"
-                    : "text-white/70 hover:text-white"
+                  location === href ? "text-[#A29475]" : "text-white/70 hover:text-white"
                 )}
               >
                 {label}
               </Link>
             ))}
-            <Link
-              href="/contact"
-              className="ml-4 px-5 py-2.5 bg-[#8A1538] hover:bg-[#6b1029] text-white text-sm font-semibold rounded transition-colors"
-            >
-              Book Now
-            </Link>
           </nav>
 
+          <div className="hidden lg:flex items-center gap-3">
+            {/* Language toggle */}
+            <button
+              onClick={toggleLang}
+              className="px-3 py-1.5 border border-white/20 text-white/60 hover:text-white hover:border-white/40 text-xs font-semibold rounded tracking-widest transition-colors"
+            >
+              {lang === "en" ? "عربي" : "EN"}
+            </button>
+            <Link
+              href="/contact"
+              className="px-5 py-2.5 bg-[#8A1538] hover:bg-[#6b1029] text-white text-sm font-semibold rounded transition-colors"
+            >
+              {t("Request Quote", "طلب عرض سعر")}
+            </Link>
+          </div>
+
           {/* Mobile toggle */}
-          <button
-            className="lg:hidden text-white p-1"
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            {open ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="lg:hidden flex items-center gap-3">
+            <button
+              onClick={toggleLang}
+              className="px-2.5 py-1 border border-white/20 text-white/60 text-xs font-semibold rounded tracking-widest"
+            >
+              {lang === "en" ? "عربي" : "EN"}
+            </button>
+            <button
+              className="text-white p-1"
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -98,7 +115,7 @@ export default function Navbar() {
               href="/contact"
               className="mt-3 px-5 py-3 bg-[#8A1538] text-white text-sm font-semibold rounded text-center"
             >
-              Book Now
+              {t("Request Quote", "طلب عرض سعر")}
             </Link>
           </nav>
         </div>
