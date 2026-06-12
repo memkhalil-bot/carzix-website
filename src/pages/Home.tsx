@@ -5,42 +5,67 @@ import {
   ChevronRight, Shield, Zap, Leaf, Droplets, Sparkles, Package, CircleDot,
 } from "lucide-react";
 import ClientsSlider from "@/components/ClientsSlider";
-import { fadeUp, staggerSlow as stagger } from "@/lib/motion";
+import Marquee from "@/components/Marquee";
+import BeforeAfter from "@/components/BeforeAfter";
+import { fadeUp, blurUp, fadeScale, staggerFast, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { staticProducts, staticCategories } from "@/lib/products";
 import type { Product } from "@/lib/types";
 
-/* ─── abstract product visual ─── */
 function ProductArt() {
   return (
-    <svg viewBox="0 0 500 420" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true">
-      <circle cx="250" cy="210" r="190" stroke="#8A1538" strokeWidth="0.7" opacity="0.15" />
-      <circle cx="250" cy="210" r="145" stroke="#A29475" strokeWidth="0.5" opacity="0.10" />
-      {/* Bottle silhouette */}
-      <rect x="175" y="95" width="70" height="110" rx="10" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1.5" />
-      <rect x="197" y="75" width="26" height="25" rx="5" fill="#222" stroke="#2a2a2a" strokeWidth="1" />
-      <rect x="193" y="88" width="34" height="8" rx="3" fill="#8A1538" opacity="0.7" />
-      <rect x="182" y="135" width="56" height="3" rx="1.5" fill="#A29475" opacity="0.4" />
-      <rect x="182" y="148" width="40" height="2" rx="1" fill="#A29475" opacity="0.25" />
-      {/* Spray bottle */}
-      <path d="M 270 130 L 270 215 Q 270 225 280 225 L 320 225 Q 330 225 330 215 L 330 155 Q 330 145 320 145 L 298 145 L 295 130 Z" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1.5" />
-      <path d="M 295 130 L 295 118 L 310 118 L 320 130" fill="#222" stroke="#2a2a2a" strokeWidth="1" />
-      <path d="M 308 118 Q 340 100 348 90" stroke="#8A1538" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-      <circle cx="348" cy="88" r="3" fill="#8A1538" opacity="0.6" />
-      <rect x="278" y="175" width="44" height="3" rx="1.5" fill="#A29475" opacity="0.35" />
-      {/* Small accent dots */}
-      <circle cx="155" cy="155" r="4" fill="#8A1538" opacity="0.4" />
-      <circle cx="345" cy="265" r="3" fill="#A29475" opacity="0.35" />
-      <circle cx="200" cy="280" r="2.5" fill="#8A1538" opacity="0.3" />
-      {/* Sparkle lines */}
-      <line x1="140" y1="100" x2="140" y2="112" stroke="#A29475" strokeWidth="1.5" opacity="0.5" strokeLinecap="round" />
-      <line x1="134" y1="106" x2="146" y2="106" stroke="#A29475" strokeWidth="1.5" opacity="0.5" strokeLinecap="round" />
-      <line x1="370" y1="140" x2="370" y2="150" stroke="#8A1538" strokeWidth="1.5" opacity="0.4" strokeLinecap="round" />
-      <line x1="365" y1="145" x2="375" y2="145" stroke="#8A1538" strokeWidth="1.5" opacity="0.4" strokeLinecap="round" />
-      {/* Ground line */}
-      <line x1="80" y1="330" x2="420" y2="330" stroke="#1a1a1a" strokeWidth="1" />
-      <ellipse cx="250" cy="330" rx="170" ry="8" fill="#8A1538" opacity="0.05" />
+    <svg viewBox="0 0 520 440" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true">
+      <circle cx="260" cy="220" r="200" stroke="#8A1538" strokeWidth="0.5" opacity="0.12" />
+      <circle cx="260" cy="220" r="160" stroke="#A29475" strokeWidth="0.5" opacity="0.08" />
+      <circle cx="260" cy="220" r="120" stroke="#8A1538" strokeWidth="0.5" opacity="0.06" />
+
+      {/* Round bottle (left) */}
+      <rect x="130" y="100" width="90" height="145" rx="16" fill="#111" stroke="#2a2a2a" strokeWidth="1.5" />
+      <rect x="155" y="76" width="40" height="30" rx="8" fill="#161616" stroke="#2a2a2a" strokeWidth="1" />
+      <rect x="149" y="94" width="52" height="10" rx="4" fill="#8A1538" opacity="0.8" />
+      <rect x="140" y="145" width="70" height="55" rx="4" fill="#1a1a1a" stroke="#2e2e2e" strokeWidth="1" />
+      <rect x="148" y="155" width="54" height="3" rx="1.5" fill="#A29475" opacity="0.45" />
+      <rect x="148" y="163" width="38" height="2" rx="1" fill="#A29475" opacity="0.25" />
+      <rect x="148" y="170" width="45" height="2" rx="1" fill="#A29475" opacity="0.18" />
+      <rect x="133" y="108" width="10" height="55" rx="5" fill="white" opacity="0.03" />
+
+      {/* Spray bottle (center-right) */}
+      <path d="M 300 115 L 300 215 Q 300 228 313 228 L 360 228 Q 373 228 373 215 L 373 155 Q 373 142 360 142 L 335 142 L 332 115 Z" fill="#111" stroke="#2a2a2a" strokeWidth="1.5" />
+      <path d="M 332 115 L 332 100 L 350 100 L 362 115" fill="#161616" stroke="#252525" strokeWidth="1" />
+      <path d="M 358 100 Q 390 82 398 72" stroke="#8A1538" strokeWidth="2" strokeLinecap="round" opacity="0.55" strokeDasharray="3 4" />
+      <circle cx="400" cy="70" r="4" fill="#8A1538" opacity="0.4" />
+      <circle cx="407" cy="63" r="2.5" fill="#8A1538" opacity="0.25" />
+      <circle cx="412" cy="57" r="1.5" fill="#8A1538" opacity="0.15" />
+      <rect x="308" y="168" width="58" height="40" rx="3" fill="#1a1a1a" stroke="#2e2e2e" strokeWidth="1" />
+      <rect x="315" y="177" width="44" height="3" rx="1.5" fill="#A29475" opacity="0.4" />
+      <rect x="315" y="185" width="30" height="2" rx="1" fill="#A29475" opacity="0.22" />
+      <rect x="303" y="124" width="9" height="48" rx="4.5" fill="white" opacity="0.025" />
+
+      {/* Small jar (front) */}
+      <ellipse cx="210" cy="318" rx="38" ry="10" fill="#151515" stroke="#252525" strokeWidth="1.5" />
+      <rect x="172" y="270" width="76" height="50" rx="8" fill="#111" stroke="#252525" strokeWidth="1.5" />
+      <ellipse cx="210" cy="270" rx="38" ry="10" fill="#161616" stroke="#252525" strokeWidth="1" />
+      <ellipse cx="210" cy="270" rx="28" ry="7" fill="#1a1a1a" stroke="#8A1538" strokeWidth="0.8" opacity="0.55" />
+      <rect x="181" y="286" width="58" height="2.5" rx="1.25" fill="#A29475" opacity="0.3" />
+      <rect x="181" y="293" width="42" height="2" rx="1" fill="#A29475" opacity="0.18" />
+
+      {/* Ground */}
+      <line x1="80" y1="352" x2="440" y2="352" stroke="#1f1f1f" strokeWidth="1" />
+      <ellipse cx="260" cy="355" rx="180" ry="9" fill="#8A1538" opacity="0.04" />
+
+      {/* Sparkles */}
+      <g opacity="0.55">
+        <line x1="105" y1="88" x2="105" y2="100" stroke="#A29475" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="99" y1="94" x2="111" y2="94" stroke="#A29475" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+      <g opacity="0.4">
+        <line x1="418" y1="145" x2="418" y2="155" stroke="#8A1538" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="413" y1="150" x2="423" y2="150" stroke="#8A1538" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+      <circle cx="100" cy="280" r="3" fill="#8A1538" opacity="0.3" />
+      <circle cx="420" cy="260" r="2.5" fill="#A29475" opacity="0.3" />
+      <circle cx="95" cy="195" r="2" fill="#A29475" opacity="0.25" />
     </svg>
   );
 }
@@ -95,19 +120,35 @@ export default function Home() {
     },
   ];
 
+  const stats = [
+    { n: "13+", labelEn: "Products", labelAr: "منتجاً" },
+    { n: "6", labelEn: "Categories", labelAr: "فئات" },
+    { n: "Qatar", labelEn: "Based In", labelAr: "مقرنا" },
+    { n: "24h", labelEn: "Response", labelAr: "وقت الرد" },
+  ];
+
   return (
     <div className="bg-black">
       {/* ── Hero ── */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_50%,_rgba(138,21,56,0.22)_0%,_transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,_rgba(162,148,117,0.06)_0%,_transparent_50%)]" />
+        {/* Animated background orbs */}
+        <div
+          className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#8A1538] blur-[120px] opacity-15 animate-orb-breathe pointer-events-none"
+        />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#A29475] blur-[100px] opacity-5 animate-orb-breathe pointer-events-none"
+          style={{ animationDelay: "3.5s" }}
+        />
+
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 bg-grid-subtle opacity-40 pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center pt-24 pb-16">
           <motion.div initial="hidden" animate="show" variants={stagger}>
             <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
               {t("Qatar's Premier Car Care", "المتجر الرائد للعناية بالسيارات في قطر")}
             </motion.p>
-            <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-6">
+            <motion.h1 variants={blurUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-6">
               {t("Professional", "منتجات")}
               <br />
               <span className="text-[#8A1538]">{t("Car Care", "عناية السيارات")}</span>
@@ -123,7 +164,7 @@ export default function Home() {
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#8A1538] hover:bg-[#6b1029] text-white font-semibold rounded transition-colors"
+                className="btn-brand inline-flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded"
               >
                 {t("Explore Catalogue", "استكشف الكتالوج")}
                 <ChevronRight size={18} />
@@ -138,49 +179,75 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:block h-96"
+            transition={{ duration: 0.9, delay: 0.25 }}
+            className="hidden lg:block h-[430px] animate-float-y"
           >
             <ProductArt />
           </motion.div>
         </div>
 
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
-          <div className="w-px h-10 bg-white/50" />
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-25">
+          <div className="w-px h-10 bg-gradient-to-b from-transparent via-white to-transparent" />
           <p className="text-white text-xs tracking-widest uppercase">{t("Scroll", "مرر")}</p>
         </div>
       </section>
 
+      {/* ── Marquee ── */}
+      <Marquee />
+
+      {/* ── Stats Strip ── */}
+      <div className="section-line" />
+      <section className="py-10 bg-black relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#8A1538]/5 via-transparent to-[#A29475]/5 pointer-events-none" />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={staggerFast}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+          >
+            {stats.map(({ n, labelEn, labelAr }) => (
+              <motion.div
+                key={labelEn}
+                variants={fadeScale}
+                className="glass card-shine rounded-xl px-4 py-5 text-center hover:border-[#8A1538]/30 transition-colors"
+              >
+                <div className="text-gradient-gold text-3xl font-black mb-1">{n}</div>
+                <div className="text-white/40 text-xs tracking-widest uppercase">{isAr ? labelAr : labelEn}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+      <div className="section-line" />
+
       {/* ── Brand Pillars ── */}
-      <section className="py-20 border-t border-white/5">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
             variants={stagger}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
             {pillars.map((p, i) => {
               const Icon = p.icon;
               return (
                 <motion.div
                   key={i}
-                  variants={fadeUp}
-                  className="p-8 border border-white/8 rounded-lg hover:border-[#8A1538]/40 transition-colors group"
+                  variants={fadeScale}
+                  className="glass card-shine p-8 rounded-xl hover:border-[#8A1538]/35 transition-colors group"
                 >
-                  <div className="w-12 h-12 rounded border border-[#8A1538]/30 bg-[#8A1538]/10 flex items-center justify-center mb-5 group-hover:bg-[#8A1538]/20 transition-colors">
+                  <div className="w-12 h-12 rounded-lg border border-[#8A1538]/25 bg-[#8A1538]/10 flex items-center justify-center mb-5 group-hover:bg-[#8A1538]/20 group-hover:border-[#8A1538]/50 transition-all">
                     <Icon size={22} className="text-[#8A1538]" />
                   </div>
-                  <h3 className="text-white font-bold text-lg mb-2">
-                    {isAr ? p.titleAr : p.titleEn}
-                  </h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    {isAr ? p.descAr : p.descEn}
-                  </p>
+                  <h3 className="text-white font-bold text-lg mb-2.5">{isAr ? p.titleAr : p.titleEn}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">{isAr ? p.descAr : p.descEn}</p>
                 </motion.div>
               );
             })}
@@ -189,8 +256,9 @@ export default function Home() {
       </section>
 
       {/* ── Product Categories ── */}
-      <section className="py-20 bg-zinc-950/50">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <section className="py-20 bg-zinc-950/50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dots-subtle opacity-30 pointer-events-none" />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -200,7 +268,7 @@ export default function Home() {
             <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
               {t("What We Offer", "ما نقدمه")}
             </motion.p>
-            <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white mb-12">
+            <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white mb-12">
               {t("Product Categories", "فئات المنتجات")}
             </motion.h2>
 
@@ -208,15 +276,15 @@ export default function Home() {
               {staticCategories.slice(1).map((cat) => {
                 const Icon = categoryIcons[cat.id] ?? Package;
                 return (
-                  <motion.div key={cat.id} variants={fadeUp}>
+                  <motion.div key={cat.id} variants={fadeScale}>
                     <Link
                       href="/products"
-                      className="flex flex-col items-center gap-3 p-5 border border-white/8 rounded-lg text-center hover:border-[#A29475]/40 hover:bg-white/3 transition-all group"
+                      className="glass card-shine flex flex-col items-center gap-3 p-5 rounded-xl text-center hover:border-[#A29475]/40 transition-all group"
                     >
-                      <div className="w-10 h-10 rounded-full border border-[#A29475]/20 bg-[#A29475]/5 flex items-center justify-center group-hover:bg-[#A29475]/15 transition-colors">
+                      <div className="w-10 h-10 rounded-full border border-[#A29475]/20 bg-[#A29475]/5 flex items-center justify-center group-hover:bg-[#A29475]/15 group-hover:border-[#A29475]/40 transition-all">
                         <Icon size={18} className="text-[#A29475]" />
                       </div>
-                      <span className="text-white/70 group-hover:text-white text-xs font-medium leading-tight transition-colors">
+                      <span className="text-white/65 group-hover:text-white text-xs font-medium leading-tight transition-colors">
                         {isAr ? cat.nameAr : cat.nameEn}
                       </span>
                     </Link>
@@ -229,7 +297,7 @@ export default function Home() {
       </section>
 
       {/* ── Featured Products ── */}
-      <section className="py-20">
+      <section className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -242,7 +310,7 @@ export default function Home() {
                 <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
                   {t("Bestsellers", "الأكثر مبيعاً")}
                 </motion.p>
-                <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
+                <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white">
                   {t("Featured Products", "المنتجات المميزة")}
                 </motion.h2>
               </div>
@@ -273,25 +341,24 @@ export default function Home() {
                 return (
                   <motion.div
                     key={product.id ?? i}
-                    variants={fadeUp}
-                    className="group border border-white/8 rounded-lg overflow-hidden hover:border-[#8A1538]/40 transition-all"
+                    variants={fadeScale}
+                    className="group glass card-shine rounded-xl overflow-hidden hover:border-[#8A1538]/40 hover:shadow-[0_4px_30px_rgba(138,21,56,0.12)] transition-all duration-300"
                   >
-                    {/* Product image / placeholder */}
                     <div className="h-52 bg-zinc-900 relative overflow-hidden">
                       {imageUrl ? (
                         <img src={imageUrl} alt={nameEn} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900 to-black flex items-center justify-center">
                           <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-[#8A1538]/15 border border-[#8A1538]/30 flex items-center justify-center mx-auto mb-3">
+                            <div className="w-16 h-16 rounded-full bg-[#8A1538]/12 border border-[#8A1538]/25 flex items-center justify-center mx-auto mb-3 group-hover:border-[#8A1538]/50 group-hover:bg-[#8A1538]/20 animate-glow-pulse transition-all">
                               <span className="text-[#8A1538] font-black text-xl">CZ</span>
                             </div>
-                            <span className="text-[#A29475] text-xs tracking-widest uppercase">{category}</span>
+                            <span className="text-[#A29475]/60 text-xs tracking-widest uppercase">{category}</span>
                           </div>
                         </div>
                       )}
                       <div className="absolute top-3 left-3">
-                        <span className="px-2 py-1 bg-black/60 border border-white/10 text-white/60 text-xs rounded">
+                        <span className="px-2 py-1 bg-black/70 border border-white/10 text-[#A29475] text-xs rounded">
                           {category}
                         </span>
                       </div>
@@ -320,14 +387,112 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Before / After ── */}
+      <section className="py-24 bg-zinc-950/60 border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="grid lg:grid-cols-2 gap-12 items-center"
+          >
+            <div>
+              <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
+                {t("See the Difference", "شاهد الفرق")}
+              </motion.p>
+              <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white mb-5">
+                {t("Results You Can See", "نتائج يمكنك رؤيتها")}
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-white/50 text-base leading-relaxed mb-8">
+                {t(
+                  "CARZIX products deliver a visible transformation every time. Drag the slider to see the difference professional-grade formulas make on your vehicle.",
+                  "تحقق منتجات كارزيكس تحولاً مرئياً في كل مرة. اسحب الشريط لترى الفرق الذي تحدثه التركيبات الاحترافية في مركبتك."
+                )}
+              </motion.p>
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+                <Link href="/products" className="btn-brand inline-flex items-center gap-2 px-6 py-3 text-white font-semibold rounded text-sm">
+                  {t("Shop Products", "تسوق المنتجات")} <ChevronRight size={16} />
+                </Link>
+              </motion.div>
+            </div>
+            <motion.div variants={fadeScale}>
+              <BeforeAfter />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── How It Works ── */}
+      <section className="py-24 bg-black">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+          >
+            <div className="text-center mb-14">
+              <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
+                {t("Simple Process", "عملية بسيطة")}
+              </motion.p>
+              <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white">
+                {t("How It Works", "كيف يعمل")}
+              </motion.h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  step: "01",
+                  titleEn: "Browse Catalogue",
+                  titleAr: "تصفح الكتالوج",
+                  descEn: "Explore our full range of professional car care products across 6 categories.",
+                  descAr: "استكشف مجموعتنا الكاملة من منتجات العناية الاحترافية عبر 6 فئات.",
+                },
+                {
+                  step: "02",
+                  titleEn: "Request a Quote",
+                  titleAr: "اطلب عرض سعر",
+                  descEn: "Select your products and quantities, then submit a quote request in seconds.",
+                  descAr: "اختر منتجاتك والكميات المطلوبة، ثم أرسل طلب عرض السعر في ثوانٍ.",
+                },
+                {
+                  step: "03",
+                  titleEn: "Fast Delivery",
+                  titleAr: "توصيل سريع",
+                  descEn: "We confirm your order and arrange delivery across Qatar within 24–48 hours.",
+                  descAr: "نؤكد طلبك ونرتب التوصيل في جميع أنحاء قطر خلال 24–48 ساعة.",
+                },
+              ].map(({ step, titleEn, titleAr, descEn, descAr }) => (
+                <motion.div
+                  key={step}
+                  variants={fadeScale}
+                  className="relative glass card-shine rounded-xl p-8 hover:border-[#A29475]/30 transition-colors"
+                >
+                  <div className="absolute top-6 right-6 text-[#8A1538]/15 text-6xl font-black leading-none select-none">
+                    {step}
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-[#8A1538] flex items-center justify-center mb-5 shadow-[0_0_16px_rgba(138,21,56,0.45)]">
+                    <span className="text-white font-black text-sm">{step}</span>
+                  </div>
+                  <h3 className="text-white font-bold text-lg mb-3">{isAr ? titleAr : titleEn}</h3>
+                  <p className="text-white/45 text-sm leading-relaxed">{isAr ? descAr : descEn}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── Clients Slider ── */}
       <ClientsSlider />
 
       {/* ── CTA Banner ── */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[#8A1538]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,_rgba(0,0,0,0.35)_0%,_transparent_70%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,_rgba(162,148,117,0.15)_0%,_transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,_rgba(0,0,0,0.4)_0%,_transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,_rgba(162,148,117,0.18)_0%,_transparent_50%)]" />
+        <div className="absolute inset-0 bg-grid-subtle opacity-20 pointer-events-none" />
 
         <motion.div
           initial="hidden"
@@ -336,10 +501,10 @@ export default function Home() {
           variants={stagger}
           className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center"
         >
-          <motion.p variants={fadeUp} className="text-white/60 text-xs font-semibold tracking-widest uppercase mb-4">
+          <motion.p variants={fadeUp} className="text-white/55 text-xs font-semibold tracking-widest uppercase mb-4">
             {t("Ready to Order?", "مستعد للطلب؟")}
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white mb-5">
+          <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white mb-5">
             {t("Request a Quote Today", "اطلب عرض سعر اليوم")}
           </motion.h2>
           <motion.p variants={fadeUp} className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
@@ -351,13 +516,13 @@ export default function Home() {
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
             <Link
               href="/products"
-              className="px-8 py-3.5 bg-white text-[#8A1538] font-bold rounded hover:bg-white/90 transition-colors"
+              className="px-8 py-3.5 bg-white text-[#8A1538] font-bold rounded hover:bg-white/90 transition-colors shadow-[0_4px_20px_rgba(255,255,255,0.18)]"
             >
               {t("Browse Products", "تصفح المنتجات")}
             </Link>
             <Link
               href="/contact"
-              className="px-8 py-3.5 border border-white/40 text-white font-semibold rounded hover:bg-white/10 transition-colors"
+              className="px-8 py-3.5 border border-white/35 text-white font-semibold rounded hover:bg-white/10 hover:border-white/55 transition-colors"
             >
               {t("Contact Us", "اتصل بنا")}
             </Link>

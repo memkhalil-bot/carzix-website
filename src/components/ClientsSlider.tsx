@@ -23,34 +23,30 @@ export default function ClientsSlider() {
   const doubled = [...clients, ...clients];
 
   return (
-    <section className="py-16 border-y border-white/10 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-8">
-        <p className="text-center text-white/40 text-sm font-medium tracking-widest uppercase">
-          {t("Trusted by leading businesses in Qatar", "موثوق من قِبل كبرى الشركات في قطر")}
+    <section className="py-16 border-y border-white/5 overflow-hidden bg-[#060606]">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-10">
+        <p className="text-center text-white/25 text-[11px] font-semibold tracking-[0.22em] uppercase">
+          {t("Trusted by Qatar's leading businesses", "موثوق من قِبل كبرى الشركات في قطر")}
         </p>
       </div>
-
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
-
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#060606] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#060606] to-transparent z-10 pointer-events-none" />
         <div className="flex overflow-hidden">
-          <div className="clients-track flex items-center gap-10 whitespace-nowrap">
+          <div className="clients-track flex items-center gap-6 whitespace-nowrap">
             {doubled.map((client, i) => (
               <div
                 key={`${client.id}-${i}`}
-                className="inline-flex items-center justify-center h-14 px-6 rounded border border-white/10 bg-white/5 hover:border-[#A29475]/40 hover:bg-white/8 transition-colors shrink-0"
+                className="inline-flex items-center justify-center h-12 px-6 rounded-lg border border-white/7 bg-white/3 hover:border-[#A29475]/25 transition-colors shrink-0"
               >
                 {client.logo_url ? (
                   <img
                     src={client.logo_url}
                     alt={client.name}
-                    className="h-8 object-contain filter brightness-75 hover:brightness-100 transition-all"
+                    className="h-7 object-contain opacity-50 hover:opacity-80 transition-opacity"
                   />
                 ) : (
-                  <span className="text-white/50 font-semibold text-sm tracking-wide">
-                    {client.name}
-                  </span>
+                  <span className="text-white/35 font-semibold text-sm tracking-wide">{client.name}</span>
                 )}
               </div>
             ))}

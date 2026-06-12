@@ -109,7 +109,7 @@ export default function Contact() {
                 <motion.div
                   key={labelEn}
                   variants={fadeUp}
-                  className="flex items-start gap-4 p-4 rounded-xl border border-white/8 bg-white/3"
+                  className="glass flex items-start gap-4 p-4 rounded-xl"
                 >
                   <div className="w-9 h-9 rounded-lg bg-[#8A1538]/15 flex items-center justify-center shrink-0">
                     <Icon size={16} className="text-[#8A1538]" />
@@ -130,7 +130,7 @@ export default function Contact() {
               {/* Map placeholder */}
               <motion.div
                 variants={fadeUp}
-                className="mt-2 h-40 rounded-xl border border-white/8 bg-zinc-900 overflow-hidden flex items-center justify-center"
+                className="glass mt-2 h-40 rounded-xl overflow-hidden flex items-center justify-center"
               >
                 <div className="text-center">
                   <MapPin size={24} className="text-[#8A1538] mx-auto mb-2" />
@@ -147,7 +147,7 @@ export default function Contact() {
               variants={fadeUp}
               className="lg:col-span-3"
             >
-              <div className="p-8 rounded-2xl border border-white/10 bg-white/3">
+              <div className="glass-dark p-8 rounded-2xl">
                 {submitted ? (
                   <div className="flex flex-col items-center py-12 text-center">
                     <CheckCircle size={44} className="text-[#8A1538] mb-4" />
@@ -255,7 +255,7 @@ export default function Contact() {
           <p className="text-white/50 text-sm">{t("Prefer to call or WhatsApp?", "تفضل الاتصال أو واتساب؟")}</p>
           <a
             href="tel:+97472252572"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#8A1538] hover:bg-[#6b1029] text-white font-semibold text-sm rounded transition-colors"
+            className="btn-brand inline-flex items-center gap-2 px-6 py-3 text-white font-semibold text-sm rounded"
           >
             <Phone size={14} /> +974 72252572
           </a>

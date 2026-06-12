@@ -200,7 +200,7 @@ export default function Products() {
                   key={isDbProduct(product) ? product.id : product.id}
                   variants={fadeUp}
                   custom={i}
-                  className="group flex flex-col rounded-xl border border-white/8 bg-white/3 overflow-hidden hover:border-[#8A1538]/40 transition-all duration-300"
+                  className="group glass card-shine flex flex-col rounded-xl overflow-hidden hover:border-[#8A1538]/40 hover:shadow-[0_4px_30px_rgba(138,21,56,0.1)] transition-all duration-300"
                 >
                   {/* Image */}
                   <div className="relative h-48 bg-zinc-900 overflow-hidden">
@@ -256,7 +256,7 @@ export default function Products() {
                       )}
                       <button
                         onClick={() => openModal(product)}
-                        className="px-3 py-1.5 bg-[#8A1538] hover:bg-[#6b1029] text-white text-xs font-semibold rounded transition-colors"
+                        className="btn-brand px-3 py-1.5 text-white text-xs font-semibold rounded"
                       >
                         {t("Request Quote", "طلب عرض سعر")}
                       </button>
@@ -283,7 +283,7 @@ export default function Products() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-zinc-950 border border-white/12 rounded-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-md glass-dark rounded-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
             >
               <button
                 onClick={closeModal}
