@@ -6,6 +6,7 @@
   --color-gold: #A29475;
   --color-gold-light: #c8b899;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -16,6 +17,56 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* ── Arabic typography (RTL) ── */
+:root:lang(ar),
+[dir="rtl"] {
+  font-family: var(--font-arabic);
+}
+
+/* Headings: SemiBold weight feels more elegant than heavy black in Arabic */
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3 {
+  font-family: var(--font-arabic);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0;
+  word-spacing: 0.04em;
+}
+
+/* Body text: comfortable reading rhythm for Arabic */
+[dir="rtl"] p,
+[dir="rtl"] li,
+[dir="rtl"] span,
+[dir="rtl"] label,
+[dir="rtl"] button,
+[dir="rtl"] a,
+[dir="rtl"] input,
+[dir="rtl"] textarea {
+  font-family: var(--font-arabic);
+  letter-spacing: 0;
+}
+
+/* Neutralise English-style letter-spacing utilities in Arabic
+   (tracking-wide / tracking-widest / tracking-[0.22em] etc.) */
+[dir="rtl"] .tracking-wide,
+[dir="rtl"] .tracking-wider,
+[dir="rtl"] .tracking-widest,
+[dir="rtl"] [class*="tracking-["] {
+  letter-spacing: 0 !important;
+}
+
+/* Uppercase has no meaning in Arabic — suppress it */
+[dir="rtl"] .uppercase {
+  text-transform: none !important;
+}
+
+/* Slightly taller line-height for Arabic body text */
+[dir="rtl"] p,
+[dir="rtl"] li {
+  line-height: 1.9;
 }
 
 /* Film grain */
