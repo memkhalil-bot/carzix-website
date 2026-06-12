@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Loader2, Package, Filter } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
-import { fadeUp, stagger } from "@/lib/motion";
+import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { staticProducts, staticCategories } from "@/lib/products";
 
@@ -39,6 +39,7 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [modalProduct, setModalProduct] = useState<DisplayProduct | null>(null);
+  const [quickView, setQuickView] = useState<DisplayProduct | null>(null);
   const [form, setForm] = useState<RequestForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -62,12 +63,8 @@ export default function Products() {
   const filtered =
     activeCategory === "all"
       ? allProducts
-      : allProducts.filter((p) => {
-          const cat = isDbProduct(p) ? p.category : p.category;
-          return cat === activeCategory;
-        });
+      : allProducts.filter((p) => p.category === activeCategory);
 
-  /* derive category list */
   const cats = useStatic
     ? staticCategories
     : [
@@ -81,7 +78,7 @@ export default function Products() {
 
   function openModal(product: DisplayProduct) {
     const name = isDbProduct(product) ? product.name : product.nameEn;
-    const id = isDbProduct(product) ? product.id : product.id;
+    const id = product.id;
     setModalProduct(product);
     setForm({ ...emptyForm, product_name: name, product_id: id });
     setSubmitted(false);
@@ -119,19 +116,18 @@ export default function Products() {
   const productName = (p: DisplayProduct) =>
     isAr && !isDbProduct(p) ? p.nameAr : isDbProduct(p) ? p.name : p.nameEn;
   const productDesc = (p: DisplayProduct) =>
-    isAr && !isDbProduct(p)
-      ? p.descriptionAr
-      : isDbProduct(p)
-      ? p.description ?? ""
-      : p.descriptionEn;
-  const productCat = (p: DisplayProduct) => (isDbProduct(p) ? p.category : p.category);
+    isAr && !isDbProduct(p) ? p.descriptionAr : isDbProduct(p) ? p.description ?? "" : p.descriptionEn;
+  const productCat = (p: DisplayProduct) => p.category;
   const productImage = (p: DisplayProduct) => (isDbProduct(p) ? p.image_url : null);
+
+  const inputCls =
+    "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#0D4261] transition-colors";
 
   return (
     <>
       {/* Hero */}
       <section className="relative pt-36 pb-20 bg-black overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,_rgba(138,21,56,0.25)_0%,_transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,_rgba(13,66,97,0.25)_0%,_transparent_60%)]" />
         <motion.div
           initial="hidden"
           animate="show"
@@ -146,8 +142,8 @@ export default function Products() {
           </motion.h1>
           <motion.p variants={fadeUp} className="text-white/50 max-w-xl mx-auto text-lg">
             {t(
-              "Professional-grade car care products for every need — from washing and polishing to interior care and tire protection.",
-              "منتجات عناية سيارات احترافية لكل احتياج — من الغسيل والتلميع إلى العناية الداخلية وحماية الكفرات."
+              "Professional-grade detailing and car care products for every need — shampoos, polishes, interior care, glass, and tires.",
+              "منتجات تفصيل وعناية سيارات احترافية لكل احتياج — شامبوهات وتلميع وعناية داخلية وزجاج وكفرات."
             )}
           </motion.p>
         </motion.div>
@@ -164,7 +160,7 @@ export default function Products() {
                 onClick={() => setActiveCategory(cat.id)}
                 className={`shrink-0 px-4 py-1.5 rounded text-sm font-medium transition-colors ${
                   activeCategory === cat.id
-                    ? "bg-[#8A1538] text-white"
+                    ? "bg-[#0D4261] text-white"
                     : "text-white/50 hover:text-white"
                 }`}
               >
@@ -180,7 +176,7 @@ export default function Products() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center py-24">
-              <Loader2 size={32} className="text-[#8A1538] animate-spin" />
+              <Loader2 size={32} className="text-[#0D4261] animate-spin" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center py-24 text-center">
@@ -198,12 +194,12 @@ export default function Products() {
               {filtered.map((product, i) => (
                 <motion.div
                   key={isDbProduct(product) ? product.id : product.id}
-                  variants={fadeUp}
+                  variants={fadeScale}
                   custom={i}
-                  className="group glass card-shine flex flex-col rounded-xl overflow-hidden hover:border-[#8A1538]/40 hover:shadow-[0_4px_30px_rgba(138,21,56,0.1)] transition-all duration-300"
+                  className="group glass card-shine flex flex-col rounded-xl overflow-hidden hover:border-[#0D4261]/45 hover:shadow-[0_4px_32px_rgba(13,66,97,0.14)] transition-all duration-300"
                 >
                   {/* Image */}
-                  <div className="relative h-48 bg-zinc-900 overflow-hidden">
+                  <div className="relative h-52 bg-zinc-900 overflow-hidden">
                     {productImage(product) ? (
                       <img
                         src={productImage(product)!}
@@ -213,8 +209,8 @@ export default function Products() {
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-900 to-black">
                         <div className="text-center">
-                          <div className="w-14 h-14 rounded-full bg-[#8A1538]/15 border border-[#8A1538]/30 flex items-center justify-center mx-auto mb-2">
-                            <span className="text-[#8A1538] font-black text-lg">CZ</span>
+                          <div className="w-14 h-14 rounded-full bg-[#0D4261]/15 border border-[#0D4261]/30 flex items-center justify-center mx-auto mb-2">
+                            <span className="text-[#A29475] font-black text-lg">CZ</span>
                           </div>
                         </div>
                       </div>
@@ -224,6 +220,21 @@ export default function Products() {
                         {productCat(product)}
                       </span>
                     )}
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 gap-2">
+                      <button
+                        onClick={() => setQuickView(product)}
+                        className="w-full py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded hover:bg-white/20 transition-colors"
+                      >
+                        {t("Quick View", "عرض سريع")}
+                      </button>
+                      <button
+                        onClick={() => openModal(product)}
+                        className="w-full py-2 btn-brand text-white text-xs font-semibold rounded"
+                      >
+                        {t("Request Quote", "طلب عرض سعر")}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Info */}
@@ -236,11 +247,13 @@ export default function Products() {
                         {productDesc(product)}
                       </p>
                     )}
-                    {/* Features for static products */}
                     {!isDbProduct(product) && (
                       <div className="flex flex-wrap gap-1 mb-4">
                         {(isAr ? product.featuresAr : product.featuresEn).slice(0, 2).map((f, fi) => (
-                          <span key={fi} className="px-2 py-0.5 bg-[#8A1538]/10 border border-[#8A1538]/20 text-[#A29475] text-xs rounded">
+                          <span
+                            key={fi}
+                            className="px-2 py-0.5 bg-[#129B82]/10 border border-[#129B82]/22 text-[#129B82] text-xs rounded"
+                          >
                             {f}
                           </span>
                         ))}
@@ -269,14 +282,124 @@ export default function Products() {
         </div>
       </section>
 
-      {/* Request modal */}
+      {/* ── Quick View Modal ── */}
+      <AnimatePresence>
+        {quickView && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setQuickView(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 20 }}
+              className="relative w-full max-w-2xl glass-dark rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto"
+            >
+              {/* Image area */}
+              <div className="relative h-52 bg-zinc-900 flex items-center justify-center">
+                {productImage(quickView) ? (
+                  <img
+                    src={productImage(quickView)!}
+                    alt={productName(quickView)}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-16 h-16 rounded-full bg-[#0D4261]/20 border border-[#0D4261]/40 flex items-center justify-center">
+                      <span className="text-[#A29475] font-black text-xl">CZ</span>
+                    </div>
+                    <span className="text-[#A29475]/60 text-xs tracking-widest uppercase">{productCat(quickView)}</span>
+                  </div>
+                )}
+                <button
+                  onClick={() => setQuickView(null)}
+                  className="absolute top-4 right-4 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-colors"
+                >
+                  <X size={16} />
+                </button>
+                {productCat(quickView) && (
+                  <span className="absolute bottom-4 left-4 px-3 py-1 bg-black/70 text-[#A29475] text-xs rounded">
+                    {productCat(quickView)}
+                  </span>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="p-8">
+                <h2 className="text-white font-black text-2xl mb-3 leading-tight">
+                  {productName(quickView)}
+                </h2>
+                {productDesc(quickView) && (
+                  <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView)}</p>
+                )}
+
+                {!isDbProduct(quickView) && quickView.featuresEn.length > 0 && (
+                  <div className="mb-5">
+                    <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
+                      {t("Key Features", "المميزات الرئيسية")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {(isAr ? quickView.featuresAr : quickView.featuresEn).map((f, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1.5 bg-[#129B82]/10 border border-[#129B82]/25 text-[#129B82] text-xs rounded"
+                        >
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {!isDbProduct(quickView) && quickView.sizes && quickView.sizes.length > 0 && (
+                  <div className="mb-7">
+                    <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
+                      {t("Available Sizes", "الأحجام المتاحة")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {quickView.sizes.map((s, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1.5 glass border-white/12 text-white/65 text-xs rounded"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { openModal(quickView); setQuickView(null); }}
+                    className="flex-1 btn-brand py-3.5 text-white font-semibold rounded"
+                  >
+                    {t("Request a Quote", "طلب عرض سعر")}
+                  </button>
+                  <button
+                    onClick={() => setQuickView(null)}
+                    className="px-6 py-3.5 border border-white/15 text-white/55 hover:text-white text-sm rounded transition-colors"
+                  >
+                    {t("Close", "إغلاق")}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Request Quote Modal ── */}
       <AnimatePresence>
         {modalProduct && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
             onClick={(e) => e.target === e.currentTarget && closeModal()}
           >
             <motion.div
@@ -294,7 +417,7 @@ export default function Products() {
 
               {submitted ? (
                 <div className="flex flex-col items-center py-6 text-center">
-                  <CheckCircle size={40} className="text-[#8A1538] mb-4" />
+                  <CheckCircle size={40} className="text-[#129B82] mb-4" />
                   <h3 className="text-white font-bold text-xl mb-2">
                     {t("Request Sent!", "تم إرسال الطلب!")}
                   </h3>
@@ -304,7 +427,7 @@ export default function Products() {
                   </p>
                   <button
                     onClick={closeModal}
-                    className="px-6 py-2.5 bg-[#8A1538] text-white text-sm font-semibold rounded hover:bg-[#6b1029] transition-colors"
+                    className="px-6 py-2.5 bg-[#0D4261] text-white text-sm font-semibold rounded hover:bg-[#0a3350] transition-colors"
                   >
                     {t("Close", "إغلاق")}
                   </button>
@@ -318,7 +441,7 @@ export default function Products() {
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
                         {t("Full Name *", "الاسم الكامل *")}
                       </label>
                       <input
@@ -326,12 +449,12 @@ export default function Products() {
                         required
                         value={form.customer_name}
                         onChange={(e) => setForm((f) => ({ ...f, customer_name: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors"
+                        className={inputCls}
                         placeholder={t("Your full name", "اسمك الكامل")}
                       />
                     </div>
                     <div>
-                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
                         {t("Email *", "البريد الإلكتروني *")}
                       </label>
                       <input
@@ -339,35 +462,35 @@ export default function Products() {
                         required
                         value={form.email}
                         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors"
+                        className={inputCls}
                         placeholder="you@example.com"
                       />
                     </div>
                     <div>
-                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
                         {t("Phone", "رقم الهاتف")}
                       </label>
                       <input
                         type="tel"
                         value={form.phone}
                         onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors"
+                        className={inputCls}
                         placeholder="+974 XXXX XXXX"
                       />
                     </div>
                     <div>
-                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
                         {t("Product", "المنتج")}
                       </label>
                       <input
                         type="text"
                         value={form.product_name}
                         onChange={(e) => setForm((f) => ({ ...f, product_name: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors"
+                        className={inputCls}
                       />
                     </div>
                     <div>
-                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
                         {t("Quantity", "الكمية")}
                       </label>
                       <input
@@ -375,18 +498,18 @@ export default function Products() {
                         min="1"
                         value={form.quantity}
                         onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors"
+                        className={inputCls}
                       />
                     </div>
                     <div>
-                      <label className="block text-white/60 text-xs font-medium mb-1.5">
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
                         {t("Notes", "ملاحظات")}
                       </label>
                       <textarea
                         rows={3}
                         value={form.notes}
                         onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8A1538] transition-colors resize-none"
+                        className={inputCls + " resize-none"}
                         placeholder={t("Any additional notes…", "أي ملاحظات إضافية…")}
                       />
                     </div>
@@ -396,7 +519,7 @@ export default function Products() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3.5 bg-[#8A1538] hover:bg-[#6b1029] disabled:opacity-60 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-3.5 bg-[#0D4261] hover:bg-[#0a3350] disabled:opacity-60 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       {submitting ? (
                         <><Loader2 size={16} className="animate-spin" /> {t("Sending…", "جارٍ الإرسال…")}</>

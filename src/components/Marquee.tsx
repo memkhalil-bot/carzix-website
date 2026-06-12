@@ -36,7 +36,7 @@ export default function Marquee() {
               <span className="text-[#A29475] text-[11px] font-semibold tracking-[0.18em] uppercase px-6">
                 {item}
               </span>
-              <span className="text-[#8A1538] text-[9px]">◆</span>
+              <span className="text-[#129B82] text-[9px]">◆</span>
             </span>
           ))}
         </div>
