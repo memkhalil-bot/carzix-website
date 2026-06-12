@@ -5,6 +5,8 @@ import {
   ChevronRight, Shield, Zap, Leaf, Droplets, Sparkles, Package, CircleDot,
 } from "lucide-react";
 import ClientsSlider from "@/components/ClientsSlider";
+import Marquee from "@/components/Marquee";
+import BeforeAfter from "@/components/BeforeAfter";
 import { fadeUp, blurUp, fadeScale, staggerFast, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
@@ -193,6 +195,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Marquee ── */}
+      <Marquee />
+
       {/* ── Stats Strip ── */}
       <div className="section-line" />
       <section className="py-10 bg-black relative">
@@ -377,6 +382,103 @@ export default function Home() {
                   </motion.div>
                 );
               })}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Before / After ── */}
+      <section className="py-24 bg-zinc-950/60 border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="grid lg:grid-cols-2 gap-12 items-center"
+          >
+            <div>
+              <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
+                {t("See the Difference", "شاهد الفرق")}
+              </motion.p>
+              <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white mb-5">
+                {t("Results You Can See", "نتائج يمكنك رؤيتها")}
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-white/50 text-base leading-relaxed mb-8">
+                {t(
+                  "CARZIX products deliver a visible transformation every time. Drag the slider to see the difference professional-grade formulas make on your vehicle.",
+                  "تحقق منتجات كارزيكس تحولاً مرئياً في كل مرة. اسحب الشريط لترى الفرق الذي تحدثه التركيبات الاحترافية في مركبتك."
+                )}
+              </motion.p>
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+                <Link href="/products" className="btn-brand inline-flex items-center gap-2 px-6 py-3 text-white font-semibold rounded text-sm">
+                  {t("Shop Products", "تسوق المنتجات")} <ChevronRight size={16} />
+                </Link>
+              </motion.div>
+            </div>
+            <motion.div variants={fadeScale}>
+              <BeforeAfter />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── How It Works ── */}
+      <section className="py-24 bg-black">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+          >
+            <div className="text-center mb-14">
+              <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
+                {t("Simple Process", "عملية بسيطة")}
+              </motion.p>
+              <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white">
+                {t("How It Works", "كيف يعمل")}
+              </motion.h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  step: "01",
+                  titleEn: "Browse Catalogue",
+                  titleAr: "تصفح الكتالوج",
+                  descEn: "Explore our full range of professional car care products across 6 categories.",
+                  descAr: "استكشف مجموعتنا الكاملة من منتجات العناية الاحترافية عبر 6 فئات.",
+                },
+                {
+                  step: "02",
+                  titleEn: "Request a Quote",
+                  titleAr: "اطلب عرض سعر",
+                  descEn: "Select your products and quantities, then submit a quote request in seconds.",
+                  descAr: "اختر منتجاتك والكميات المطلوبة، ثم أرسل طلب عرض السعر في ثوانٍ.",
+                },
+                {
+                  step: "03",
+                  titleEn: "Fast Delivery",
+                  titleAr: "توصيل سريع",
+                  descEn: "We confirm your order and arrange delivery across Qatar within 24–48 hours.",
+                  descAr: "نؤكد طلبك ونرتب التوصيل في جميع أنحاء قطر خلال 24–48 ساعة.",
+                },
+              ].map(({ step, titleEn, titleAr, descEn, descAr }) => (
+                <motion.div
+                  key={step}
+                  variants={fadeScale}
+                  className="relative glass card-shine rounded-xl p-8 hover:border-[#A29475]/30 transition-colors"
+                >
+                  <div className="absolute top-6 right-6 text-[#8A1538]/15 text-6xl font-black leading-none select-none">
+                    {step}
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-[#8A1538] flex items-center justify-center mb-5 shadow-[0_0_16px_rgba(138,21,56,0.45)]">
+                    <span className="text-white font-black text-sm">{step}</span>
+                  </div>
+                  <h3 className="text-white font-bold text-lg mb-3">{isAr ? titleAr : titleEn}</h3>
+                  <p className="text-white/45 text-sm leading-relaxed">{isAr ? descAr : descEn}</p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
