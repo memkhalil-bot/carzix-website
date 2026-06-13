@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LanguageContext";
 
 export default function Navbar() {
-  const { t, toggleLang, lang } = useLang();
+  const { t, toggleLang, lang, isAr } = useLang();
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -37,13 +37,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded bg-[#0D4261] flex items-center justify-center ring-1 ring-[#0D4261]/40 shadow-[0_0_12px_rgba(13,66,97,0.45)]">
-              <span className="text-white font-black text-xs tracking-tight">CZ</span>
-            </div>
-            <span className="text-white font-black text-xl tracking-widest uppercase">
-              CARZIX
-            </span>
+          <Link href="/" className="flex items-center group">
+            <img
+              src={isAr ? "/logo-ar.svg" : "/logo-en.svg"}
+              alt="CARZIX"
+              className="h-8 lg:h-9 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}

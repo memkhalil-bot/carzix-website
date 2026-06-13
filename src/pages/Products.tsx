@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Loader2, Package, Filter } from "lucide-react";
+import DilutionCalculator from "@/components/DilutionCalculator";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
@@ -146,9 +147,6 @@ export default function Products() {
           variants={stagger}
           className="relative max-w-7xl mx-auto px-6 lg:px-8 text-center"
         >
-          <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
-            {t("Catalogue", "الكتالوج")}
-          </motion.p>
           <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl font-black text-white mb-5">
             {t("Our Products", "منتجاتنا")}
           </motion.h1>
@@ -228,7 +226,7 @@ export default function Products() {
                       </div>
                     )}
                     {productCat(product) && (
-                      <span className="absolute top-3 left-3 px-2 py-0.5 bg-black/70 text-[#A29475] text-xs rounded">
+                      <span className="absolute top-3 start-3 px-2 py-0.5 bg-black/70 text-[#A29475] text-xs rounded">
                         {productCat(product)}
                       </span>
                     )}
@@ -271,11 +269,21 @@ export default function Products() {
                         ))}
                       </div>
                     )}
-                    {isDbProduct(product) && product.dilution_ratio && (
-                      <p className="text-white/35 text-xs mb-3">
-                        <span className="text-white/25">{t("Dilution", "نسبة التخفيف")}: </span>
-                        {product.dilution_ratio}
-                      </p>
+                    {isDbProduct(product) && (product.dilution_ratio || product.suitable_for) && (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
+                        {product.dilution_ratio && (
+                          <p className="text-white/40 text-xs">
+                            <span className="text-white/22">{t("Dilution", "تخفيف")}: </span>
+                            <span className="text-[#A29475]/80 font-semibold">{product.dilution_ratio}</span>
+                          </p>
+                        )}
+                        {product.suitable_for && (
+                          <p className="text-white/40 text-xs">
+                            <span className="text-white/22">{t("For", "مناسب لـ")}: </span>
+                            {product.suitable_for}
+                          </p>
+                        )}
+                      </div>
                     )}
                     <div className="flex items-center justify-between mt-auto pt-1">
                       {isDbProduct(product) && product.price != null ? (
@@ -299,6 +307,9 @@ export default function Products() {
           )}
         </div>
       </section>
+
+      {/* ── Dilution Calculator ── */}
+      <DilutionCalculator />
 
       {/* ── Quick View Modal ── */}
       <AnimatePresence>
@@ -339,7 +350,7 @@ export default function Products() {
                   <X size={16} />
                 </button>
                 {productCat(quickView) && (
-                  <span className="absolute bottom-4 left-4 px-3 py-1 bg-black/70 text-[#A29475] text-xs rounded">
+                  <span className="absolute bottom-4 start-4 px-3 py-1 bg-black/70 text-[#A29475] text-xs rounded">
                     {productCat(quickView)}
                   </span>
                 )}
