@@ -253,9 +253,13 @@ export default function Home() {
               {(dbProducts.length > 0 ? dbProducts : featuredStatic).map((product, i) => {
                 const isDb = dbProducts.length > 0;
                 const nameEn = isDb ? (product as Product).name : (product as typeof featuredStatic[0]).nameEn;
-                const nameAr = isDb ? (product as Product).name : (product as typeof featuredStatic[0]).nameAr;
+                const nameAr = isDb
+                  ? ((product as Product).name_ar || (product as Product).name)
+                  : (product as typeof featuredStatic[0]).nameAr;
                 const desc = isDb
-                  ? (product as Product).description ?? ""
+                  ? (isAr
+                    ? ((product as Product).description_ar || (product as Product).description || "")
+                    : (product as Product).description ?? "")
                   : isAr
                   ? (product as typeof featuredStatic[0]).descriptionAr
                   : (product as typeof featuredStatic[0]).descriptionEn;
