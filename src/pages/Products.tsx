@@ -260,7 +260,7 @@ export default function Products() {
                       </p>
                     )}
                     {productFeatures(product).slice(0, 2).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
+                      <div className="flex flex-wrap gap-1 mb-3">
                         {productFeatures(product).slice(0, 2).map((f, fi) => (
                           <span
                             key={fi}
@@ -270,6 +270,12 @@ export default function Products() {
                           </span>
                         ))}
                       </div>
+                    )}
+                    {isDbProduct(product) && product.dilution_ratio && (
+                      <p className="text-white/35 text-xs mb-3">
+                        <span className="text-white/25">{t("Dilution", "نسبة التخفيف")}: </span>
+                        {product.dilution_ratio}
+                      </p>
                     )}
                     <div className="flex items-center justify-between mt-auto pt-1">
                       {isDbProduct(product) && product.price != null ? (
@@ -367,7 +373,7 @@ export default function Products() {
                 )}
 
                 {productSizes(quickView).length > 0 && (
-                  <div className="mb-7">
+                  <div className="mb-5">
                     <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
                       {t("Available Sizes", "الأحجام المتاحة")}
                     </p>
@@ -381,6 +387,27 @@ export default function Products() {
                         </span>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {isDbProduct(quickView) && (quickView.dilution_ratio || quickView.suitable_for) && (
+                  <div className="mb-7 grid grid-cols-2 gap-4">
+                    {quickView.dilution_ratio && (
+                      <div>
+                        <p className="text-white/35 text-xs uppercase tracking-widest mb-1">
+                          {t("Dilution Ratio", "نسبة التخفيف")}
+                        </p>
+                        <p className="text-white/70 text-sm">{quickView.dilution_ratio}</p>
+                      </div>
+                    )}
+                    {quickView.suitable_for && (
+                      <div>
+                        <p className="text-white/35 text-xs uppercase tracking-widest mb-1">
+                          {t("Suitable For", "مناسب لـ")}
+                        </p>
+                        <p className="text-white/70 text-sm">{quickView.suitable_for}</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
