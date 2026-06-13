@@ -89,13 +89,13 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-3">
-                <Phone size={13} className="text-[#129B82] shrink-0" />
+                <Phone size={13} className="text-[#A29475] shrink-0" />
                 <a href="tel:+97472252572" className="text-white/45 hover:text-white text-sm transition-colors">
                   +974 72252572
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={13} className="text-[#129B82] shrink-0" />
+                <Mail size={13} className="text-[#A29475] shrink-0" />
                 <a href="mailto:hello@carzix.qa" className="text-white/45 hover:text-white text-sm transition-colors">
                   hello@carzix.qa
                 </a>
@@ -105,7 +105,7 @@ export default function Footer() {
                 <span className="text-white/45 text-sm">{t("Doha, Qatar", "الدوحة، قطر")}</span>
               </li>
               <li className="flex items-center gap-3">
-                <Instagram size={13} className="text-[#129B82] shrink-0" />
+                <Instagram size={13} className="text-[#A29475] shrink-0" />
                 <a
                   href="https://www.instagram.com/carzix.qa/"
                   target="_blank"
