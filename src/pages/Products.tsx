@@ -253,34 +253,35 @@ export default function Products() {
                       {productName(product)}
                     </h3>
                     {isDbProduct(product) && product.dilution_ratio && (
-                      <div className="mb-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0D4261]/20 border border-[#A29475]/35 text-[#A29475] text-xs font-bold tracking-wider">
-                          {product.dilution_ratio}
+                      <div className="mb-2.5">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0D4261]/20 border border-[#A29475]/35 text-xs font-bold">
+                          <span className="text-white/35 font-medium">{t("Dilution:", "نسبة التخفيف:")}</span>
+                          <span className="text-[#A29475] tracking-wider">{product.dilution_ratio}</span>
                         </span>
                       </div>
                     )}
                     {productDesc(product) && (
-                      <p className="text-white/40 text-xs leading-relaxed mb-3 flex-1 line-clamp-3">
+                      <p className="text-white/40 text-xs leading-relaxed mb-3 flex-1 line-clamp-2">
                         {productDesc(product)}
                       </p>
                     )}
-                    {productFeatures(product).slice(0, 2).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {productFeatures(product).slice(0, 2).map((f, fi) => (
-                          <span
-                            key={fi}
-                            className="px-2 py-0.5 bg-[#0D4261]/12 border border-[#A29475]/25 text-[#A29475] text-xs rounded"
-                          >
-                            {f}
+                    {productSizes(product).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {productSizes(product).map((s, si) => (
+                          <span key={si} className="px-2 py-0.5 bg-[#0D4261]/10 border border-[#0D4261]/22 text-white/45 text-[10px] rounded font-mono">
+                            {s}
                           </span>
                         ))}
                       </div>
                     )}
                     {isDbProduct(product) && product.suitable_for && (
-                      <p className="text-white/35 text-xs mb-3">
-                        <span className="text-white/20">{t("For", "مناسب لـ")}: </span>
-                        {product.suitable_for}
-                      </p>
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {product.suitable_for.split(/[,،]/).map((s, si) => (
+                          <span key={si} className="px-2 py-0.5 bg-white/4 border border-white/10 text-white/40 text-[10px] rounded">
+                            {s.trim()}
+                          </span>
+                        ))}
+                      </div>
                     )}
                     <div className="flex items-center justify-between mt-auto pt-1">
                       {isDbProduct(product) && product.price != null ? (
@@ -387,44 +388,55 @@ export default function Products() {
                   </div>
                 )}
 
-                {productSizes(quickView).length > 0 && (
-                  <div className="mb-5">
-                    <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
-                      {t("Available Sizes", "الأحجام المتاحة")}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {productSizes(quickView).map((s, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1.5 glass border-white/12 text-white/65 text-xs rounded"
-                        >
-                          {s}
+                {/* Operational Information */}
+                <div className="mb-7">
+                  <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
+                    {t("Operational Information", "معلومات التشغيل")}
+                  </p>
+                  <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-3">
+                    {isDbProduct(quickView) && quickView.dilution_ratio && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/40 text-xs">{t("Dilution Ratio", "نسبة التخفيف")}</span>
+                        <span className="text-[#A29475] font-bold text-sm">{quickView.dilution_ratio}</span>
+                      </div>
+                    )}
+                    {isDbProduct(quickView) && quickView.suitable_for && (
+                      <div>
+                        <span className="text-white/40 text-xs block mb-2">{t("Suitable For", "مناسب لـ")}</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {quickView.suitable_for.split(/[,،]/).map((s, i) => (
+                            <span key={i} className="px-2.5 py-1 bg-[#0D4261]/15 border border-[#0D4261]/30 text-white/60 text-xs rounded-full">
+                              {s.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {productSizes(quickView).length > 0 && (
+                      <div>
+                        <span className="text-white/40 text-xs block mb-2">{t("Available Sizes", "الأحجام المتاحة")}</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {productSizes(quickView).map((s, i) => (
+                            <span key={i} className="px-2.5 py-1 bg-[#0D4261]/10 border border-[#0D4261]/22 text-white/50 text-xs rounded font-mono">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div className="pt-2 border-t border-white/8 flex flex-wrap gap-2">
+                      {[
+                        { en: "Professional Grade", ar: "درجة احترافية" },
+                        { en: "Phosphate Free", ar: "خالي من الفوسفات" },
+                        { en: "GCC Climate Tested", ar: "مختبر لمناخ الخليج" },
+                      ].map(({ en, ar }) => (
+                        <span key={en} className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#129B82]/10 border border-[#129B82]/22 text-[#129B82] text-[10px] rounded-full">
+                          <CheckCircle size={9} /> {isAr ? ar : en}
                         </span>
                       ))}
                     </div>
                   </div>
-                )}
-
-                {isDbProduct(quickView) && (quickView.dilution_ratio || quickView.suitable_for) && (
-                  <div className="mb-7 grid grid-cols-2 gap-4">
-                    {quickView.dilution_ratio && (
-                      <div>
-                        <p className="text-white/35 text-xs uppercase tracking-widest mb-1">
-                          {t("Dilution Ratio", "نسبة التخفيف")}
-                        </p>
-                        <p className="text-white/70 text-sm">{quickView.dilution_ratio}</p>
-                      </div>
-                    )}
-                    {quickView.suitable_for && (
-                      <div>
-                        <p className="text-white/35 text-xs uppercase tracking-widest mb-1">
-                          {t("Suitable For", "مناسب لـ")}
-                        </p>
-                        <p className="text-white/70 text-sm">{quickView.suitable_for}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                </div>
 
                 <div className="flex gap-3">
                   <button

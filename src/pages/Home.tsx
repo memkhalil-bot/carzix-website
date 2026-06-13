@@ -114,22 +114,22 @@ export default function Home() {
             <motion.h1 variants={blurUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-5">
               {isAr ? (
                 <>
-                  حلول احترافية
+                  المعيار الاحترافي
                   <br />
-                  <span className="text-[#A29475]">للعناية بالسيارات.</span>
+                  <span className="text-[#A29475]">لنتائج فائقة.</span>
                 </>
               ) : (
                 <>
-                  Professional
+                  The New Standard
                   <br />
-                  <span className="text-[#A29475]">Car Care Solutions.</span>
+                  <span className="text-[#A29475]">in Professional Detailing.</span>
                 </>
               )}
             </motion.h1>
             <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed mb-5 max-w-lg">
               {t(
-                "German-engineered concentrated formulas built for detailing centers, car washes, and automotive fleets across the GCC.",
-                "تركيبات ألمانية فائقة التركيز مصممة لمراكز التلميع والمغاسل والوكالات في قطر."
+                "German-engineered high-concentration formulas built for detailing studios, dealerships and automotive fleets across Qatar and the GCC.",
+                "تركيبات ألمانية فائقة التركيز مصممة خصيصاً لمراكز التلميع والوكالات في قطر والخليج لتحقيق نتائج استثنائية وتوفير تشغيلي ملموس."
               )}
             </motion.p>
             {/* Concentration ratio callout */}
@@ -153,7 +153,7 @@ export default function Home() {
                 href="/products"
                 className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-[#D1D5DB] hover:border-[#A29475]/50 hover:text-white font-semibold rounded transition-colors"
               >
-                {t("Browse Products", "تصفح المنتجات")}
+                {t("Explore Products", "تصفح المنتجات")}
               </Link>
             </motion.div>
           </motion.div>

@@ -4,6 +4,7 @@ import { Phone, Mail, MapPin, CheckCircle, Loader2, Instagram } from "lucide-rea
 import { supabase } from "@/lib/supabase";
 import { fadeUp, stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
+import WhyProfessionals from "@/components/WhyProfessionals";
 
 interface Form {
   full_name: string;
@@ -84,6 +85,9 @@ export default function Contact() {
           </motion.p>
         </motion.div>
       </section>
+
+      {/* Why Professionals */}
+      <WhyProfessionals />
 
       {/* Content */}
       <section className="py-16 bg-black">
