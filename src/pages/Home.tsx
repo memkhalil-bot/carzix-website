@@ -13,63 +13,6 @@ import { supabase } from "@/lib/supabase";
 import { staticProducts, staticCategories } from "@/lib/products";
 import type { Product } from "@/lib/types";
 
-function ProductArt() {
-  return (
-    <svg viewBox="0 0 520 440" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true">
-      <circle cx="260" cy="220" r="200" stroke="#0D4261" strokeWidth="0.5" opacity="0.18" />
-      <circle cx="260" cy="220" r="160" stroke="#A29475" strokeWidth="0.5" opacity="0.1" />
-      <circle cx="260" cy="220" r="120" stroke="#0D4261" strokeWidth="0.5" opacity="0.08" />
-
-      {/* Round bottle (left) */}
-      <rect x="130" y="100" width="90" height="145" rx="16" fill="#111" stroke="#2a2a2a" strokeWidth="1.5" />
-      <rect x="155" y="76" width="40" height="30" rx="8" fill="#161616" stroke="#2a2a2a" strokeWidth="1" />
-      <rect x="149" y="94" width="52" height="10" rx="4" fill="#0D4261" opacity="0.85" />
-      <rect x="140" y="145" width="70" height="55" rx="4" fill="#1a1a1a" stroke="#2e2e2e" strokeWidth="1" />
-      <rect x="148" y="155" width="54" height="3" rx="1.5" fill="#A29475" opacity="0.45" />
-      <rect x="148" y="163" width="38" height="2" rx="1" fill="#A29475" opacity="0.25" />
-      <rect x="148" y="170" width="45" height="2" rx="1" fill="#A29475" opacity="0.18" />
-      <rect x="133" y="108" width="10" height="55" rx="5" fill="white" opacity="0.03" />
-
-      {/* Spray bottle (center-right) */}
-      <path d="M 300 115 L 300 215 Q 300 228 313 228 L 360 228 Q 373 228 373 215 L 373 155 Q 373 142 360 142 L 335 142 L 332 115 Z" fill="#111" stroke="#2a2a2a" strokeWidth="1.5" />
-      <path d="M 332 115 L 332 100 L 350 100 L 362 115" fill="#161616" stroke="#252525" strokeWidth="1" />
-      <path d="M 358 100 Q 390 82 398 72" stroke="#129B82" strokeWidth="2" strokeLinecap="round" opacity="0.6" strokeDasharray="3 4" />
-      <circle cx="400" cy="70" r="4" fill="#129B82" opacity="0.45" />
-      <circle cx="407" cy="63" r="2.5" fill="#129B82" opacity="0.28" />
-      <circle cx="412" cy="57" r="1.5" fill="#129B82" opacity="0.18" />
-      <rect x="308" y="168" width="58" height="40" rx="3" fill="#1a1a1a" stroke="#2e2e2e" strokeWidth="1" />
-      <rect x="315" y="177" width="44" height="3" rx="1.5" fill="#A29475" opacity="0.4" />
-      <rect x="315" y="185" width="30" height="2" rx="1" fill="#A29475" opacity="0.22" />
-      <rect x="303" y="124" width="9" height="48" rx="4.5" fill="white" opacity="0.025" />
-
-      {/* Small jar (front) */}
-      <ellipse cx="210" cy="318" rx="38" ry="10" fill="#151515" stroke="#252525" strokeWidth="1.5" />
-      <rect x="172" y="270" width="76" height="50" rx="8" fill="#111" stroke="#252525" strokeWidth="1.5" />
-      <ellipse cx="210" cy="270" rx="38" ry="10" fill="#161616" stroke="#252525" strokeWidth="1" />
-      <ellipse cx="210" cy="270" rx="28" ry="7" fill="#1a1a1a" stroke="#0D4261" strokeWidth="0.8" opacity="0.6" />
-      <rect x="181" y="286" width="58" height="2.5" rx="1.25" fill="#A29475" opacity="0.3" />
-      <rect x="181" y="293" width="42" height="2" rx="1" fill="#A29475" opacity="0.18" />
-
-      {/* Ground */}
-      <line x1="80" y1="352" x2="440" y2="352" stroke="#1f1f1f" strokeWidth="1" />
-      <ellipse cx="260" cy="355" rx="180" ry="9" fill="#0D4261" opacity="0.04" />
-
-      {/* Sparkles */}
-      <g opacity="0.55">
-        <line x1="105" y1="88" x2="105" y2="100" stroke="#A29475" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="99" y1="94" x2="111" y2="94" stroke="#A29475" strokeWidth="1.5" strokeLinecap="round" />
-      </g>
-      <g opacity="0.4">
-        <line x1="418" y1="145" x2="418" y2="155" stroke="#129B82" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="413" y1="150" x2="423" y2="150" stroke="#129B82" strokeWidth="1.5" strokeLinecap="round" />
-      </g>
-      <circle cx="100" cy="280" r="3" fill="#0D4261" opacity="0.35" />
-      <circle cx="420" cy="260" r="2.5" fill="#A29475" opacity="0.3" />
-      <circle cx="95" cy="195" r="2" fill="#129B82" opacity="0.3" />
-    </svg>
-  );
-}
-
 const categoryIcons: Record<string, React.ElementType> = {
   Shampoos: Droplets,
   Polishing: Sparkles,
@@ -131,8 +74,38 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-grid-subtle opacity-30 pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center pt-24 pb-16">
-          <motion.div initial="hidden" animate="show" variants={stagger}>
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center pt-24 pb-16">
+          {/* Video — above text on mobile, right column on desktop */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.15 }}
+            className="order-first lg:order-last"
+          >
+            <div className="relative rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(13,66,97,0.22)]">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-56 sm:h-72 lg:h-[430px] object-cover"
+              >
+                <source src="/videos/hero.mp4" type="video/mp4" />
+              </video>
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/15 pointer-events-none" />
+              {/* Subtle border */}
+              <div className="absolute inset-0 rounded-2xl ring-1 ring-white/8 pointer-events-none" />
+            </div>
+          </motion.div>
+
+          {/* Text — below video on mobile, left column on desktop */}
+          <motion.div
+            initial="hidden"
+            animate="show"
+            variants={stagger}
+            className="order-last lg:order-first"
+          >
             <motion.p variants={fadeUp} className="text-[#129B82] text-xs font-semibold tracking-widest uppercase mb-4">
               {t("Automotive Detailing Products · Qatar & GCC", "منتجات العناية بالسيارات · قطر والخليج")}
             </motion.p>
@@ -164,15 +137,6 @@ export default function Home() {
                 {t("Request a Quote", "طلب عرض سعر")}
               </Link>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.25 }}
-            className="hidden lg:block h-[430px] animate-float-y"
-          >
-            <ProductArt />
           </motion.div>
         </div>
 
