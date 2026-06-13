@@ -249,11 +249,18 @@ export default function Products() {
 
                   {/* Info */}
                   <div className="flex flex-col flex-1 p-5">
-                    <h3 className="text-white font-bold text-base mb-1 leading-snug">
+                    <h3 className="text-white font-bold text-base mb-1.5 leading-snug">
                       {productName(product)}
                     </h3>
+                    {isDbProduct(product) && product.dilution_ratio && (
+                      <div className="mb-2">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0D4261]/20 border border-[#A29475]/35 text-[#A29475] text-xs font-bold tracking-wider">
+                          {product.dilution_ratio}
+                        </span>
+                      </div>
+                    )}
                     {productDesc(product) && (
-                      <p className="text-white/40 text-xs leading-relaxed mb-4 flex-1 line-clamp-3">
+                      <p className="text-white/40 text-xs leading-relaxed mb-3 flex-1 line-clamp-3">
                         {productDesc(product)}
                       </p>
                     )}
@@ -269,21 +276,11 @@ export default function Products() {
                         ))}
                       </div>
                     )}
-                    {isDbProduct(product) && (product.dilution_ratio || product.suitable_for) && (
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                        {product.dilution_ratio && (
-                          <p className="text-white/40 text-xs">
-                            <span className="text-white/22">{t("Dilution", "تخفيف")}: </span>
-                            <span className="text-[#A29475]/80 font-semibold">{product.dilution_ratio}</span>
-                          </p>
-                        )}
-                        {product.suitable_for && (
-                          <p className="text-white/40 text-xs">
-                            <span className="text-white/22">{t("For", "مناسب لـ")}: </span>
-                            {product.suitable_for}
-                          </p>
-                        )}
-                      </div>
+                    {isDbProduct(product) && product.suitable_for && (
+                      <p className="text-white/35 text-xs mb-3">
+                        <span className="text-white/20">{t("For", "مناسب لـ")}: </span>
+                        {product.suitable_for}
+                      </p>
                     )}
                     <div className="flex items-center justify-between mt-auto pt-1">
                       {isDbProduct(product) && product.price != null ? (
@@ -358,9 +355,16 @@ export default function Products() {
 
               {/* Content */}
               <div className="p-8">
-                <h2 className="text-white font-black text-2xl mb-3 leading-tight">
+                <h2 className="text-white font-black text-2xl mb-2 leading-tight">
                   {productName(quickView)}
                 </h2>
+                {isDbProduct(quickView) && quickView.dilution_ratio && (
+                  <div className="mb-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#0D4261]/20 border border-[#A29475]/40 text-[#A29475] text-sm font-bold tracking-wider shadow-[0_0_12px_rgba(162,148,117,0.12)]">
+                      {quickView.dilution_ratio}
+                    </span>
+                  </div>
+                )}
                 {productDesc(quickView) && (
                   <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView)}</p>
                 )}

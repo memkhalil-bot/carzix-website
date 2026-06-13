@@ -8,6 +8,7 @@ import ClientsSlider from "@/components/ClientsSlider";
 import Marquee from "@/components/Marquee";
 import BeforeAfter from "@/components/BeforeAfter";
 import DilutionCalculator from "@/components/DilutionCalculator";
+import ConcentrationSection from "@/components/ConcentrationSection";
 import { fadeUp, blurUp, fadeScale, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
@@ -108,34 +109,51 @@ export default function Home() {
             className="order-last lg:order-first"
           >
             <motion.p variants={fadeUp} className="text-[#129B82] text-xs font-semibold tracking-widest uppercase mb-4">
-              {t("Automotive Detailing Products · Qatar & GCC", "منتجات العناية بالسيارات · قطر والخليج")}
+              {t("Professional Car Care · Qatar & GCC", "منتجات العناية الاحترافية · قطر والخليج")}
             </motion.p>
-            <motion.h1 variants={blurUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-6">
-              {t("The Professional", "المعيار")}
-              <br />
-              <span className="text-[#A29475]">{t("Detailing", "الاحترافي")}</span>
-              <br />
-              {t("Standard.", "لعناية السيارات.")}
+            <motion.h1 variants={blurUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-5">
+              {isAr ? (
+                <>
+                  حلول احترافية
+                  <br />
+                  <span className="text-[#A29475]">للعناية بالسيارات.</span>
+                </>
+              ) : (
+                <>
+                  Professional
+                  <br />
+                  <span className="text-[#A29475]">Car Care Solutions.</span>
+                </>
+              )}
             </motion.h1>
-            <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed mb-8 max-w-lg">
+            <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed mb-5 max-w-lg">
               {t(
-                "Professional-grade automotive care formulas trusted by detailing studios, dealerships, and enthusiasts across Qatar and the GCC.",
-                "تركيبات عناية سيارات احترافية موثوق بها من محلات التفصيل والوكلاء والهواة في جميع أنحاء قطر والخليج العربي."
+                "German-engineered concentrated formulas built for detailing centers, car washes, and automotive fleets across the GCC.",
+                "تركيبات ألمانية فائقة التركيز مصممة لمراكز التلميع والمغاسل والوكالات في قطر."
               )}
             </motion.p>
+            {/* Concentration ratio callout */}
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0D4261]/18 border border-[#0D4261]/35 mb-7">
+              <span className="text-[#A29475] font-black text-lg tabular-nums">1L</span>
+              <span className="text-[#0D4261]/50 font-bold text-lg">→</span>
+              <span className="text-white font-black text-lg tabular-nums">400L</span>
+              <span className="text-white/30 text-sm hidden sm:inline">
+                {t("Ready-To-Use", "جاهز للاستخدام")}
+              </span>
+            </motion.div>
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
               <Link
-                href="/products"
+                href="/contact"
                 className="btn-brand inline-flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded"
               >
-                {t("Shop the Catalogue", "تسوق الكتالوج")}
+                {t("Get a Quote", "احصل على عرض سعر")}
                 <ChevronRight size={18} />
               </Link>
               <Link
-                href="/contact"
+                href="/products"
                 className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-white/80 hover:border-[#A29475]/50 hover:text-white font-semibold rounded transition-colors"
               >
-                {t("Request a Quote", "طلب عرض سعر")}
+                {t("Browse Products", "تصفح المنتجات")}
               </Link>
             </motion.div>
           </motion.div>
@@ -301,15 +319,16 @@ export default function Home() {
                       <h3 className="text-white font-bold text-base mb-1.5 leading-tight">
                         {isAr ? nameAr : nameEn}
                       </h3>
-                      <p className="text-white/45 text-sm leading-relaxed mb-3 line-clamp-2">
+                      {isDb && (product as Product).dilution_ratio && (
+                        <div className="mb-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0D4261]/20 border border-[#A29475]/35 text-[#A29475] text-xs font-bold tracking-wider">
+                            {(product as Product).dilution_ratio}
+                          </span>
+                        </div>
+                      )}
+                      <p className="text-white/45 text-sm leading-relaxed mb-4 line-clamp-2">
                         {typeof desc === "string" ? desc : ""}
                       </p>
-                      {isDb && (product as Product).dilution_ratio && (
-                        <p className="text-white/35 text-xs mb-3">
-                          <span className="text-white/20">{t("Dilution", "تخفيف")}: </span>
-                          <span className="text-[#A29475]/75 font-semibold">{(product as Product).dilution_ratio}</span>
-                        </p>
-                      )}
                       <Link
                         href="/products"
                         className="inline-flex items-center gap-1.5 text-[#129B82] hover:text-[#A29475] text-sm font-medium transition-colors"
@@ -455,6 +474,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Why Concentrated Products? ── */}
+      <ConcentrationSection />
 
       {/* ── Dilution Calculator ── */}
       <DilutionCalculator />

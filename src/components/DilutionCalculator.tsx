@@ -38,23 +38,25 @@ export default function DilutionCalculator() {
         className="relative max-w-4xl mx-auto px-6 lg:px-8"
       >
         {/* Header */}
-        <motion.div variants={fadeUp} className="text-center mb-10">
+        <motion.div variants={fadeUp} className="text-center mb-3">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#129B82]/10 border border-[#129B82]/22 mb-4">
             <FlaskConical size={13} className="text-[#129B82]" />
             <span className="text-[#129B82] text-xs font-semibold tracking-widest uppercase">
               {t("B2B Savings Tool", "أداة توفير B2B")}
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-3">
             {t("Dilution Calculator", "حاسبة التخفيف")}
           </h2>
-          <p className="text-white/40 text-base max-w-lg mx-auto">
-            {t(
-              "Every 1 liter of CARZIX concentrate produces up to 400 liters of ready-to-use solution.",
-              "كل لتر مركز CARZIX ينتج حتى 400 لتر جاهز للاستخدام."
-            )}
-          </p>
         </motion.div>
+
+        {/* Intro line */}
+        <motion.p variants={fadeUp} className="text-white/40 text-base text-center max-w-lg mx-auto mb-10">
+          {t(
+            "Calculate exactly how much concentrate your business needs.",
+            "اكتشف كمية المنتج المركز التي يحتاجها نشاطك خلال ثوانٍ."
+          )}
+        </motion.p>
 
         {/* Calculator card */}
         <motion.div variants={fadeUp} className="glass-dark rounded-2xl overflow-hidden">
@@ -100,58 +102,66 @@ export default function DilutionCalculator() {
             </div>
           </div>
 
-          {/* Results */}
-          <div className="bg-white/[0.03] border-t border-white/8">
-            <div className="grid grid-cols-3 divide-x divide-white/8">
-              <div className="p-6 text-center">
+          {/* Premium KPI results */}
+          <div className="border-t border-white/8 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Monthly Cars */}
+              <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 text-center">
                 <p className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Cars / Month", "سيارات شهرياً")}
+                  {t("Monthly Cars", "السيارات شهرياً")}
                 </p>
-                <p className="text-white font-black text-4xl mb-1">
+                <p className="text-white font-black text-4xl mb-1 tabular-nums">
                   {monthlyCars.toLocaleString()}
                 </p>
-                <p className="text-white/25 text-xs">{t("vehicles", "مركبة")}</p>
+                <p className="text-white/20 text-xs">{t("vehicles", "مركبة")}</p>
               </div>
-              <div className="p-6 text-center">
+
+              {/* Ready-To-Use Volume */}
+              <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 text-center">
                 <p className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Ready-To-Use Solution", "محلول جاهز للاستخدام")}
+                  {t("Ready-To-Use Volume", "المحلول الجاهز")}
                 </p>
-                <p className="text-[#129B82] font-black text-4xl mb-1">
+                <p className="text-[#129B82] font-black text-4xl mb-1 tabular-nums">
                   {fmt(dilutedNeeded)}
                 </p>
-                <p className="text-white/25 text-xs">{t("liters", "لتر")}</p>
+                <p className="text-white/20 text-xs">{t("liters", "لتر")}</p>
               </div>
-              <div className="p-6 text-center">
-                <p className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Concentrate Needed", "مركز مطلوب فقط")}
+
+              {/* Concentrate Required — HIGHLIGHTED */}
+              <div className="relative rounded-xl overflow-hidden border border-[#A29475]/40 p-5 text-center shadow-[0_0_28px_rgba(162,148,117,0.14)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0D4261]/18 via-[#0D4261]/8 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,_rgba(162,148,117,0.1)_0%,_transparent_65%)] pointer-events-none" />
+                <p className="relative text-[#A29475]/55 text-[10px] font-semibold uppercase tracking-widest mb-3">
+                  {t("Concentrate Required", "المركز المطلوب فقط")}
                 </p>
-                <p className="text-[#A29475] font-black text-4xl mb-1">
+                <p className="relative text-[#A29475] font-black text-5xl mb-1 tabular-nums drop-shadow-[0_0_14px_rgba(162,148,117,0.45)]">
                   {fmt(concentrateNeeded)}
                 </p>
-                <p className="text-white/25 text-xs">{t("liters", "لتر")}</p>
+                <p className="relative text-[#A29475]/35 text-xs">{t("liters", "لتر")}</p>
               </div>
             </div>
           </div>
 
-          {/* Highlight box */}
+          {/* Insight strip */}
           <div className="px-8 py-5 bg-[#0D4261]/15 border-t border-[#0D4261]/30 text-center">
             <p className="text-white font-semibold text-base">
-              {isAr
-                ? <>
-                    تحتاج فقط إلى{" "}
-                    <span className="text-[#A29475] font-black">{fmt(concentrateNeeded)} {t("L", "لتر")}</span>
-                    {" "}من المركز لخدمة{" "}
-                    <span className="text-[#129B82] font-black">{monthlyCars.toLocaleString()}</span>
-                    {" "}سيارة شهرياً
-                  </>
-                : <>
-                    Only{" "}
-                    <span className="text-[#A29475] font-black">{fmt(concentrateNeeded)} L</span>
-                    {" "}of concentrate to serve{" "}
-                    <span className="text-[#129B82] font-black">{monthlyCars.toLocaleString()}</span>
-                    {" "}cars/month
-                  </>
-              }
+              {isAr ? (
+                <>
+                  تحتاج فقط إلى{" "}
+                  <span className="text-[#A29475] font-black">{fmt(concentrateNeeded)} {t("L", "لتر")}</span>
+                  {" "}من المركز لخدمة{" "}
+                  <span className="text-[#129B82] font-black">{monthlyCars.toLocaleString()}</span>
+                  {" "}سيارة شهرياً
+                </>
+              ) : (
+                <>
+                  Only{" "}
+                  <span className="text-[#A29475] font-black">{fmt(concentrateNeeded)} L</span>
+                  {" "}of concentrate to serve{" "}
+                  <span className="text-[#129B82] font-black">{monthlyCars.toLocaleString()}</span>
+                  {" "}cars/month
+                </>
+              )}
             </p>
           </div>
 
@@ -167,7 +177,7 @@ export default function DilutionCalculator() {
               href="/contact"
               className="btn-brand shrink-0 inline-flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded"
             >
-              {t("Request a Quote Now", "اطلب عرض سعر الآن")}
+              {t("Get a Custom Business Quote", "احصل على عرض سعر مخصص لنشاطك")}
               <ChevronRight size={16} />
             </Link>
           </div>
