@@ -22,9 +22,9 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <div className="mb-4">
               <img
-                src={isAr ? "/logo-ar-white.png" : "/logo-en-white.png"}
+                src={isAr ? "/logo-ar.svg" : "/logo-en.svg"}
                 alt="CARZIX"
-                className="h-12 w-auto"
+                className="h-8 w-auto"
               />
             </div>
             <p className="text-white/45 text-sm leading-relaxed mb-5">

@@ -39,9 +39,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img
-              src={isAr ? "/logo-ar-white.png" : "/logo-en-white.png"}
+              src={isAr ? "/logo-ar.svg" : "/logo-en.svg"}
               alt="CARZIX"
-              className="h-12 lg:h-14 w-auto"
+              className="h-8 lg:h-9 w-auto"
             />
           </Link>
 
