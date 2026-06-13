@@ -405,6 +405,13 @@ function ProductModal({ lang, editProduct, onClose, onSaved }: ProductModalProps
       .upload(path, file, { upsert: false, cacheControl: "3600" });
 
     if (uploadErr) {
+      // Log full error details to browser console for debugging
+      console.error("[Storage] Upload error:", {
+        message: uploadErr.message,
+        name: (uploadErr as { name?: string }).name,
+        cause: (uploadErr as { cause?: unknown }).cause,
+        stack: (uploadErr as { stack?: string }).stack,
+      });
       setError(t("uploadFailed", lang) + uploadErr.message);
       setUploading(false);
       setUploadProgress(0);
