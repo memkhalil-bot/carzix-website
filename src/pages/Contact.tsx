@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Clock, CheckCircle, Loader2, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin, CheckCircle, Loader2, Instagram } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { fadeUp, stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
@@ -24,8 +24,7 @@ export default function Contact() {
   const contactInfo = [
     { icon: Phone, labelEn: "Phone", labelAr: "الهاتف", value: "+974 72252572", href: "tel:+97472252572" },
     { icon: Mail, labelEn: "Email", labelAr: "البريد الإلكتروني", value: "hello@carzix.qa", href: "mailto:hello@carzix.qa" },
-    { icon: MapPin, labelEn: "Location", labelAr: "الموقع", value: t("Doha, Qatar", "الدوحة، قطر"), href: undefined },
-    { icon: Clock, labelEn: "Hours", labelAr: "ساعات العمل", value: t("Sat–Thu: 8am – 8pm", "السبت-الخميس: 8ص – 8م"), href: undefined },
+    { icon: MapPin, labelEn: "Location", labelAr: "الموقع", value: t("Doha – Qatar", "الدوحة – قطر"), href: undefined },
   ];
 
   function set(key: keyof Form) {
@@ -148,16 +147,6 @@ export default function Contact() {
                 </div>
               </motion.div>
 
-              {/* Map placeholder */}
-              <motion.div
-                variants={fadeUp}
-                className="glass mt-2 h-36 rounded-xl overflow-hidden flex items-center justify-center"
-              >
-                <div className="text-center">
-                  <MapPin size={22} className="text-[#129B82] mx-auto mb-2" />
-                  <p className="text-white/30 text-xs">{t("Doha, Qatar", "الدوحة، قطر")}</p>
-                </div>
-              </motion.div>
             </motion.div>
 
             {/* Right: form */}

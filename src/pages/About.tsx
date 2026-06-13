@@ -59,6 +59,11 @@ export default function About() {
       eventEn: "Expanding product line and distribution network to serve more studios and businesses across Qatar and the GCC.",
       eventAr: "توسيع خط المنتجات وشبكة التوزيع لخدمة المزيد من المحلات والشركات في قطر والخليج.",
     },
+    {
+      year: "2026",
+      eventEn: "Partnership agreement with Doha International Trading Company as the exclusive distributor of CARZIX products in Qatar.",
+      eventAr: "الاتفاق مع شركة الدوحة العالمية للتجارة كموزع حصري لمنتجات CARZIX في دولة قطر.",
+    },
   ];
 
   return (
@@ -155,10 +160,10 @@ export default function About() {
               {t("From Vision to Market", "من الرؤية إلى السوق")}
             </motion.h2>
 
-            <div className="relative pl-8 border-l border-[#0D4261]/35 space-y-8">
+            <div className="relative ps-8 border-s border-[#0D4261]/35 space-y-8">
               {milestones.map(({ year, eventEn, eventAr }) => (
                 <motion.div key={year} variants={fadeUp} className="relative">
-                  <div className="absolute -left-[1.65rem] w-3 h-3 rounded-full bg-[#129B82] ring-4 ring-zinc-950 shadow-[0_0_8px_rgba(18,155,130,0.6)]" />
+                  <div className="absolute -start-[1.65rem] w-3 h-3 rounded-full bg-[#129B82] ring-4 ring-zinc-950 shadow-[0_0_8px_rgba(18,155,130,0.6)]" />
                   <p className="text-[#129B82] text-xs font-bold tracking-widest uppercase mb-1">{year}</p>
                   <p className="text-white/65 text-sm leading-relaxed">{isAr ? eventAr : eventEn}</p>
                 </motion.div>

@@ -2,24 +2,24 @@ import { useLang } from "@/contexts/LanguageContext";
 
 const EN = [
   "German Engineered",
-  "Qatar Tested",
   "Professional Grade",
   "Eco Certified",
   "Phosphate Free",
   "UV Protected",
   "Biodegradable Formula",
   "Safe For All Surfaces",
+  "1:400 Dilution Ratio",
 ];
 
 const AR = [
   "تقنية ألمانية",
-  "مختبر في قطر",
   "درجة احترافية",
   "معتمد بيئياً",
   "خالٍ من الفوسفات",
   "محمي من الأشعة UV",
   "تركيبة قابلة للتحلل",
   "آمن لجميع الأسطح",
+  "نسبة تخفيف 1:400",
 ];
 
 export default function Marquee() {

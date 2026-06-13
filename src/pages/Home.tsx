@@ -7,6 +7,7 @@ import {
 import ClientsSlider from "@/components/ClientsSlider";
 import Marquee from "@/components/Marquee";
 import BeforeAfter from "@/components/BeforeAfter";
+import DilutionCalculator from "@/components/DilutionCalculator";
 import { fadeUp, blurUp, fadeScale, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
@@ -300,9 +301,15 @@ export default function Home() {
                       <h3 className="text-white font-bold text-base mb-1.5 leading-tight">
                         {isAr ? nameAr : nameEn}
                       </h3>
-                      <p className="text-white/45 text-sm leading-relaxed mb-4 line-clamp-2">
+                      <p className="text-white/45 text-sm leading-relaxed mb-3 line-clamp-2">
                         {typeof desc === "string" ? desc : ""}
                       </p>
+                      {isDb && (product as Product).dilution_ratio && (
+                        <p className="text-white/35 text-xs mb-3">
+                          <span className="text-white/20">{t("Dilution", "تخفيف")}: </span>
+                          <span className="text-[#A29475]/75 font-semibold">{(product as Product).dilution_ratio}</span>
+                        </p>
+                      )}
                       <Link
                         href="/products"
                         className="inline-flex items-center gap-1.5 text-[#129B82] hover:text-[#A29475] text-sm font-medium transition-colors"
@@ -365,9 +372,6 @@ export default function Home() {
             variants={stagger}
           >
             <div className="text-center mb-14">
-              <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-3">
-                {t("Simple Process", "عملية بسيطة")}
-              </motion.p>
               <motion.h2 variants={blurUp} className="text-4xl sm:text-5xl font-black text-white">
                 {t("How It Works", "كيف يعمل")}
               </motion.h2>
@@ -451,6 +455,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Dilution Calculator ── */}
+      <DilutionCalculator />
 
       {/* ── CTA Banner ── */}
       <section className="py-24 relative overflow-hidden">
