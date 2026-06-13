@@ -1,9 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import {
   LayoutDashboard, Package, Users, MessageSquare, ClipboardList,
   LogOut, Trash2, Plus, RefreshCw, Loader2, X, Check, Menu,
-  ChevronDown, Pencil,
+  ChevronDown, Pencil, Upload,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { Client, ContactMessage, ProductRequest } from "@/lib/types";
@@ -57,7 +57,13 @@ const T = {
   category:      { ar: "الفئة",               en: "Category" },
   price:         { ar: "السعر (ريال)",         en: "Price (QAR)" },
   description:   { ar: "الوصف",               en: "Description" },
-  imageUrl:      { ar: "رابط الصورة",          en: "Image URL" },
+  imageUrl:      { ar: "صورة المنتج",           en: "Product Image" },
+  uploadImg:     { ar: "رفع صورة",             en: "Upload Image" },
+  replaceImg:    { ar: "استبدال",              en: "Replace" },
+  removeImg:     { ar: "إزالة الصورة",         en: "Remove Image" },
+  uploading:     { ar: "جارٍ الرفع…",          en: "Uploading…" },
+  uploadFailed:  { ar: "فشل الرفع: ",          en: "Upload failed: " },
+  uploadHint:    { ar: "JPG، PNG، WebP — حد أقصى 5MB", en: "JPG, PNG, WebP — max 5 MB" },
   save:          { ar: "حفظ",                  en: "Save" },
   cancel:        { ar: "إلغاء",               en: "Cancel" },
   nameEn:        { ar: "الاسم (إنجليزي)",      en: "Name (EN)" },
@@ -374,12 +380,54 @@ function ProductModal({ lang, editProduct, onClose, onSaved }: ProductModalProps
     editProduct ? productToForm(editProduct) : EMPTY_FORM
   );
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isEdit = editProduct !== null;
 
   function setField<K extends keyof ProductFormState>(key: K, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleImageUpload(file: File) {
+    if (!file.type.startsWith("image/")) return;
+    setUploading(true);
+    setUploadProgress(10);
+    setError(null);
+
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error: uploadErr } = await supabase.storage
+      .from("products")
+      .upload(path, file, { upsert: false, cacheControl: "3600" });
+
+    if (uploadErr) {
+      setError(t("uploadFailed", lang) + uploadErr.message);
+      setUploading(false);
+      setUploadProgress(0);
+      return;
+    }
+
+    setUploadProgress(90);
+    const { data } = supabase.storage.from("products").getPublicUrl(path);
+    setField("image_url", data.publicUrl);
+    setUploadProgress(100);
+    setUploading(false);
+  }
+
+  async function removeImage() {
+    const url = form.image_url.trim();
+    if (url) {
+      const match = url.match(/\/storage\/v1\/object\/public\/products\/(.+)/);
+      if (match?.[1]) {
+        await supabase.storage.from("products").remove([match[1]]);
+      }
+    }
+    setField("image_url", "");
+    setUploadProgress(0);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -504,24 +552,87 @@ function ProductModal({ lang, editProduct, onClose, onSaved }: ProductModalProps
             </div>
           </div>
 
-          {/* Image URL + preview */}
+          {/* Image upload */}
           <div>
             <LabelEl>{t("imageUrl", lang)}</LabelEl>
             <input
-              style={inp}
-              placeholder="https://..."
-              value={form.image_url}
-              onChange={(e) => setField("image_url", e.target.value)}
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleImageUpload(f);
+                e.target.value = "";
+              }}
             />
-            {form.image_url.trim() && (
-              <div className="mt-2 flex items-center gap-3">
-                <span className="text-xs" style={{ color: C.muted }}>{t("imagePreview", lang)}:</span>
+            {form.image_url.trim() ? (
+              <div className="relative rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
                 <img
                   src={form.image_url.trim()}
                   alt="preview"
-                  className="h-14 w-14 object-cover rounded-lg"
-                  style={{ border: `1px solid ${C.border}` }}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  className="w-full h-40 object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = ""; }}
+                />
+                {/* Overlay buttons */}
+                <div className="absolute top-2 end-2 flex gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold"
+                    style={{ background: "rgba(0,0,0,0.72)", color: "#fff" }}
+                  >
+                    <Upload size={11} /> {t("replaceImg", lang)}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    disabled={uploading}
+                    className="p-1.5 rounded-lg"
+                    style={{ background: "rgba(220,38,38,0.82)", color: "#fff" }}
+                    title={t("removeImg", lang)}
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="w-full flex flex-col items-center justify-center gap-2 rounded-xl py-10 transition-colors"
+                style={{
+                  background: C.bg,
+                  border: `2px dashed ${uploading ? C.action : C.border}`,
+                  color: uploading ? C.action : C.muted,
+                  cursor: uploading ? "wait" : "pointer",
+                }}
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 size={22} className="animate-spin" />
+                    <span className="text-xs font-medium">{t("uploading", lang)}</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={22} />
+                    <span className="text-xs font-semibold">{t("uploadImg", lang)}</span>
+                    <span className="text-xs opacity-50">{t("uploadHint", lang)}</span>
+                  </>
+                )}
+              </button>
+            )}
+            {/* Progress bar */}
+            {uploading && (
+              <div
+                className="mt-2 h-1 rounded-full overflow-hidden"
+                style={{ background: C.border }}
+              >
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ background: C.action, width: `${uploadProgress}%` }}
                 />
               </div>
             )}

@@ -17,10 +17,10 @@ export default function DilutionCalculator() {
   const { t, isAr } = useLang();
   const [dailyCars, setDailyCars] = useState(50);
   const [workingDays, setWorkingDays] = useState(26);
-  const [avgUsage, setAvgUsage] = useState(0.5);
+  const [avgUsageMl, setAvgUsageMl] = useState(500);
 
   const monthlyCars = dailyCars * workingDays;
-  const dilutedNeeded = monthlyCars * avgUsage;
+  const dilutedNeeded = monthlyCars * (avgUsageMl / 1000);
   const concentrateNeeded = dilutedNeeded / 400;
 
   const inputCls =
@@ -89,14 +89,14 @@ export default function DilutionCalculator() {
             </div>
             <div>
               <label className="block text-white/40 text-xs font-semibold mb-2 tracking-wider uppercase">
-                {t("Avg. Usage / Car (L)", "متوسط الاستهلاك (لتر/سيارة)")}
+                {t("Avg. Usage Per Car (ml)", "متوسط الاستهلاك (مل/سيارة)")}
               </label>
               <input
                 type="number"
-                min="0.1"
-                step="0.1"
-                value={avgUsage}
-                onChange={(e) => setAvgUsage(Math.max(0.1, Number(e.target.value) || 0.1))}
+                min="10"
+                step="10"
+                value={avgUsageMl}
+                onChange={(e) => setAvgUsageMl(Math.max(10, Number(e.target.value) || 10))}
                 className={inputCls}
               />
             </div>
@@ -116,10 +116,10 @@ export default function DilutionCalculator() {
                 <p className="text-white/20 text-xs">{t("vehicles", "مركبة")}</p>
               </div>
 
-              {/* Ready-To-Use Volume */}
+              {/* Monthly Ready-To-Use Requirement */}
               <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 text-center">
                 <p className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Ready-To-Use Volume", "المحلول الجاهز")}
+                  {t("Monthly Ready-To-Use Req.", "احتياجك من المحلول الجاهز")}
                 </p>
                 <p className="text-[#129B82] font-black text-4xl mb-1 tabular-nums">
                   {fmt(dilutedNeeded)}
@@ -127,12 +127,12 @@ export default function DilutionCalculator() {
                 <p className="text-white/20 text-xs">{t("liters", "لتر")}</p>
               </div>
 
-              {/* Concentrate Required — HIGHLIGHTED */}
+              {/* Monthly Concentrate Requirement — HIGHLIGHTED */}
               <div className="relative rounded-xl overflow-hidden border border-[#A29475]/40 p-5 text-center shadow-[0_0_28px_rgba(162,148,117,0.14)]">
                 <div className="absolute inset-0 bg-gradient-to-b from-[#0D4261]/18 via-[#0D4261]/8 to-transparent pointer-events-none" />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,_rgba(162,148,117,0.1)_0%,_transparent_65%)] pointer-events-none" />
                 <p className="relative text-[#A29475]/55 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Concentrate Required", "المركز المطلوب فقط")}
+                  {t("Monthly Concentrate Req.", "احتياجك من المركز")}
                 </p>
                 <p className="relative text-[#A29475] font-black text-5xl mb-1 tabular-nums drop-shadow-[0_0_14px_rgba(162,148,117,0.45)]">
                   {fmt(concentrateNeeded)}
@@ -143,7 +143,7 @@ export default function DilutionCalculator() {
           </div>
 
           {/* Insight strip */}
-          <div className="px-8 py-5 bg-[#0D4261]/15 border-t border-[#0D4261]/30 text-center">
+          <div className="px-8 py-5 bg-[#0D4261]/15 border-t border-[#0D4261]/30 text-center space-y-1">
             <p className="text-white font-semibold text-base">
               {isAr ? (
                 <>
@@ -163,6 +163,9 @@ export default function DilutionCalculator() {
                 </>
               )}
             </p>
+            <p className="text-white/30 text-xs">
+              {t("Every 1L of CARZIX produces up to 400L ready-to-use.", "كل لتر من CARZIX ينتج حتى 400 لتر جاهز للاستخدام.")}
+            </p>
           </div>
 
           {/* Footer */}
@@ -177,7 +180,7 @@ export default function DilutionCalculator() {
               href="/contact"
               className="btn-cta shrink-0 inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
             >
-              {t("Get a Custom Business Quote", "احصل على عرض سعر مخصص لنشاطك")}
+              {t("Get Commercial Quote", "احصل على عرض سعر تجاري")}
               <ChevronRight size={16} />
             </Link>
           </div>
