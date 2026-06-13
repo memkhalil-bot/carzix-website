@@ -6,6 +6,7 @@
   --color-teal: #129B82;
   --color-gold: #A29475;
   --color-gold-light: #c8b899;
+  --color-cta: #E9C56B;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-arabic: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
 }
@@ -104,8 +105,8 @@ body::after {
   to   { transform: translateX(120%) skewX(-12deg); }
 }
 @keyframes glow-throb {
-  0%,100% { box-shadow: 0 0 14px rgba(18,155,130,0.28); }
-  50%     { box-shadow: 0 0 28px rgba(18,155,130,0.55); }
+  0%,100% { box-shadow: 0 0 14px rgba(13,66,97,0.35); }
+  50%     { box-shadow: 0 0 28px rgba(13,66,97,0.6); }
 }
 
 /* ── Animation utilities ── */
@@ -167,6 +168,19 @@ body::after {
   transform: translateY(-1px);
 }
 .btn-teal:active { transform: none; }
+
+/* Gold CTA — quote/conversion actions only */
+.btn-cta {
+  background: linear-gradient(135deg, #E9C56B 0%, #d4af50 100%);
+  color: #111827;
+  box-shadow: 0 4px 16px rgba(233,197,107,0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+  transition: box-shadow 0.25s, transform 0.18s;
+}
+.btn-cta:hover {
+  box-shadow: 0 6px 26px rgba(233,197,107,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
+  transform: translateY(-1px);
+}
+.btn-cta:active { transform: none; }
 
 .btn-ghost {
   border: 1px solid rgba(255,255,255,0.16);

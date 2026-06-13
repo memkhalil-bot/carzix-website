@@ -175,7 +175,7 @@ export default function DilutionCalculator() {
             </p>
             <Link
               href="/contact"
-              className="btn-brand shrink-0 inline-flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded"
+              className="btn-cta shrink-0 inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
             >
               {t("Get a Custom Business Quote", "احصل على عرض سعر مخصص لنشاطك")}
               <ChevronRight size={16} />

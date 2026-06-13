@@ -234,13 +234,13 @@ export default function Products() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 gap-2">
                       <button
                         onClick={() => setQuickView(product)}
-                        className="w-full py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded hover:bg-white/20 transition-colors"
+                        className="w-full py-2 bg-white/8 backdrop-blur-sm border border-white/18 text-[#D1D5DB] text-xs font-semibold rounded hover:bg-white/18 transition-colors"
                       >
                         {t("Quick View", "عرض سريع")}
                       </button>
                       <button
                         onClick={() => openModal(product)}
-                        className="w-full py-2 btn-brand text-white text-xs font-semibold rounded"
+                        className="w-full py-2 btn-cta text-[#111827] text-xs font-bold rounded"
                       >
                         {t("Request Quote", "طلب عرض سعر")}
                       </button>
@@ -269,7 +269,7 @@ export default function Products() {
                         {productFeatures(product).slice(0, 2).map((f, fi) => (
                           <span
                             key={fi}
-                            className="px-2 py-0.5 bg-[#129B82]/10 border border-[#129B82]/22 text-[#129B82] text-xs rounded"
+                            className="px-2 py-0.5 bg-[#0D4261]/12 border border-[#A29475]/25 text-[#A29475] text-xs rounded"
                           >
                             {f}
                           </span>
@@ -292,7 +292,7 @@ export default function Products() {
                       )}
                       <button
                         onClick={() => openModal(product)}
-                        className="btn-brand px-3 py-1.5 text-white text-xs font-semibold rounded"
+                        className="btn-cta px-3 py-1.5 text-[#111827] text-xs font-bold rounded"
                       >
                         {t("Request Quote", "طلب عرض سعر")}
                       </button>
@@ -378,7 +378,7 @@ export default function Products() {
                       {productFeatures(quickView).map((f, i) => (
                         <span
                           key={i}
-                          className="px-3 py-1.5 bg-[#129B82]/10 border border-[#129B82]/25 text-[#129B82] text-xs rounded"
+                          className="px-3 py-1.5 bg-[#0D4261]/12 border border-[#A29475]/28 text-[#A29475] text-xs rounded"
                         >
                           {f}
                         </span>
@@ -429,7 +429,7 @@ export default function Products() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { openModal(quickView); setQuickView(null); }}
-                    className="flex-1 btn-brand py-3.5 text-white font-semibold rounded"
+                    className="flex-1 btn-cta py-3.5 text-[#111827] font-bold rounded"
                   >
                     {t("Request a Quote", "طلب عرض سعر")}
                   </button>

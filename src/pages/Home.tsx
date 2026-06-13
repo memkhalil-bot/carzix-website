@@ -108,7 +108,7 @@ export default function Home() {
             variants={stagger}
             className="order-last lg:order-first"
           >
-            <motion.p variants={fadeUp} className="text-[#129B82] text-xs font-semibold tracking-widest uppercase mb-4">
+            <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
               {t("Professional Car Care · Qatar & GCC", "منتجات العناية الاحترافية · قطر والخليج")}
             </motion.p>
             <motion.h1 variants={blurUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-5">
@@ -144,14 +144,14 @@ export default function Home() {
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
               <Link
                 href="/contact"
-                className="btn-brand inline-flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded"
+                className="btn-cta inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
               >
                 {t("Get a Quote", "احصل على عرض سعر")}
                 <ChevronRight size={18} />
               </Link>
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-white/80 hover:border-[#A29475]/50 hover:text-white font-semibold rounded transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-[#D1D5DB] hover:border-[#A29475]/50 hover:text-white font-semibold rounded transition-colors"
               >
                 {t("Browse Products", "تصفح المنتجات")}
               </Link>
@@ -186,11 +186,11 @@ export default function Home() {
                   variants={fadeScale}
                   className="glass card-shine p-8 rounded-xl hover:border-[#129B82]/30 transition-colors group"
                 >
-                  <div className="w-12 h-12 rounded-lg border border-[#129B82]/25 bg-[#129B82]/10 flex items-center justify-center mb-5 group-hover:bg-[#129B82]/20 group-hover:border-[#129B82]/50 transition-all">
-                    <Icon size={22} className="text-[#129B82]" />
+                  <div className="w-12 h-12 rounded-lg border border-[#0D4261]/35 bg-[#0D4261]/12 flex items-center justify-center mb-5 group-hover:bg-[#0D4261]/22 group-hover:border-[#0D4261]/55 transition-all">
+                    <Icon size={22} className="text-[#A29475]" />
                   </div>
                   <h3 className="text-white font-bold text-lg mb-2.5">{isAr ? p.titleAr : p.titleEn}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{isAr ? p.descAr : p.descEn}</p>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">{isAr ? p.descAr : p.descEn}</p>
                 </motion.div>
               );
             })}
@@ -331,7 +331,7 @@ export default function Home() {
                       </p>
                       <Link
                         href="/products"
-                        className="inline-flex items-center gap-1.5 text-[#129B82] hover:text-[#A29475] text-sm font-medium transition-colors"
+                        className="inline-flex items-center gap-1.5 text-[#A29475] hover:text-white text-sm font-medium transition-colors"
                       >
                         {t("View details", "عرض التفاصيل")}
                         <ChevronRight size={14} />
@@ -422,16 +422,16 @@ export default function Home() {
                 <motion.div
                   key={step}
                   variants={fadeScale}
-                  className="relative glass card-shine rounded-xl p-8 hover:border-[#129B82]/30 transition-colors"
+                  className="relative glass card-shine rounded-xl p-8 hover:border-[#0D4261]/40 transition-colors"
                 >
                   <div className="absolute top-6 right-6 text-[#0D4261]/20 text-6xl font-black leading-none select-none">
                     {step}
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-[#129B82] flex items-center justify-center mb-5 shadow-[0_0_16px_rgba(18,155,130,0.45)]">
+                  <div className="w-10 h-10 rounded-full bg-[#0D4261] flex items-center justify-center mb-5 shadow-[0_0_14px_rgba(13,66,97,0.5)]">
                     <span className="text-white font-black text-sm">{step}</span>
                   </div>
                   <h3 className="text-white font-bold text-lg mb-3">{isAr ? titleAr : titleEn}</h3>
-                  <p className="text-white/45 text-sm leading-relaxed">{isAr ? descAr : descEn}</p>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">{isAr ? descAr : descEn}</p>
                 </motion.div>
               ))}
             </div>

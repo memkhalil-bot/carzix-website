@@ -100,7 +100,7 @@ export default function Contact() {
               <motion.h2 variants={fadeUp} className="text-2xl font-black text-white mb-2">
                 {t("Let's Talk", "لنتحدث")}
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/45 text-sm leading-relaxed mb-4">
+              <motion.p variants={fadeUp} className="text-[#9CA3AF] text-sm leading-relaxed mb-4">
                 {t(
                   "Whether you need product information, a bulk quote, or a custom order for your studio or business — our team responds within 24 hours.",
                   "سواء كنت بحاجة إلى معلومات عن المنتج أو عرض سعر بالجملة أو طلب مخصص لمحلك أو شركتك — فريقنا يرد خلال 24 ساعة."
@@ -113,8 +113,8 @@ export default function Contact() {
                   variants={fadeUp}
                   className="glass flex items-start gap-4 p-4 rounded-xl"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-[#129B82]/12 border border-[#129B82]/22 flex items-center justify-center shrink-0">
-                    <Icon size={15} className="text-[#129B82]" />
+                  <div className="w-9 h-9 rounded-lg bg-[#0D4261]/14 border border-[#0D4261]/30 flex items-center justify-center shrink-0">
+                    <Icon size={15} className="text-[#A29475]" />
                   </div>
                   <div>
                     <p className="text-white/35 text-xs mb-0.5">{isAr ? labelAr : labelEn}</p>

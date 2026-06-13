@@ -163,9 +163,9 @@ export default function About() {
             <div className="relative ps-8 border-s border-[#0D4261]/35 space-y-8">
               {milestones.map(({ year, eventEn, eventAr }) => (
                 <motion.div key={year} variants={fadeUp} className="relative">
-                  <div className="absolute -start-[1.65rem] w-3 h-3 rounded-full bg-[#129B82] ring-4 ring-zinc-950 shadow-[0_0_8px_rgba(18,155,130,0.6)]" />
-                  <p className="text-[#129B82] text-xs font-bold tracking-widest uppercase mb-1">{year}</p>
-                  <p className="text-white/65 text-sm leading-relaxed">{isAr ? eventAr : eventEn}</p>
+                  <div className="absolute -start-[1.65rem] w-3 h-3 rounded-full bg-[#0D4261] ring-4 ring-zinc-950 shadow-[0_0_8px_rgba(13,66,97,0.7)]" />
+                  <p className="text-[#A29475] text-xs font-bold tracking-widest uppercase mb-1">{year}</p>
+                  <p className="text-[#D1D5DB] text-sm leading-relaxed">{isAr ? eventAr : eventEn}</p>
                 </motion.div>
               ))}
             </div>
@@ -194,13 +194,13 @@ export default function About() {
                 <motion.div
                   key={titleEn}
                   variants={fadeUp}
-                  className="glass card-shine p-7 rounded-xl hover:border-[#129B82]/30 transition-colors"
+                  className="glass card-shine p-7 rounded-xl hover:border-[#0D4261]/35 transition-colors"
                 >
-                  <div className="w-11 h-11 rounded-lg bg-[#129B82]/12 border border-[#129B82]/25 flex items-center justify-center mb-4">
-                    <Icon size={20} className="text-[#129B82]" />
+                  <div className="w-11 h-11 rounded-lg bg-[#0D4261]/12 border border-[#0D4261]/28 flex items-center justify-center mb-4">
+                    <Icon size={20} className="text-[#A29475]" />
                   </div>
                   <h3 className="text-white font-bold text-base mb-2">{isAr ? titleAr : titleEn}</h3>
-                  <p className="text-white/45 text-sm leading-relaxed">{isAr ? descAr : descEn}</p>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">{isAr ? descAr : descEn}</p>
                 </motion.div>
               ))}
             </div>

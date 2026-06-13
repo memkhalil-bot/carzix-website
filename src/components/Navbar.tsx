@@ -81,7 +81,7 @@ export default function Navbar() {
             </button>
             <Link
               href="/contact"
-              className="btn-brand px-5 py-2.5 text-white text-sm font-semibold rounded"
+              className="btn-cta px-5 py-2.5 text-[#111827] text-sm font-semibold rounded"
             >
               {t("Request Quote", "طلب عرض سعر")}
             </Link>
@@ -132,7 +132,7 @@ export default function Navbar() {
             </a>
             <Link
               href="/contact"
-              className="mt-3 px-5 py-3 bg-[#0D4261] text-white text-sm font-semibold rounded text-center"
+              className="mt-3 px-5 py-3 btn-cta text-[#111827] text-sm font-semibold rounded text-center"
             >
               {t("Request Quote", "طلب عرض سعر")}
             </Link>
