@@ -39,10 +39,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img
-              src={isAr ? "/logo-ar.png" : "/logo-en.png"}
+              src={isAr ? "/logo-ar-white.png" : "/logo-en-white.png"}
               alt="CARZIX"
-              className="h-14 lg:h-16 w-auto"
-              style={{ filter: "invert(1) hue-rotate(180deg)" }}
+              className="h-12 lg:h-14 w-auto"
             />
           </Link>
 

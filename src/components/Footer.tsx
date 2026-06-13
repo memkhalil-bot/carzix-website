@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin, Instagram } from "lucide-react";
 import { useLang } from "@/contexts/LanguageContext";
 
 export default function Footer() {
-  const { t } = useLang();
+  const { t, isAr } = useLang();
 
   const categories = [
     { label: t("Shampoos & Washing", "الشامبوهات والغسيل") },
@@ -20,11 +20,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded bg-[#0D4261] flex items-center justify-center shadow-[0_0_10px_rgba(13,66,97,0.4)]">
-                <span className="text-white font-black text-xs">CZ</span>
-              </div>
-              <span className="text-white font-black text-lg tracking-widest uppercase">CARZIX</span>
+            <div className="mb-4">
+              <img
+                src={isAr ? "/logo-ar-white.png" : "/logo-en-white.png"}
+                alt="CARZIX"
+                className="h-12 w-auto"
+              />
             </div>
             <p className="text-white/45 text-sm leading-relaxed mb-5">
               {t(
