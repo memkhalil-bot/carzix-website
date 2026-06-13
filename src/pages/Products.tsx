@@ -114,11 +114,23 @@ export default function Products() {
   }
 
   const productName = (p: DisplayProduct) =>
-    isAr && !isDbProduct(p) ? p.nameAr : isDbProduct(p) ? p.name : p.nameEn;
+    isAr
+      ? (isDbProduct(p) ? (p.name_ar || p.name) : p.nameAr)
+      : (isDbProduct(p) ? p.name : p.nameEn);
   const productDesc = (p: DisplayProduct) =>
-    isAr && !isDbProduct(p) ? p.descriptionAr : isDbProduct(p) ? p.description ?? "" : p.descriptionEn;
+    isAr
+      ? (isDbProduct(p) ? (p.description_ar || p.description || "") : p.descriptionAr)
+      : (isDbProduct(p) ? p.description ?? "" : p.descriptionEn);
   const productCat = (p: DisplayProduct) => p.category;
   const productImage = (p: DisplayProduct) => (isDbProduct(p) ? p.image_url : null);
+  const productFeatures = (p: DisplayProduct): string[] => {
+    if (isDbProduct(p)) return (isAr ? (p.features_ar || p.features) : p.features) ?? [];
+    return isAr ? p.featuresAr : p.featuresEn;
+  };
+  const productSizes = (p: DisplayProduct): string[] => {
+    if (isDbProduct(p)) return p.sizes ?? [];
+    return p.sizes ?? [];
+  };
 
   const inputCls =
     "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#0D4261] transition-colors";
@@ -247,9 +259,9 @@ export default function Products() {
                         {productDesc(product)}
                       </p>
                     )}
-                    {!isDbProduct(product) && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {(isAr ? product.featuresAr : product.featuresEn).slice(0, 2).map((f, fi) => (
+                    {productFeatures(product).slice(0, 2).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {productFeatures(product).slice(0, 2).map((f, fi) => (
                           <span
                             key={fi}
                             className="px-2 py-0.5 bg-[#129B82]/10 border border-[#129B82]/22 text-[#129B82] text-xs rounded"
@@ -258,6 +270,12 @@ export default function Products() {
                           </span>
                         ))}
                       </div>
+                    )}
+                    {isDbProduct(product) && product.dilution_ratio && (
+                      <p className="text-white/35 text-xs mb-3">
+                        <span className="text-white/25">{t("Dilution", "نسبة التخفيف")}: </span>
+                        {product.dilution_ratio}
+                      </p>
                     )}
                     <div className="flex items-center justify-between mt-auto pt-1">
                       {isDbProduct(product) && product.price != null ? (
@@ -336,13 +354,13 @@ export default function Products() {
                   <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView)}</p>
                 )}
 
-                {!isDbProduct(quickView) && quickView.featuresEn.length > 0 && (
+                {productFeatures(quickView).length > 0 && (
                   <div className="mb-5">
                     <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
                       {t("Key Features", "المميزات الرئيسية")}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {(isAr ? quickView.featuresAr : quickView.featuresEn).map((f, i) => (
+                      {productFeatures(quickView).map((f, i) => (
                         <span
                           key={i}
                           className="px-3 py-1.5 bg-[#129B82]/10 border border-[#129B82]/25 text-[#129B82] text-xs rounded"
@@ -354,13 +372,13 @@ export default function Products() {
                   </div>
                 )}
 
-                {!isDbProduct(quickView) && quickView.sizes && quickView.sizes.length > 0 && (
-                  <div className="mb-7">
+                {productSizes(quickView).length > 0 && (
+                  <div className="mb-5">
                     <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
                       {t("Available Sizes", "الأحجام المتاحة")}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {quickView.sizes.map((s, i) => (
+                      {productSizes(quickView).map((s, i) => (
                         <span
                           key={i}
                           className="px-3 py-1.5 glass border-white/12 text-white/65 text-xs rounded"
@@ -369,6 +387,27 @@ export default function Products() {
                         </span>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {isDbProduct(quickView) && (quickView.dilution_ratio || quickView.suitable_for) && (
+                  <div className="mb-7 grid grid-cols-2 gap-4">
+                    {quickView.dilution_ratio && (
+                      <div>
+                        <p className="text-white/35 text-xs uppercase tracking-widest mb-1">
+                          {t("Dilution Ratio", "نسبة التخفيف")}
+                        </p>
+                        <p className="text-white/70 text-sm">{quickView.dilution_ratio}</p>
+                      </div>
+                    )}
+                    {quickView.suitable_for && (
+                      <div>
+                        <p className="text-white/35 text-xs uppercase tracking-widest mb-1">
+                          {t("Suitable For", "مناسب لـ")}
+                        </p>
+                        <p className="text-white/70 text-sm">{quickView.suitable_for}</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
