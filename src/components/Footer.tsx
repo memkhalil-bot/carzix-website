@@ -22,9 +22,9 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <div className="mb-4">
               <img
-                src={isAr ? "/logo-ar.svg" : "/logo-en.svg"}
+                src={isAr ? "/logo-ar.png" : "/logo-en.png"}
                 alt="CARZIX"
-                className="h-8 w-auto"
+                className="h-10 w-auto"
               />
             </div>
             <p className="text-white/45 text-sm leading-relaxed mb-5">
@@ -91,13 +91,13 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3">
                 <Phone size={13} className="text-[#A29475] shrink-0" />
-                <a href="tel:+97472252572" className="text-white/45 hover:text-white text-sm transition-colors">
+                <a href="tel:+97472252572" dir="ltr" className="text-white/45 hover:text-white text-sm transition-colors" style={{ unicodeBidi: "isolate" }}>
                   +974 72252572
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={13} className="text-[#A29475] shrink-0" />
-                <a href="mailto:hello@carzix.qa" className="text-white/45 hover:text-white text-sm transition-colors">
+                <a href="mailto:hello@carzix.qa" dir="ltr" className="text-white/45 hover:text-white text-sm transition-colors" style={{ unicodeBidi: "isolate" }}>
                   hello@carzix.qa
                 </a>
               </li>
@@ -111,7 +111,9 @@ export default function Footer() {
                   href="https://www.instagram.com/carzix.qa/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  dir="ltr"
                   className="text-white/45 hover:text-white text-sm transition-colors"
+                  style={{ unicodeBidi: "isolate" }}
                 >
                   @carzix.qa
                 </a>
