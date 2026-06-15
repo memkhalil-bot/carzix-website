@@ -123,7 +123,7 @@ export default function Contact() {
                   <div>
                     <p className="text-white/35 text-xs mb-0.5">{isAr ? labelAr : labelEn}</p>
                     {href ? (
-                      <a href={href} className="text-white text-sm font-medium hover:text-[#A29475] transition-colors">
+                      <a href={href} dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white text-sm font-medium hover:text-[#A29475] transition-colors">
                         {value}
                       </a>
                     ) : (
@@ -144,6 +144,8 @@ export default function Contact() {
                     href="https://www.instagram.com/carzix.qa/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    dir="ltr"
+                    style={{ unicodeBidi: "isolate" }}
                     className="text-white text-sm font-medium hover:text-[#A29475] transition-colors"
                   >
                     @carzix.qa
@@ -271,13 +273,13 @@ export default function Contact() {
             href="tel:+97472252572"
             className="btn-brand inline-flex items-center gap-2 px-6 py-3 text-white font-semibold text-sm rounded"
           >
-            <Phone size={14} /> +974 72252572
+            <Phone size={14} /> <span dir="ltr" style={{ unicodeBidi: "isolate" }}>+974 72252572</span>
           </a>
           <a
             href="mailto:hello@carzix.qa"
             className="inline-flex items-center gap-2 px-6 py-3 border border-white/18 hover:border-white/35 text-white/65 hover:text-white text-sm font-medium rounded transition-colors"
           >
-            <Mail size={14} /> hello@carzix.qa
+            <Mail size={14} /> <span dir="ltr" style={{ unicodeBidi: "isolate" }}>hello@carzix.qa</span>
           </a>
         </div>
       </section>

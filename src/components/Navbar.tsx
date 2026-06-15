@@ -39,9 +39,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img
-              src={isAr ? "/logo-ar-white.png" : "/logo-en-white.png"}
+              src={isAr ? "/logo-ar.png" : "/logo-en.png"}
               alt="CARZIX"
-              className="h-12 lg:h-14 w-auto"
+              className="h-8 lg:h-9 w-auto"
             />
           </Link>
 
@@ -128,7 +128,7 @@ export default function Navbar() {
               rel="noopener noreferrer"
               className="py-3 text-sm font-medium border-b border-white/5 text-white/65 flex items-center gap-2"
             >
-              <Instagram size={15} /> @carzix.qa
+              <Instagram size={15} /> <span dir="ltr" style={{ unicodeBidi: "isolate" }}>@carzix.qa</span>
             </a>
             <Link
               href="/contact"
