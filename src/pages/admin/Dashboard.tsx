@@ -110,9 +110,16 @@ const T = {
   quoteReqs:     { ar: "طلبات الأسعار",        en: "Quote Requests" },
   markRead:      { ar: "تحديد كمقروء",        en: "Mark as Read" },
   replyEmail:    { ar: "الرد بالبريد الإلكتروني", en: "Reply by Email" },
-  markFulfilled: { ar: "تحديد كمنجز",         en: "Mark Fulfilled" },
-  cancelReq:     { ar: "إلغاء",              en: "Cancel" },
-  resetPending:  { ar: "إعادة للانتظار",      en: "Reset to Pending" },
+  markFulfilled:  { ar: "تحديد كمنجز",           en: "Mark Fulfilled" },
+  cancelReq:      { ar: "إلغاء",                en: "Cancel" },
+  resetPending:   { ar: "إعادة للانتظار",        en: "Reset to Pending" },
+  markContacted:  { ar: "تحديد كـ: تم التواصل", en: "Mark Contacted" },
+  markQuoted:     { ar: "تحديد كـ: تم تسعيره",  en: "Mark Quoted" },
+  markClosed:     { ar: "تحديد كـ: مغلق",       en: "Mark Closed" },
+  reopenReq:      { ar: "إعادة فتح",            en: "Reopen" },
+  contacted:      { ar: "تم التواصل",           en: "Contacted" },
+  quoted:         { ar: "تم التسعير",           en: "Quoted" },
+  closed:         { ar: "مغلق",                en: "Closed" },
   newBadge:      { ar: "جديد",               en: "New" },
   inCatalogue:   { ar: "في الكتالوج",         en: "In catalogue" },
   logoSlider:    { ar: "شريط الشعار",          en: "Logo slider" },
@@ -292,7 +299,10 @@ function statusBadge(status: string | null | undefined, lang: Lang) {
   if (s === "inactive")  return <Badge color="red">{t("inactive", lang)}</Badge>;
   if (s === "fulfilled") return <Badge color="green">Fulfilled</Badge>;
   if (s === "cancelled") return <Badge color="red">Cancelled</Badge>;
-  return <Badge color="yellow">{status ?? "Pending"}</Badge>;
+  if (s === "contacted") return <Badge color="blue">{t("contacted", lang)}</Badge>;
+  if (s === "quoted")    return <Badge color="yellow">{t("quoted", lang)}</Badge>;
+  if (s === "closed")    return <Badge color="green">{t("closed", lang)}</Badge>;
+  return <Badge color="yellow">{t("newBadge", lang)}</Badge>;
 }
 
 // ── Input / Label styles ──────────────────────────────────────────────
@@ -1344,7 +1354,7 @@ function RequestsTab({ lang }: { lang: Lang }) {
               className="rounded-xl"
               style={{
                 background: C.card,
-                border: `1px solid ${!r.status || r.status === "pending" ? C.action + "44" : C.border}`,
+                border: `1px solid ${!r.status || r.status === "new" ? C.action + "44" : C.border}`,
               }}
             >
               <button
@@ -1397,28 +1407,36 @@ function RequestsTab({ lang }: { lang: Lang }) {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
-                      onClick={() => updateStatus(r.id, "fulfilled")}
-                      disabled={r.status === "fulfilled"}
+                      onClick={() => updateStatus(r.id, "contacted")}
+                      disabled={r.status === "contacted"}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                      style={{ background: "#16A34A15", color: C.success, border: `1px solid #16A34A30` }}
+                      style={{ background: "#2563EB15", color: C.action, border: `1px solid #2563EB30` }}
                     >
-                      <Check size={12} /> {t("markFulfilled", lang)}
+                      <Check size={12} /> {t("markContacted", lang)}
                     </button>
                     <button
-                      onClick={() => updateStatus(r.id, "cancelled")}
-                      disabled={r.status === "cancelled"}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                      style={{ background: "#DC262615", color: C.danger, border: `1px solid #DC262630` }}
-                    >
-                      <X size={12} /> {t("cancelReq", lang)}
-                    </button>
-                    <button
-                      onClick={() => updateStatus(r.id, "pending")}
-                      disabled={r.status === "pending" || !r.status}
+                      onClick={() => updateStatus(r.id, "quoted")}
+                      disabled={r.status === "quoted"}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
                       style={{ background: "#F59E0B15", color: C.warning, border: `1px solid #F59E0B30` }}
                     >
-                      {t("resetPending", lang)}
+                      <Check size={12} /> {t("markQuoted", lang)}
+                    </button>
+                    <button
+                      onClick={() => updateStatus(r.id, "closed")}
+                      disabled={r.status === "closed"}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                      style={{ background: "#16A34A15", color: C.success, border: `1px solid #16A34A30` }}
+                    >
+                      <Check size={12} /> {t("markClosed", lang)}
+                    </button>
+                    <button
+                      onClick={() => updateStatus(r.id, "new")}
+                      disabled={!r.status || r.status === "new"}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                      style={{ background: C.bg, color: C.muted, border: `1px solid ${C.border}` }}
+                    >
+                      {t("reopenReq", lang)}
                     </button>
                     <a
                       href={`mailto:${r.email}`}
