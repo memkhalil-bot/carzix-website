@@ -150,9 +150,6 @@ export default function Products() {
     if (err) {
       console.error("[QuoteForm] Insert failed", err);
       setError(t("Something went wrong. Please try again.", "حدث خطأ ما. يرجى المحاولة مرة أخرى."));
-    } else if (!data || data.length === 0) {
-      console.error("[QuoteForm] Insert returned no data — likely blocked by RLS (anon INSERT policy missing)");
-      setError(t("Something went wrong. Please try again.", "حدث خطأ ما. يرجى المحاولة مرة أخرى."));
     } else {
       setSubmitted(true);
     }
