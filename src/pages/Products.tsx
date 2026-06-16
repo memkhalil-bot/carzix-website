@@ -7,6 +7,7 @@ import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { staticProducts, staticCategories } from "@/lib/products";
+import { validateName, validateEmail, validatePhone, validateQuantity, validateNotes } from "@/lib/validation";
 
 interface RequestForm {
   customer_name: string;
@@ -16,6 +17,14 @@ interface RequestForm {
   product_id: string;
   quantity: string;
   notes: string;
+}
+
+interface FormErrors {
+  customer_name?: string;
+  email?: string;
+  phone?: string;
+  quantity?: string;
+  notes?: string;
 }
 
 const emptyForm: RequestForm = {
@@ -45,6 +54,7 @@ export default function Products() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     supabase
@@ -84,19 +94,40 @@ export default function Products() {
     setForm({ ...emptyForm, product_name: name, product_id: id });
     setSubmitted(false);
     setError("");
+    setErrors({});
   }
 
   function closeModal() {
     setModalProduct(null);
     setSubmitted(false);
+    setErrors({});
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const errs: FormErrors = {};
+    const nameErr = validateName(form.customer_name);
+    if (nameErr) errs.customer_name = isAr ? nameErr.ar : nameErr.en;
+    const emailErr = validateEmail(form.email);
+    if (emailErr) errs.email = isAr ? emailErr.ar : emailErr.en;
+    const phoneErr = validatePhone(form.phone);
+    if (phoneErr) errs.phone = isAr ? phoneErr.ar : phoneErr.en;
+    const qtyErr = validateQuantity(form.quantity);
+    if (qtyErr) errs.quantity = isAr ? qtyErr.ar : qtyErr.en;
+    const notesErr = validateNotes(form.notes);
+    if (notesErr) errs.notes = isAr ? notesErr.ar : notesErr.en;
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    setErrors({});
     setSubmitting(true);
     setError("");
 
-    const { error: err } = await supabase.from("product_requests").insert({
+    const payload = {
       customer_name: form.customer_name,
       email: form.email,
       phone: form.phone || null,
@@ -104,10 +135,20 @@ export default function Products() {
       product_name: form.product_name,
       quantity: parseInt(form.quantity) || 1,
       notes: form.notes || null,
-    });
+    };
+
+    console.log("[QuoteForm] Submitting quote request", payload);
+
+    const { data, error: err } = await supabase
+      .from("product_requests")
+      .insert(payload)
+      .select();
+
+    console.log("[QuoteForm] Insert result", { data, error: err });
 
     setSubmitting(false);
     if (err) {
+      console.error("[QuoteForm] Insert failed", err);
       setError(t("Something went wrong. Please try again.", "حدث خطأ ما. يرجى المحاولة مرة أخرى."));
     } else {
       setSubmitted(true);
@@ -518,6 +559,7 @@ export default function Products() {
                         className={inputCls}
                         placeholder={t("Your full name", "اسمك الكامل")}
                       />
+                      {errors.customer_name && <p className="text-red-400 text-xs mt-1">{errors.customer_name}</p>}
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">
@@ -531,6 +573,7 @@ export default function Products() {
                         className={inputCls}
                         placeholder="you@example.com"
                       />
+                      {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">
@@ -543,6 +586,7 @@ export default function Products() {
                         className={inputCls}
                         placeholder="+974 XXXX XXXX"
                       />
+                      {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">
@@ -550,22 +594,25 @@ export default function Products() {
                       </label>
                       <input
                         type="text"
+                        readOnly
                         value={form.product_name}
-                        onChange={(e) => setForm((f) => ({ ...f, product_name: e.target.value }))}
-                        className={inputCls}
+                        className={inputCls + " cursor-not-allowed opacity-60"}
                       />
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Quantity", "الكمية")}
+                        {t("Quantity *", "الكمية *")}
                       </label>
                       <input
                         type="number"
                         min="1"
+                        max="9999"
+                        required
                         value={form.quantity}
                         onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
                         className={inputCls}
                       />
+                      {errors.quantity && <p className="text-red-400 text-xs mt-1">{errors.quantity}</p>}
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">
@@ -578,6 +625,7 @@ export default function Products() {
                         className={inputCls + " resize-none"}
                         placeholder={t("Any additional notes…", "أي ملاحظات إضافية…")}
                       />
+                      {errors.notes && <p className="text-red-400 text-xs mt-1">{errors.notes}</p>}
                     </div>
 
                     {error && <p className="text-red-400 text-sm">{error}</p>}

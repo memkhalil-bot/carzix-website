@@ -91,13 +91,13 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3">
                 <Phone size={13} className="text-[#A29475] shrink-0" />
-                <a href="tel:+97472252572" dir="ltr" className="text-white/45 hover:text-white text-sm transition-colors" style={{ unicodeBidi: "isolate" }}>
+                <a href="tel:+97472252572" dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white/45 hover:text-white text-sm transition-colors">
                   +974 72252572
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={13} className="text-[#A29475] shrink-0" />
-                <a href="mailto:hello@carzix.qa" dir="ltr" className="text-white/45 hover:text-white text-sm transition-colors" style={{ unicodeBidi: "isolate" }}>
+                <a href="mailto:hello@carzix.qa" dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white/45 hover:text-white text-sm transition-colors">
                   hello@carzix.qa
                 </a>
               </li>
@@ -112,8 +112,8 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   dir="ltr"
-                  className="text-white/45 hover:text-white text-sm transition-colors"
                   style={{ unicodeBidi: "isolate" }}
+                  className="text-white/45 hover:text-white text-sm transition-colors"
                 >
                   @carzix.qa
                 </a>

@@ -5,12 +5,20 @@ import { supabase } from "@/lib/supabase";
 import { fadeUp, stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import WhyProfessionals from "@/components/WhyProfessionals";
+import { validateName, validateEmail, validatePhone, validateMessage } from "@/lib/validation";
 
 interface Form {
   full_name: string;
   email: string;
   phone: string;
   message: string;
+}
+
+interface FormErrors {
+  full_name?: string;
+  email?: string;
+  phone?: string;
+  message?: string;
 }
 
 const emptyForm: Form = { full_name: "", email: "", phone: "", message: "" };
@@ -21,6 +29,7 @@ export default function Contact() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const contactInfo = [
     { icon: Phone, labelEn: "Phone", labelAr: "الهاتف", value: "+974 72252572", href: "tel:+97472252572" },
@@ -35,6 +44,23 @@ export default function Contact() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const errs: FormErrors = {};
+    const nameErr = validateName(form.full_name);
+    if (nameErr) errs.full_name = isAr ? nameErr.ar : nameErr.en;
+    const emailErr = validateEmail(form.email);
+    if (emailErr) errs.email = isAr ? emailErr.ar : emailErr.en;
+    const phoneErr = validatePhone(form.phone);
+    if (phoneErr) errs.phone = isAr ? phoneErr.ar : phoneErr.en;
+    const msgErr = validateMessage(form.message);
+    if (msgErr) errs.message = isAr ? msgErr.ar : msgErr.en;
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    setErrors({});
     setSubmitting(true);
     setError("");
 
@@ -47,6 +73,7 @@ export default function Contact() {
 
     setSubmitting(false);
     if (err) {
+      console.error("[ContactForm] Supabase insert error:", err);
       setError(t(
         "Something went wrong. Please try again or contact us directly.",
         "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل معنا مباشرةً."
@@ -123,7 +150,7 @@ export default function Contact() {
                   <div>
                     <p className="text-white/35 text-xs mb-0.5">{isAr ? labelAr : labelEn}</p>
                     {href ? (
-                      <a href={href} dir="ltr" className="text-white text-sm font-medium hover:text-[#A29475] transition-colors" style={{ unicodeBidi: "isolate" }}>
+                      <a href={href} dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white text-sm font-medium hover:text-[#A29475] transition-colors">
                         {value}
                       </a>
                     ) : (
@@ -145,8 +172,8 @@ export default function Contact() {
                     target="_blank"
                     rel="noopener noreferrer"
                     dir="ltr"
-                    className="text-white text-sm font-medium hover:text-[#A29475] transition-colors"
                     style={{ unicodeBidi: "isolate" }}
+                    className="text-white text-sm font-medium hover:text-[#A29475] transition-colors"
                   >
                     @carzix.qa
                   </a>
@@ -198,6 +225,7 @@ export default function Contact() {
                           placeholder={t("Your name", "اسمك")}
                           className={inputCls}
                         />
+                        {errors.full_name && <p className="text-red-400 text-xs mt-1">{errors.full_name}</p>}
                       </div>
                       <div>
                         <label className="block text-white/55 text-xs font-medium mb-1.5">
@@ -211,6 +239,7 @@ export default function Contact() {
                           placeholder="hello@example.com"
                           className={inputCls}
                         />
+                        {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
                       </div>
                     </div>
 
@@ -225,6 +254,7 @@ export default function Contact() {
                         placeholder="+974 XXXX XXXX"
                         className={inputCls}
                       />
+                      {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
                     </div>
 
                     <div>
@@ -242,6 +272,7 @@ export default function Contact() {
                         )}
                         className={inputCls + " resize-none"}
                       />
+                      {errors.message && <p className="text-red-400 text-xs mt-1">{errors.message}</p>}
                     </div>
 
                     {error && <p className="text-red-400 text-sm">{error}</p>}
