@@ -1321,10 +1321,27 @@ function RequestsTab({ lang }: { lang: Lang }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData.session;
+    console.log("[RequestsTab] Session:", session ? "ACTIVE" : "NONE");
+    if (session) {
+      try {
+        const payload = JSON.parse(atob(session.access_token.split(".")[1]));
+        console.log("[RequestsTab] JWT role:", payload.role, "| email:", session.user.email);
+      } catch { /* ignore */ }
+    } else {
+      console.warn("[RequestsTab] No session — SELECT will run as anon and return empty due to RLS");
+    }
+
+    const { data, error } = await supabase
       .from("product_requests")
       .select("*")
       .order("created_at", { ascending: false });
+
+    console.log("[RequestsTab] Rows returned:", data?.length ?? 0, "| Error:", error?.message ?? "none");
+    if (error) console.error("[RequestsTab] product_requests SELECT error:", error);
+
     setRequests(data ?? []);
     setLoading(false);
   }, []);
@@ -1501,16 +1518,38 @@ export default function AdminDashboard() {
     return () => listener.subscription.unsubscribe();
   }, [setLocation]);
 
-  // Load overview data
+  // Load overview data — waits for session, logs diagnostics
   useEffect(() => {
-    Promise.all([
-      supabase.from("products").select("*", { count: "exact", head: true }),
-      supabase.from("clients").select("*", { count: "exact", head: true }),
-      supabase.from("contact_messages").select("*", { count: "exact", head: true }),
-      supabase.from("product_requests").select("*", { count: "exact", head: true }),
-      supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(5),
-      supabase.from("product_requests").select("*").order("created_at", { ascending: false }).limit(5),
-    ]).then(([p, c, m, r, msgs, reqs]) => {
+    async function load() {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData.session;
+
+      console.log("[Dashboard] auth.getSession →", session ? "session ACTIVE" : "NO session");
+      if (session) {
+        console.log("[Dashboard] user.email:", session.user.email);
+        console.log("[Dashboard] user.role:", session.user.role);
+        try {
+          const payload = JSON.parse(atob(session.access_token.split(".")[1]));
+          console.log("[Dashboard] JWT role:", payload.role);
+        } catch { /* ignore decode errors */ }
+      } else {
+        console.warn("[Dashboard] No session — queries will run as anon and may return empty due to RLS");
+      }
+
+      const [p, c, m, r, msgs, reqs] = await Promise.all([
+        supabase.from("products").select("*", { count: "exact", head: true }),
+        supabase.from("clients").select("*", { count: "exact", head: true }),
+        supabase.from("contact_messages").select("*", { count: "exact", head: true }),
+        supabase.from("product_requests").select("*", { count: "exact", head: true }),
+        supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(5),
+        supabase.from("product_requests").select("*").order("created_at", { ascending: false }).limit(5),
+      ]);
+
+      console.log("[Dashboard] products → count:", p.count, "| error:", p.error?.message ?? "none");
+      console.log("[Dashboard] product_requests count → count:", r.count, "| error:", r.error?.message ?? "none");
+      console.log("[Dashboard] recent product_requests → rows:", reqs.data?.length ?? 0, "| error:", reqs.error?.message ?? "none");
+      if (reqs.error) console.error("[Dashboard] product_requests SELECT failed:", reqs.error);
+
       setStats({
         products: p.count ?? 0,
         clients:  c.count ?? 0,
@@ -1519,7 +1558,8 @@ export default function AdminDashboard() {
       });
       setRecentMessages((msgs.data ?? []) as ContactMessage[]);
       setRecentRequests((reqs.data ?? []) as ProductRequest[]);
-    });
+    }
+    load();
   }, []);
 
   async function handleLogout() {
