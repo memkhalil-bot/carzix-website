@@ -1,33 +1,39 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { supabase } from "@/lib/supabase";
+
+const ALLOWED_EMAILS = ["carzix.qa@gmail.com", "memkhalil@gmail.com"];
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const adminPwd = import.meta.env.VITE_ADMIN_PASSWORD;
+    const { data, error: authErr } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (!adminPwd) {
-      setError("VITE_ADMIN_PASSWORD is not configured in environment variables.");
+    if (authErr || !data.session) {
+      setError("Incorrect email or password. Please try again.");
+      setPassword("");
       setLoading(false);
       return;
     }
 
-    if (password === adminPwd) {
-      sessionStorage.setItem("carzix-admin-auth", "1");
-      setLocation("/admin/dashboard");
-    } else {
-      setError("Incorrect password. Please try again.");
+    if (!ALLOWED_EMAILS.includes(data.user.email ?? "")) {
+      await supabase.auth.signOut();
+      setError("Access denied. This account is not authorized.");
       setPassword("");
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    setLocation("/admin/dashboard");
   }
 
   return (
@@ -59,20 +65,37 @@ export default function AdminLogin() {
               className="block text-xs font-semibold uppercase tracking-widest mb-2"
               style={{ color: "#A1A1AA" }}
             >
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@example.com"
+              autoFocus
+              required
+              className="w-full rounded-lg px-4 py-3 text-white text-sm focus:outline-none transition-colors"
+              style={{ background: "#1C1C1C", border: "1px solid #2A2A2A" }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "#FF6B1A")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "#2A2A2A")}
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-xs font-semibold uppercase tracking-widest mb-2"
+              style={{ color: "#A1A1AA" }}
+            >
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
-              autoFocus
+              placeholder="Enter your password"
               required
               className="w-full rounded-lg px-4 py-3 text-white text-sm focus:outline-none transition-colors"
-              style={{
-                background: "#1C1C1C",
-                border: "1px solid #2A2A2A",
-              }}
+              style={{ background: "#1C1C1C", border: "1px solid #2A2A2A" }}
               onFocus={(e) => (e.currentTarget.style.borderColor = "#FF6B1A")}
               onBlur={(e) => (e.currentTarget.style.borderColor = "#2A2A2A")}
             />
@@ -86,13 +109,13 @@ export default function AdminLogin() {
 
           <button
             type="submit"
-            disabled={loading || !password}
+            disabled={loading || !email || !password}
             className="w-full py-3.5 font-bold text-sm tracking-widest uppercase rounded-lg transition-colors disabled:opacity-50"
             style={{ background: "#FF6B1A", color: "#fff" }}
             onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#e55f15"; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = "#FF6B1A"; }}
           >
-            {loading ? "Verifying…" : "Enter Dashboard"}
+            {loading ? "Signing in…" : "Enter Dashboard"}
           </button>
         </form>
 

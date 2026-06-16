@@ -1488,11 +1488,17 @@ export default function AdminDashboard() {
 
   const isRTL = lang === "ar";
 
-  // Auth guard
+  // Auth guard — verify active Supabase session
   useEffect(() => {
-    if (!sessionStorage.getItem("carzix-admin-auth")) {
-      setLocation("/admin/login");
-    }
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) setLocation("/admin/login");
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) setLocation("/admin/login");
+    });
+
+    return () => listener.subscription.unsubscribe();
   }, [setLocation]);
 
   // Load overview data
@@ -1516,8 +1522,8 @@ export default function AdminDashboard() {
     });
   }, []);
 
-  function handleLogout() {
-    sessionStorage.removeItem("carzix-admin-auth");
+  async function handleLogout() {
+    await supabase.auth.signOut();
     setLocation("/admin/login");
   }
 
