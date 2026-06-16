@@ -127,7 +127,7 @@ export default function Products() {
     setSubmitting(true);
     setError("");
 
-    const { error: err } = await supabase.from("product_requests").insert({
+    const payload = {
       customer_name: form.customer_name,
       email: form.email,
       phone: form.phone || null,
@@ -135,11 +135,23 @@ export default function Products() {
       product_name: form.product_name,
       quantity: parseInt(form.quantity) || 1,
       notes: form.notes || null,
-    });
+    };
+
+    console.log("[QuoteForm] Submitting quote request", payload);
+
+    const { data, error: err } = await supabase
+      .from("product_requests")
+      .insert(payload)
+      .select();
+
+    console.log("[QuoteForm] Insert result", { data, error: err });
 
     setSubmitting(false);
     if (err) {
-      console.error("[QuoteForm] Supabase insert error:", err);
+      console.error("[QuoteForm] Insert failed", err);
+      setError(t("Something went wrong. Please try again.", "حدث خطأ ما. يرجى المحاولة مرة أخرى."));
+    } else if (!data || data.length === 0) {
+      console.error("[QuoteForm] Insert returned no data — likely blocked by RLS (anon INSERT policy missing)");
       setError(t("Something went wrong. Please try again.", "حدث خطأ ما. يرجى المحاولة مرة أخرى."));
     } else {
       setSubmitted(true);
