@@ -73,6 +73,43 @@ export function validateNotes(value: string): Msg | null {
   return null;
 }
 
+export function validateCompanyName(value: string): Msg | null {
+  const v = value.trim();
+  if (!v) return { en: "Company name is required.", ar: "اسم الشركة مطلوب." };
+  if (v.length < 2)
+    return { en: "Please enter a valid company name.", ar: "يرجى إدخال اسم شركة صحيح." };
+  if (hasRepeatedChars(v))
+    return { en: "Please enter a valid company name.", ar: "يرجى إدخال اسم شركة صحيح." };
+  return null;
+}
+
+export function validateCity(value: string): Msg | null {
+  const v = value.trim();
+  if (!v) return { en: "City is required.", ar: "المدينة مطلوبة." };
+  if (!/^[؀-ۿa-zA-Z\s]+$/.test(v))
+    return {
+      en: "City must contain letters only (no numbers or symbols).",
+      ar: "يجب أن تحتوي المدينة على حروف فقط، بدون أرقام أو رموز.",
+    };
+  if (hasRepeatedChars(v))
+    return { en: "Please enter a valid city name.", ar: "يرجى إدخال اسم مدينة صحيح." };
+  return null;
+}
+
+export function validateMonthlyVolume(value: string): Msg | null {
+  const v = value.trim();
+  if (!v) return { en: "Monthly consumption is required.", ar: "الاستهلاك الشهري مطلوب." };
+  const n = Number(v);
+  if (!Number.isInteger(n) || n < 1)
+    return {
+      en: "Monthly consumption must be a whole number of at least 1.",
+      ar: "يجب أن يكون الاستهلاك الشهري عددًا صحيحًا 1 على الأقل.",
+    };
+  if (n > 999999)
+    return { en: "Monthly consumption value is too large.", ar: "قيمة الاستهلاك الشهري كبيرة جدًا." };
+  return null;
+}
+
 export function validateMessage(value: string): Msg | null {
   const v = value.trim();
   if (!v) return { en: "Message is required.", ar: "الرسالة مطلوبة." };
