@@ -1,6 +1,8 @@
 import { Link } from "wouter";
-import { Phone, Mail, MapPin, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram, MessageCircle } from "lucide-react";
 import { useLang } from "@/contexts/LanguageContext";
+
+const WHATSAPP_MESSAGE = encodeURIComponent("Hello CARZIX,\nI would like a wholesale quotation.");
 
 export default function Footer() {
   const { t, isAr } = useLang();
@@ -39,9 +41,18 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="CARZIX on Instagram"
-                className="w-9 h-9 rounded border border-white/10 flex items-center justify-center text-white/40 hover:text-[#A29475] hover:border-[#A29475]/40 transition-colors"
+                className="w-9 h-9 rounded border border-white/10 flex items-center justify-center text-white/40 hover:text-[#A29475] hover:border-[#A29475]/40 hover:-translate-y-0.5 transition-all"
               >
                 <Instagram size={16} />
+              </a>
+              <a
+                href={`https://wa.me/97472252572?text=${WHATSAPP_MESSAGE}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="CARZIX on WhatsApp"
+                className="w-9 h-9 rounded border border-white/10 flex items-center justify-center text-white/40 hover:text-[#129B82] hover:border-[#129B82]/40 hover:-translate-y-0.5 transition-all"
+              >
+                <MessageCircle size={16} />
               </a>
             </div>
           </div>
@@ -101,22 +112,22 @@ export default function Footer() {
                   hello@carzix.qa
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin size={13} className="text-[#129B82] shrink-0 mt-0.5" />
-                <span className="text-white/45 text-sm">{t("Doha, Qatar", "الدوحة، قطر")}</span>
-              </li>
               <li className="flex items-center gap-3">
-                <Instagram size={13} className="text-[#A29475] shrink-0" />
+                <MessageCircle size={13} className="text-[#129B82] shrink-0" />
                 <a
-                  href="https://www.instagram.com/carzix.qa/"
+                  href={`https://wa.me/97472252572?text=${WHATSAPP_MESSAGE}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   dir="ltr"
                   style={{ unicodeBidi: "isolate" }}
                   className="text-white/45 hover:text-white text-sm transition-colors"
                 >
-                  @carzix.qa
+                  +974 72252572
                 </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin size={13} className="text-[#129B82] shrink-0 mt-0.5" />
+                <span className="text-white/45 text-sm">{t("Doha, Qatar", "الدوحة، قطر")}</span>
               </li>
             </ul>
           </div>
