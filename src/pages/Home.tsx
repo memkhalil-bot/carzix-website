@@ -46,16 +46,16 @@ export default function Home() {
     {
       icon: Shield,
       titleEn: "German-Grade Formulas",
-      titleAr: "تركيبات بمعايير ألمانية",
+      titleAr: "هندسة ألمانية فائقة",
       descEn: "Developed with European automotive chemistry — the same standards trusted by professional detailing studios worldwide.",
-      descAr: "مطورة بكيمياء السيارات الأوروبية — نفس المعايير التي تثق بها محلات التفصيل الاحترافية حول العالم.",
+      descAr: "تركيباتنا نتاج كيمياء أوروبية متقدمة، مطورة ومصممة خصيصاً لتلبي المعايير الدولية الصارمة التي تبحث عنها كبرى مراكز التلميع والوكالات في دولة قطر.",
     },
     {
       icon: Zap,
       titleEn: "Engineered for Results",
-      titleAr: "مصمم للنتائج",
+      titleAr: "كفاءة تشغيلية واقتصادية عالية",
       descEn: "Concentrated, high-performance formulas that deliver measurable results with every application — for studios and enthusiasts alike.",
-      descAr: "تركيبات مركزة وعالية الأداء تحقق نتائج قابلة للقياس مع كل تطبيق — للمحترفين والهواة على حد سواء.",
+      descAr: "تركيبات فائقة التركيز وعالية الأداء تحقق نتائج مذهلة وقابلة للقياس مع كل تطبيق؛ مصممة خصيصاً للمحترفين وأصحاب الأعمال لخفض التكاليف التشغيلية ومضاعفة الأرباح.",
     },
     {
       icon: Leaf,
@@ -137,7 +137,7 @@ export default function Home() {
             <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed mb-5 max-w-lg">
               {t(
                 "German-engineered high-concentration formulas built for detailing studios, dealerships and automotive fleets across Qatar and the GCC.",
-                "تركيبات ألمانية فائقة التركيز مصممة خصيصاً لمراكز التلميع والوكالات في قطر والخليج لتحقيق نتائج استثنائية وتوفير تشغيلي ملموس."
+                "تركيبات كيميائية ألمانية فائقة التركيز، تمنح مراكز التلميع والوكالات في دولة قطر أداءً استثنائياً وتوفيراً تشغيلياً لا يضاهى. معتمدة وموزعة حصرياً عبر شركة الدوحة العالمية للتجارة."
               )}
             </motion.p>
             {/* Concentration ratio callout */}
@@ -408,23 +408,23 @@ export default function Home() {
                 {
                   step: "01",
                   titleEn: "Browse Catalogue",
-                  titleAr: "تصفح الكتالوج",
+                  titleAr: "استكشف الكتالوج الفني",
                   descEn: "Explore our full range of professional detailing products across 6 categories.",
-                  descAr: "استكشف مجموعتنا الكاملة من منتجات التفصيل الاحترافية عبر 6 فئات.",
+                  descAr: "استعرض مجموعتنا المتكاملة من التركيبات والمنظفات الألمانية الموزعة عبر فئات رئيسية مصممة لتلبية احتياجات منشأتك.",
                 },
                 {
                   step: "02",
                   titleEn: "Request a Quote",
-                  titleAr: "اطلب عرض سعر",
+                  titleAr: "حدد الكميات التجارية",
                   descEn: "Select your products and quantities, then submit a quote request in seconds.",
-                  descAr: "اختر منتجاتك والكميات المطلوبة، ثم أرسل طلب عرض السعر في ثوانٍ.",
+                  descAr: "حدد المنتجات والعبوات المطلوبة مثل 5L و20L، ثم أرسل طلب التسعير التجاري المخصص في ثوانٍ.",
                 },
                 {
                   step: "03",
                   titleEn: "Fast Delivery",
-                  titleAr: "توصيل سريع",
+                  titleAr: "إمداد فوري وتوصيل مباشر",
                   descEn: "We confirm your order and arrange delivery across Qatar within 24–48 hours.",
-                  descAr: "نؤكد طلبك ونرتب التوصيل في جميع أنحاء قطر خلال 24–48 ساعة.",
+                  descAr: "نقوم بتأكيد طلبك فوراً وتأمين الشحن والإمداد المباشر إلى مركزك في أي مكان داخل دولة قطر خلال 24–48 ساعة عبر وكيلنا الحصري.",
                 },
               ].map(({ step, titleEn, titleAr, descEn, descAr }) => (
                 <motion.div

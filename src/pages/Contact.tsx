@@ -35,7 +35,7 @@ export default function Contact() {
   const contactInfo = [
     { icon: Phone, labelEn: "Phone", labelAr: "الهاتف", value: "+974 72252572", href: "tel:+97472252572" },
     { icon: Mail, labelEn: "Email", labelAr: "البريد الإلكتروني", value: "hello@carzix.qa", href: "mailto:hello@carzix.qa" },
-    { icon: MapPin, labelEn: "Location", labelAr: "الموقع", value: t("Doha – Qatar", "الدوحة – قطر"), href: undefined },
+    { icon: MapPin, labelEn: "Location", labelAr: "الموقع", value: t("Doha – Qatar", "الدوحة، دولة قطر"), href: undefined },
   ];
 
   function set(key: keyof Form) {
