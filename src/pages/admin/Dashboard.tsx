@@ -118,7 +118,11 @@ const T = {
   markClosed:     { ar: "تحديد كـ: مغلق",       en: "Mark Closed" },
   reopenReq:      { ar: "إعادة فتح",            en: "Reopen" },
   contacted:      { ar: "تم التواصل",           en: "Contacted" },
-  quoted:         { ar: "تم التسعير",           en: "Quoted" },
+  quoted:         { ar: "تم إرسال عرض",         en: "Quoted" },
+  won:            { ar: "تم الإغلاق بنجاح",     en: "Won" },
+  lost:           { ar: "خاسر",                 en: "Lost" },
+  markWon:        { ar: "تحديد كـ: تم الإغلاق بنجاح", en: "Mark Won" },
+  markLost:       { ar: "تحديد كـ: خاسر",        en: "Mark Lost" },
   closed:         { ar: "مغلق",                en: "Closed" },
   newBadge:      { ar: "جديد",               en: "New" },
   inCatalogue:   { ar: "في الكتالوج",         en: "In catalogue" },
@@ -140,6 +144,29 @@ const T = {
   clientsSlider: { ar: "العملاء (شريط الشعار)", en: "Clients (Logo Slider)" },
   required:      { ar: "(مطلوب)",             en: "(required)" },
   imagePreview:  { ar: "معاينة الصورة",       en: "Image Preview" },
+
+  // Overview metrics
+  totalRequests:     { ar: "إجمالي الطلبات",        en: "Total Requests" },
+  newRequests:       { ar: "طلبات جديدة",            en: "New Requests" },
+  contactedRequests: { ar: "طلبات تم التواصل معها",  en: "Contacted Requests" },
+  quotedRequests:    { ar: "طلبات تم إرسال عرض لها",  en: "Quoted Requests" },
+  wonRequests:       { ar: "طلبات مغلقة بنجاح",       en: "Won Requests" },
+  lostRequests:      { ar: "طلبات خاسرة",             en: "Lost Requests" },
+  latest5Requests:   { ar: "أحدث 5 طلبات",            en: "Latest 5 Requests" },
+  mostRequestedProduct: { ar: "الأكثر طلباً",         en: "Most Requested Product" },
+  noDataYet:         { ar: "لا توجد بيانات بعد.",     en: "No data yet." },
+
+  // Search / filters / export
+  searchPlaceholder:    { ar: "بحث بالاسم، الشركة، البريد، الهاتف، المنتج، أو المدينة…", en: "Search name, company, email, phone, product, or city…" },
+  filterByStatus:       { ar: "تصفية بالحالة",        en: "Filter by status" },
+  filterByBusinessType: { ar: "تصفية بنوع النشاط",    en: "Filter by business type" },
+  allStatuses:          { ar: "جميع الحالات",         en: "All Statuses" },
+  allBusinessTypes:     { ar: "جميع الأنشطة",         en: "All Business Types" },
+  clearFilters:         { ar: "إعادة تعيين الفلاتر",  en: "Clear Filters" },
+  exportCsv:            { ar: "تصدير CSV",            en: "Export CSV" },
+  noResultsFound:       { ar: "لا توجد نتائج مطابقة.", en: "No matching results." },
+  updateSuccess:        { ar: "تم تحديث الحالة بنجاح.", en: "Status updated successfully." },
+  updateError:          { ar: "فشل تحديث الحالة. حاول مرة أخرى.", en: "Failed to update status. Please try again." },
 } as const;
 
 function t(key: keyof typeof T, lang: Lang): string {
@@ -300,12 +327,22 @@ function statusBadge(status: string | null | undefined, lang: Lang) {
   const s = (status ?? "").toLowerCase();
   if (s === "active")    return <Badge color="green">{t("active", lang)}</Badge>;
   if (s === "inactive")  return <Badge color="red">{t("inactive", lang)}</Badge>;
-  if (s === "fulfilled") return <Badge color="green">Fulfilled</Badge>;
-  if (s === "cancelled") return <Badge color="red">Cancelled</Badge>;
   if (s === "contacted") return <Badge color="blue">{t("contacted", lang)}</Badge>;
   if (s === "quoted")    return <Badge color="yellow">{t("quoted", lang)}</Badge>;
-  if (s === "closed")    return <Badge color="green">{t("closed", lang)}</Badge>;
+  // "won"/"lost" are the current workflow; "closed"/"fulfilled"/"cancelled" are
+  // legacy values from the prior workflow, mapped here so old rows still read sensibly.
+  if (s === "won" || s === "closed" || s === "fulfilled") return <Badge color="green">{t("won", lang)}</Badge>;
+  if (s === "lost" || s === "cancelled") return <Badge color="red">{t("lost", lang)}</Badge>;
   return <Badge color="yellow">{t("newBadge", lang)}</Badge>;
+}
+
+function normalizedRequestStatus(status: string | null | undefined): "new" | "contacted" | "quoted" | "won" | "lost" {
+  const s = (status ?? "").toLowerCase();
+  if (s === "contacted") return "contacted";
+  if (s === "quoted") return "quoted";
+  if (s === "won" || s === "closed" || s === "fulfilled") return "won";
+  if (s === "lost" || s === "cancelled") return "lost";
+  return "new";
 }
 
 // ── Input / Label styles ──────────────────────────────────────────────
@@ -792,55 +829,53 @@ function ProductModal({ lang, editProduct, onClose, onSaved }: ProductModalProps
 }
 
 // ── Overview Tab ─────────────────────────────────────────────────────
-function OverviewTab({
-  lang,
-  stats,
-  recentMessages,
-  recentRequests,
-}: {
-  lang: Lang;
-  stats: { products: number; clients: number; messages: number; requests: number };
-  recentMessages: ContactMessage[];
-  recentRequests: ProductRequest[];
-}) {
+function mostRequestedProduct(requests: ProductRequest[]): { name: string; count: number } | null {
+  const counts = new Map<string, number>();
+  for (const r of requests) {
+    if (!r.product_name) continue;
+    counts.set(r.product_name, (counts.get(r.product_name) ?? 0) + 1);
+  }
+  let best: { name: string; count: number } | null = null;
+  for (const [name, count] of counts) {
+    if (!best || count > best.count) best = { name, count };
+  }
+  return best;
+}
+
+function OverviewTab({ lang, requests, loading }: { lang: Lang; requests: ProductRequest[]; loading: boolean }) {
+  const total = requests.length;
+  const byStatus = { new: 0, contacted: 0, quoted: 0, won: 0, lost: 0 };
+  for (const r of requests) byStatus[normalizedRequestStatus(r.status)]++;
+  const latest5 = requests.slice(0, 5);
+  const topProduct = mostRequestedProduct(requests);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Loader2 size={28} style={{ color: C.action }} className="animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label={t("products", lang)}  value={stats.products}  sub={t("inCatalogue", lang)} />
-        <StatCard label={t("clients", lang)}   value={stats.clients}   sub={t("logoSlider", lang)} />
-        <StatCard label={t("messages", lang)}  value={stats.messages}  sub={t("contactForm", lang)} accent={C.warning} />
-        <StatCard label={t("requests", lang)}  value={stats.requests}  sub={t("productReqs", lang)} accent={C.action} />
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        <StatCard label={t("totalRequests", lang)}     value={total}             accent={C.action} />
+        <StatCard label={t("newRequests", lang)}       value={byStatus.new} />
+        <StatCard label={t("contactedRequests", lang)} value={byStatus.contacted} accent={C.action} />
+        <StatCard label={t("quotedRequests", lang)}    value={byStatus.quoted}   accent={C.warning} />
+        <StatCard label={t("wonRequests", lang)}       value={byStatus.won}      accent={C.success} />
+        <StatCard label={t("lostRequests", lang)}      value={byStatus.lost}     accent={C.danger} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
         <div className="rounded-xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-          <p className="text-sm font-semibold mb-4" style={{ color: C.text }}>{t("recentMsgs", lang)}</p>
-          {recentMessages.length === 0 ? (
-            <p className="text-sm" style={{ color: C.muted }}>{t("noMsgsYet", lang)}</p>
+          <p className="text-sm font-semibold mb-4" style={{ color: C.text }}>{t("latest5Requests", lang)}</p>
+          {latest5.length === 0 ? (
+            <p className="text-sm" style={{ color: C.muted }}>{t("noDataYet", lang)}</p>
           ) : (
             <div className="space-y-3">
-              {recentMessages.map((m) => (
-                <div key={m.id} className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate" style={{ color: C.text }}>{m.full_name}</p>
-                    <p className="text-xs truncate" style={{ color: C.muted }}>{m.email}</p>
-                  </div>
-                  <p className="text-xs shrink-0" style={{ color: C.muted }}>
-                    {new Date(m.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="rounded-xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-          <p className="text-sm font-semibold mb-4" style={{ color: C.text }}>{t("recentReqs", lang)}</p>
-          {recentRequests.length === 0 ? (
-            <p className="text-sm" style={{ color: C.muted }}>{t("noReqsYet", lang)}</p>
-          ) : (
-            <div className="space-y-3">
-              {recentRequests.map((r) => (
+              {latest5.map((r) => (
                 <div key={r.id} className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: C.text }}>{r.customer_name}</p>
@@ -850,6 +885,20 @@ function OverviewTab({
                 </div>
               ))}
             </div>
+          )}
+        </div>
+
+        <div className="rounded-xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
+          <p className="text-sm font-semibold mb-4" style={{ color: C.text }}>{t("mostRequestedProduct", lang)}</p>
+          {topProduct ? (
+            <div>
+              <p className="text-2xl font-black" style={{ color: C.text }}>{topProduct.name}</p>
+              <p className="text-xs mt-1" style={{ color: C.muted }}>
+                {topProduct.count} {t("productReqs", lang)}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm" style={{ color: C.muted }}>{t("noDataYet", lang)}</p>
           )}
         </div>
       </div>
@@ -1316,11 +1365,62 @@ function MessagesTab({ lang }: { lang: Lang }) {
   );
 }
 
+// ── CSV export helper ───────────────────────────────────────────────
+function csvEscape(value: unknown): string {
+  const s = value == null ? "" : String(value);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+const CSV_COLUMNS: { key: keyof ProductRequest; header: string }[] = [
+  { key: "created_at",   header: "created_at" },
+  { key: "status",       header: "status" },
+  { key: "customer_name", header: "customer_name" },
+  { key: "company_name", header: "company_name" },
+  { key: "business_type", header: "business_type" },
+  { key: "city",          header: "city" },
+  { key: "email",         header: "email" },
+  { key: "phone",         header: "phone" },
+  { key: "product_name",  header: "product_name" },
+  { key: "quantity",      header: "quantity" },
+  { key: "notes",         header: "notes" },
+];
+
+function exportRequestsCsv(requests: ProductRequest[]) {
+  const headerRow = CSV_COLUMNS.map((c) => c.header).join(",");
+  const rows = requests.map((r) => CSV_COLUMNS.map((c) => csvEscape(r[c.key])).join(","));
+  const csv = [headerRow, ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `carzix-requests-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ── Requests Tab ─────────────────────────────────────────────────────
+const STATUS_FILTERS = ["all", "new", "contacted", "quoted", "won", "lost"] as const;
+type StatusFilter = typeof STATUS_FILTERS[number];
+
+function matchesSearch(r: ProductRequest, query: string): boolean {
+  if (!query) return true;
+  const needle = query.toLowerCase();
+  return [r.customer_name, r.company_name, r.email, r.phone, r.product_name, r.city].some((field) =>
+    (field ?? "").toLowerCase().includes(needle)
+  );
+}
+
 function RequestsTab({ lang }: { lang: Lang }) {
   const [requests, setRequests] = useState<ProductRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [businessTypeFilter, setBusinessTypeFilter] = useState<string>("all");
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -1351,14 +1451,106 @@ function RequestsTab({ lang }: { lang: Lang }) {
 
   useEffect(() => { load(); }, [load]);
 
-  async function updateStatus(id: string, status: string) {
-    await supabase.from("product_requests").update({ status }).eq("id", id);
-    setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
+  function showFeedback(type: "success" | "error", message: string) {
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+    setFeedback({ type, message });
+    feedbackTimer.current = setTimeout(() => setFeedback(null), 3500);
   }
+
+  async function updateStatus(id: string, status: string) {
+    const { error } = await supabase.from("product_requests").update({ status }).eq("id", id);
+    if (error) {
+      console.error("[RequestsTab] status update failed:", error);
+      showFeedback("error", t("updateError", lang));
+      return;
+    }
+    setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
+    showFeedback("success", t("updateSuccess", lang));
+  }
+
+  const businessTypeOptions = Array.from(
+    new Set(requests.map((r) => r.business_type).filter((v): v is string => !!v))
+  ).sort();
+
+  const filtered = requests.filter((r) =>
+    matchesSearch(r, search) &&
+    (statusFilter === "all" || normalizedRequestStatus(r.status) === statusFilter) &&
+    (businessTypeFilter === "all" || r.business_type === businessTypeFilter)
+  );
+
+  const filtersActive = search !== "" || statusFilter !== "all" || businessTypeFilter !== "all";
+
+  function clearFilters() {
+    setSearch("");
+    setStatusFilter("all");
+    setBusinessTypeFilter("all");
+  }
+
+  const inp = inputStyle();
 
   return (
     <div>
-      <SectionHeader title={t("quoteReqs", lang)} count={requests.length} onRefresh={load} loading={loading} />
+      <SectionHeader title={t("quoteReqs", lang)} count={filtered.length} onRefresh={load} loading={loading}>
+        <button
+          onClick={() => exportRequestsCsv(filtered)}
+          disabled={filtered.length === 0}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40"
+          style={{ background: C.action, color: "#fff" }}
+        >
+          {t("exportCsv", lang)}
+        </button>
+      </SectionHeader>
+
+      {feedback && (
+        <div
+          className="mb-4 px-3 py-2 rounded-lg text-sm"
+          style={
+            feedback.type === "success"
+              ? { background: "#16A34A15", color: C.success, border: `1px solid #16A34A30` }
+              : { background: "#DC262615", color: C.danger, border: `1px solid #DC262630` }
+          }
+        >
+          {feedback.message}
+        </div>
+      )}
+
+      {/* Search + filters */}
+      <div className="grid sm:grid-cols-4 gap-3 mb-5">
+        <div className="sm:col-span-2">
+          <input
+            style={inp}
+            placeholder={t("searchPlaceholder", lang)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <select style={inp} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}>
+          <option value="all">{t("allStatuses", lang)}</option>
+          <option value="new">{t("newBadge", lang)}</option>
+          <option value="contacted">{t("contacted", lang)}</option>
+          <option value="quoted">{t("quoted", lang)}</option>
+          <option value="won">{t("won", lang)}</option>
+          <option value="lost">{t("lost", lang)}</option>
+        </select>
+        <select style={inp} value={businessTypeFilter} onChange={(e) => setBusinessTypeFilter(e.target.value)}>
+          <option value="all">{t("allBusinessTypes", lang)}</option>
+          {businessTypeOptions.map((bt) => (
+            <option key={bt} value={bt}>{bt}</option>
+          ))}
+        </select>
+      </div>
+
+      {filtersActive && (
+        <div className="mb-5">
+          <button
+            onClick={clearFilters}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium"
+            style={{ background: C.bg, color: C.muted, border: `1px solid ${C.border}` }}
+          >
+            {t("clearFilters", lang)}
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-16">
@@ -1366,15 +1558,17 @@ function RequestsTab({ lang }: { lang: Lang }) {
         </div>
       ) : requests.length === 0 ? (
         <p className="text-sm py-8 text-center" style={{ color: C.muted }}>{t("noRequests", lang)}</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm py-8 text-center" style={{ color: C.muted }}>{t("noResultsFound", lang)}</p>
       ) : (
         <div className="space-y-3">
-          {requests.map((r) => (
+          {filtered.map((r) => (
             <div
               key={r.id}
               className="rounded-xl"
               style={{
                 background: C.card,
-                border: `1px solid ${!r.status || r.status === "new" ? C.action + "44" : C.border}`,
+                border: `1px solid ${normalizedRequestStatus(r.status) === "new" ? C.action + "44" : C.border}`,
               }}
             >
               <button
@@ -1444,38 +1638,53 @@ function RequestsTab({ lang }: { lang: Lang }) {
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => updateStatus(r.id, "contacted")}
-                      disabled={r.status === "contacted"}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                      style={{ background: "#2563EB15", color: C.action, border: `1px solid #2563EB30` }}
-                    >
-                      <Check size={12} /> {t("markContacted", lang)}
-                    </button>
-                    <button
-                      onClick={() => updateStatus(r.id, "quoted")}
-                      disabled={r.status === "quoted"}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                      style={{ background: "#F59E0B15", color: C.warning, border: `1px solid #F59E0B30` }}
-                    >
-                      <Check size={12} /> {t("markQuoted", lang)}
-                    </button>
-                    <button
-                      onClick={() => updateStatus(r.id, "closed")}
-                      disabled={r.status === "closed"}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                      style={{ background: "#16A34A15", color: C.success, border: `1px solid #16A34A30` }}
-                    >
-                      <Check size={12} /> {t("markClosed", lang)}
-                    </button>
-                    <button
-                      onClick={() => updateStatus(r.id, "new")}
-                      disabled={!r.status || r.status === "new"}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                      style={{ background: C.bg, color: C.muted, border: `1px solid ${C.border}` }}
-                    >
-                      {t("reopenReq", lang)}
-                    </button>
+                    {(() => {
+                      const current = normalizedRequestStatus(r.status);
+                      return (
+                        <>
+                          <button
+                            onClick={() => updateStatus(r.id, "contacted")}
+                            disabled={current === "contacted"}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                            style={{ background: "#2563EB15", color: C.action, border: `1px solid #2563EB30` }}
+                          >
+                            <Check size={12} /> {t("markContacted", lang)}
+                          </button>
+                          <button
+                            onClick={() => updateStatus(r.id, "quoted")}
+                            disabled={current === "quoted"}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                            style={{ background: "#F59E0B15", color: C.warning, border: `1px solid #F59E0B30` }}
+                          >
+                            <Check size={12} /> {t("markQuoted", lang)}
+                          </button>
+                          <button
+                            onClick={() => updateStatus(r.id, "won")}
+                            disabled={current === "won"}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                            style={{ background: "#16A34A15", color: C.success, border: `1px solid #16A34A30` }}
+                          >
+                            <Check size={12} /> {t("markWon", lang)}
+                          </button>
+                          <button
+                            onClick={() => updateStatus(r.id, "lost")}
+                            disabled={current === "lost"}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                            style={{ background: "#DC262615", color: C.danger, border: `1px solid #DC262630` }}
+                          >
+                            <X size={12} /> {t("markLost", lang)}
+                          </button>
+                          <button
+                            onClick={() => updateStatus(r.id, "new")}
+                            disabled={current === "new"}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
+                            style={{ background: C.bg, color: C.muted, border: `1px solid ${C.border}` }}
+                          >
+                            {t("reopenReq", lang)}
+                          </button>
+                        </>
+                      );
+                    })()}
                     <a
                       href={`mailto:${r.email}`}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium"
@@ -1520,9 +1729,8 @@ export default function AdminDashboard() {
   const [lang, setLang] = useState<Lang>("ar");
   const [tab, setTab] = useState<TabId>("overview");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [stats, setStats] = useState({ products: 0, clients: 0, messages: 0, requests: 0 });
-  const [recentMessages, setRecentMessages] = useState<ContactMessage[]>([]);
-  const [recentRequests, setRecentRequests] = useState<ProductRequest[]>([]);
+  const [overviewRequests, setOverviewRequests] = useState<ProductRequest[]>([]);
+  const [overviewLoading, setOverviewLoading] = useState(true);
 
   const isRTL = lang === "ar";
 
@@ -1542,6 +1750,7 @@ export default function AdminDashboard() {
   // Load overview data — waits for session, logs diagnostics
   useEffect(() => {
     async function load() {
+      setOverviewLoading(true);
       const { data: sessionData } = await supabase.auth.getSession();
       const session = sessionData.session;
 
@@ -1557,28 +1766,16 @@ export default function AdminDashboard() {
         console.warn("[Dashboard] No session — queries will run as anon and may return empty due to RLS");
       }
 
-      const [p, c, m, r, msgs, reqs] = await Promise.all([
-        supabase.from("products").select("*", { count: "exact", head: true }),
-        supabase.from("clients").select("*", { count: "exact", head: true }),
-        supabase.from("contact_messages").select("*", { count: "exact", head: true }),
-        supabase.from("product_requests").select("*", { count: "exact", head: true }),
-        supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(5),
-        supabase.from("product_requests").select("*").order("created_at", { ascending: false }).limit(5),
-      ]);
+      const { data, error } = await supabase
+        .from("product_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      console.log("[Dashboard] products → count:", p.count, "| error:", p.error?.message ?? "none");
-      console.log("[Dashboard] product_requests count → count:", r.count, "| error:", r.error?.message ?? "none");
-      console.log("[Dashboard] recent product_requests → rows:", reqs.data?.length ?? 0, "| error:", reqs.error?.message ?? "none");
-      if (reqs.error) console.error("[Dashboard] product_requests SELECT failed:", reqs.error);
+      console.log("[Dashboard] product_requests → rows:", data?.length ?? 0, "| error:", error?.message ?? "none");
+      if (error) console.error("[Dashboard] product_requests SELECT failed:", error);
 
-      setStats({
-        products: p.count ?? 0,
-        clients:  c.count ?? 0,
-        messages: m.count ?? 0,
-        requests: r.count ?? 0,
-      });
-      setRecentMessages((msgs.data ?? []) as ContactMessage[]);
-      setRecentRequests((reqs.data ?? []) as ProductRequest[]);
+      setOverviewRequests((data ?? []) as ProductRequest[]);
+      setOverviewLoading(false);
     }
     load();
   }, []);
@@ -1747,9 +1944,8 @@ export default function AdminDashboard() {
           {tab === "overview" && (
             <OverviewTab
               lang={lang}
-              stats={stats}
-              recentMessages={recentMessages}
-              recentRequests={recentRequests}
+              requests={overviewRequests}
+              loading={overviewLoading}
             />
           )}
           {tab === "products"  && <ProductsTab lang={lang} />}
