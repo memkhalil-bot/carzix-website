@@ -42,28 +42,33 @@ export default function About() {
   const milestones = [
     {
       year: "2022",
+      titleAr: "من الرؤية إلى السوق",
       eventEn: "CARZIX brand established in Qatar — focused on bringing premium professional-grade detailing formulas to the region.",
-      eventAr: "تأسست علامة كارزيكس في قطر — مركزة على جلب تركيبات تفصيل احترافية فاخرة إلى المنطقة.",
+      eventAr: "تأسست علامة CARZIX في جمهورية مصر العربية بأيدي خبراء متخصصين، برؤية واضحة لجلب وتطوير كيمياء وتركيبات تفصيل احترافية فاخرة تلبي تطلعات السوق وتضع معايير جديدة للجودة.",
     },
     {
       year: "2023",
+      titleAr: "الانطلاقة والكتالوج",
       eventEn: "Launched full product catalogue spanning shampoos, polishes, interior care, glass care, and tire products.",
-      eventAr: "إطلاق كتالوج منتجات كامل يشمل الشامبوهات والمواد اللامعة والعناية الداخلية وعناية الزجاج والكفرات.",
+      eventAr: "وضعنا اللبنة الأولى بإطلاق منتجات العناية بالسيارات الفاخرة التي تجمع بين الابتكار الألماني واحتياجات مراكز الغسيل والتلميع الاحترافية.",
     },
     {
       year: "2024",
+      titleAr: "الشراكات الإستراتيجية",
       eventEn: "Partnered with leading automotive businesses and detailing studios across Qatar — growing into a trusted professional supply partner.",
-      eventAr: "شراكات مع كبرى الشركات في مجال السيارات ومحلات التفصيل في قطر — نمو لتصبح شريك إمداد احترافي موثوق.",
+      eventAr: "رسخنا مكانتنا كشريك إمداد موثوق لكبرى وكالات السيارات ومراكز التلميع (Detailing) المرموقة في دولة قطر.",
     },
     {
       year: "2025",
+      titleAr: "التوسع المحلي",
       eventEn: "Expanding product line and distribution network to serve more studios and businesses across Qatar and the GCC.",
-      eventAr: "توسيع خط المنتجات وشبكة التوزيع لخدمة المزيد من المحلات والشركات في قطر والخليج.",
+      eventAr: "ضاعفنا خطوط إنتاجنا وعززنا شبكة خدماتنا لتلبية الطلب المتزايد في السوق الاحترافي داخل دولة قطر.",
     },
     {
       year: "2026",
+      titleAr: "التمكين المحلي والوكالة",
       eventEn: "Partnership agreement with Doha International Trading Company as the exclusive distributor of CARZIX products in Qatar.",
-      eventAr: "الاتفاق مع شركة الدوحة العالمية للتجارة كموزع حصري لمنتجات CARZIX في دولة قطر.",
+      eventAr: "عقدنا شراكة إستراتيجية حصرية مع شركة الدوحة العالمية للتجارة لتصبح الوجهة الرسمية والوكيل الحصري لمنتجات CARZIX في دولة قطر، مما يضمن توفير إمداد فوري ومباشر لكافة المراكز والشركات القطرية.",
     },
   ];
 
@@ -89,17 +94,26 @@ export default function About() {
             <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
               {t("About CARZIX", "عن كارزيكس")}
             </motion.p>
-            <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl font-black text-white leading-tight mb-6">
-              {t("Built for", "مصنوع لـ")}
-              <br />
-              <span className="text-[#A29475]">{t("Automotive", "التفصيل")}</span>
-              <br />
-              {t("Detailing.", "الاحترافي.")}
+            <motion.h1
+              variants={fadeUp}
+              className={isAr ? "text-4xl sm:text-5xl font-black text-white leading-tight mb-6" : "text-5xl sm:text-6xl font-black text-white leading-tight mb-6"}
+            >
+              {isAr ? (
+                "كيمياء مبتكرة للأداء الاحترافي الفائق."
+              ) : (
+                <>
+                  Built for
+                  <br />
+                  <span className="text-[#A29475]">Automotive</span>
+                  <br />
+                  Detailing.
+                </>
+              )}
             </motion.h1>
             <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed">
               {t(
                 "CARZIX is Qatar's dedicated automotive detailing products brand — bringing professional-grade formulas developed with European technology to studios, dealerships, and enthusiasts across the GCC.",
-                "كارزيكس هي علامة منتجات التفصيل الاحترافية في قطر — تجلب تركيبات احترافية مطورة بتكنولوجيا أوروبية للمحلات والوكلاء والهواة في جميع أنحاء الخليج."
+                "CARZIX هي العلامة الرائدة في هندسة تركيبات العناية بالسيارات في دولة قطر. نلتزم بجلب أحدث الابتكارات والتكنولوجيا الألمانية المتطورة المصممة خصيصاً لتلبية احتياجات كبرى مراكز التلميع الاحترافي (Detailing)، الوكالات المعتمدة، وأساطيل السيارات في السوق القطري، وذلك عبر وكيلنا الحصري شركة الدوحة العالمية للتجارة."
               )}
             </motion.p>
           </div>
@@ -169,10 +183,13 @@ export default function About() {
             </motion.h2>
 
             <div className="relative ps-8 border-s border-[#0D4261]/35 space-y-8">
-              {milestones.map(({ year, eventEn, eventAr }) => (
+              {milestones.map(({ year, titleAr, eventEn, eventAr }) => (
                 <motion.div key={year} variants={fadeUp} className="relative">
                   <div className="absolute -start-[1.65rem] w-3 h-3 rounded-full bg-[#0D4261] ring-4 ring-zinc-950 shadow-[0_0_8px_rgba(13,66,97,0.7)]" />
                   <p className="text-[#A29475] text-xs font-bold tracking-widest uppercase mb-1">{year}</p>
+                  {isAr && (
+                    <p className="text-white font-bold text-sm mb-1">{titleAr}</p>
+                  )}
                   <p className="text-[#D1D5DB] text-sm leading-relaxed">{isAr ? eventAr : eventEn}</p>
                 </motion.div>
               ))}

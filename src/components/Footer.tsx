@@ -32,7 +32,7 @@ export default function Footer() {
             <p className="text-white/45 text-sm leading-relaxed mb-5">
               {t(
                 "Professional-grade automotive detailing and car care products for Qatar and the GCC. Trusted by studios, dealerships, and enthusiasts.",
-                "منتجات عناية واضيحة سيارات احترافية لقطر والخليج العربي. موثوق بها من المحلات والوكلاء والهواة."
+                "منتجات عناية وتلميع سيارات احترافية لقطر والخليج العربي. موثوق بها من المحلات والوكلاء والهواة."
               )}
             </p>
             <div className="flex gap-3">
@@ -127,8 +127,15 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3">
                 <MapPin size={13} className="text-[#129B82] shrink-0 mt-0.5" />
-                <span className="text-white/45 text-sm">{t("Doha, Qatar", "الدوحة، قطر")}</span>
+                <span className="text-white/45 text-sm">{t("Doha, Qatar", "الدوحة، دولة قطر")}</span>
               </li>
+              {isAr && (
+                <li className="pt-1">
+                  <p className="text-white/35 text-xs leading-relaxed">
+                    المقر الرسمي للتوزيع والإمداد المباشر عبر الشريك الحصري: شركة الدوحة العالمية للتجارة.
+                  </p>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -137,7 +144,7 @@ export default function Footer() {
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} CARZIX. {t("All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
-          <p className="text-white/25 text-xs">{t("Doha, Qatar · GCC", "الدوحة، قطر · الخليج")}</p>
+          <p className="text-white/25 text-xs">{t("Doha, Qatar · GCC", "الدوحة، دولة قطر · الخليج")}</p>
         </div>
       </div>
     </footer>
