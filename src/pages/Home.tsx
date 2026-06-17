@@ -119,7 +119,14 @@ export default function Home() {
             <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
               {t("Professional Car Care · Qatar & GCC", "منتجات العناية الاحترافية · قطر والخليج")}
             </motion.p>
-            <motion.h1 variants={blurUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-5">
+            <motion.h1
+              variants={blurUp}
+              className={
+                isAr
+                  ? "text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.15] sm:leading-[1.05] mb-5"
+                  : "text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-5"
+              }
+            >
               {isAr ? (
                 <>
                   المعيار الاحترافي
@@ -134,10 +141,10 @@ export default function Home() {
                 </>
               )}
             </motion.h1>
-            <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed mb-5 max-w-lg">
+            <motion.p variants={fadeUp} className="text-white/55 text-base sm:text-lg leading-relaxed mb-5 max-w-lg">
               {t(
                 "German-engineered high-concentration formulas built for detailing studios, dealerships and automotive fleets across Qatar and the GCC.",
-                "تركيبات كيميائية ألمانية فائقة التركيز، تمنح مراكز التلميع والوكالات في دولة قطر أداءً استثنائياً وتوفيراً تشغيلياً لا يضاهى. معتمدة وموزعة حصرياً عبر شركة الدوحة العالمية للتجارة."
+                "تركيبات كيميائية ألمانية فائقة التركيز، تمنح مراكز التلميع والوكالات في دولة قطر أداءً استثنائياً وتوفيراً تشغيلياً لا يضاهى، معتمدة وموزعة حصرياً عبر شركة الدوحة العالمية للتجارة."
               )}
             </motion.p>
             {/* Concentration ratio callout */}
@@ -154,14 +161,14 @@ export default function Home() {
                 href="/contact"
                 className="btn-cta inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
               >
-                {t("Get a Quote", "احصل على عرض سعر")}
+                {t("Request a Quote", "اطلب عرض سعر")}
                 <ChevronRight size={18} />
               </Link>
               <Link
                 href="/products"
                 className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-[#D1D5DB] hover:border-[#A29475]/50 hover:text-white font-semibold rounded transition-colors"
               >
-                {t("Explore Products", "تصفح المنتجات")}
+                {t("Explore Products", "استكشف المنتجات")}
               </Link>
             </motion.div>
           </motion.div>

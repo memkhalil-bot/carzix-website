@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Loader2, Package, Filter } from "lucide-react";
 import DilutionCalculator from "@/components/DilutionCalculator";
+import RequestQuoteModal from "@/components/RequestQuoteModal";
 import Seo from "@/components/Seo";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
@@ -9,67 +11,17 @@ import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { staticProducts, staticCategories } from "@/lib/products";
 import {
-  validateName,
-  validateEmail,
-  validatePhone,
-  validateQuantity,
-  validateNotes,
-  validateCompanyName,
-  validateCity,
-  validateBusinessType,
-} from "@/lib/validation";
-
-const BUSINESS_TYPES = [
-  { value: "Car Wash", labelEn: "Car Wash", labelAr: "مغسلة سيارات" },
-  { value: "Detailing Center", labelEn: "Detailing Center", labelAr: "مركز تلميع" },
-  { value: "Distributor", labelEn: "Distributor", labelAr: "موزع" },
-  { value: "Retail Shop", labelEn: "Retail Shop", labelAr: "محل بيع بالتجزئة" },
-  { value: "Fleet Company", labelEn: "Fleet Company", labelAr: "شركة أسطول" },
-  { value: "Other", labelEn: "Other", labelAr: "أخرى" },
-];
-
-interface RequestForm {
-  customer_name: string;
-  email: string;
-  phone: string;
-  product_name: string;
-  product_id: string;
-  quantity: string;
-  notes: string;
-  company_name: string;
-  city: string;
-  business_type: string;
-}
-
-interface FormErrors {
-  customer_name?: string;
-  email?: string;
-  phone?: string;
-  quantity?: string;
-  notes?: string;
-  company_name?: string;
-  city?: string;
-  business_type?: string;
-}
-
-const emptyForm: RequestForm = {
-  customer_name: "",
-  email: "",
-  phone: "",
-  product_name: "",
-  product_id: "",
-  quantity: "1",
-  notes: "",
-  company_name: "",
-  city: "",
-  business_type: "",
-};
-
-type DisplayProduct = Product | typeof staticProducts[0];
-
-function isDbProduct(p: DisplayProduct): p is Product {
-  return "status" in p;
-}
+  type DisplayProduct,
+  isDbProduct,
+  productName,
+  productDesc,
+  productCat,
+  productImage,
+  productFeatures,
+  productSizes,
+  usageInstructions,
+  productSlug,
+} from "@/lib/productHelpers";
 
 export default function Products() {
   const { t, isAr } = useLang();
@@ -78,11 +30,6 @@ export default function Products() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [modalProduct, setModalProduct] = useState<DisplayProduct | null>(null);
   const [quickView, setQuickView] = useState<DisplayProduct | null>(null);
-  const [form, setForm] = useState<RequestForm>(emptyForm);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
-  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     supabase
@@ -116,121 +63,12 @@ export default function Products() {
       ];
 
   function openModal(product: DisplayProduct) {
-    const name = isDbProduct(product) ? product.name : product.nameEn;
-    const id = product.id;
     setModalProduct(product);
-    setForm({ ...emptyForm, product_name: name, product_id: id });
-    setSubmitted(false);
-    setError("");
-    setErrors({});
   }
 
   function closeModal() {
     setModalProduct(null);
-    setSubmitted(false);
-    setErrors({});
   }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const errs: FormErrors = {};
-    const nameErr = validateName(form.customer_name);
-    if (nameErr) errs.customer_name = isAr ? nameErr.ar : nameErr.en;
-    const emailErr = validateEmail(form.email);
-    if (emailErr) errs.email = isAr ? emailErr.ar : emailErr.en;
-    const phoneErr = validatePhone(form.phone);
-    if (phoneErr) errs.phone = isAr ? phoneErr.ar : phoneErr.en;
-    const qtyErr = validateQuantity(form.quantity);
-    if (qtyErr) errs.quantity = isAr ? qtyErr.ar : qtyErr.en;
-    const notesErr = validateNotes(form.notes);
-    if (notesErr) errs.notes = isAr ? notesErr.ar : notesErr.en;
-    const companyErr = validateCompanyName(form.company_name);
-    if (companyErr) errs.company_name = isAr ? companyErr.ar : companyErr.en;
-    const cityErr = validateCity(form.city);
-    if (cityErr) errs.city = isAr ? cityErr.ar : cityErr.en;
-    const businessTypeErr = validateBusinessType(form.business_type);
-    if (businessTypeErr) errs.business_type = isAr ? businessTypeErr.ar : businessTypeErr.en;
-
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
-
-    setErrors({});
-    setSubmitting(true);
-    setError("");
-
-    const basePayload = {
-      customer_name: form.customer_name,
-      email: form.email,
-      phone: form.phone || null,
-      product_id: isDbProduct(modalProduct!) ? modalProduct!.id : null,
-      product_name: form.product_name,
-      quantity: parseInt(form.quantity) || 1,
-      notes: form.notes || null,
-    };
-    const extendedPayload = {
-      ...basePayload,
-      company_name: form.company_name,
-      city: form.city,
-      business_type: form.business_type,
-    };
-
-    console.log("[QuoteForm] Submitting quote request", extendedPayload);
-
-    let { error: err } = await supabase.from("product_requests").insert(extendedPayload).select();
-
-    if (err && (err.code === "PGRST204" || /column .* does not exist/i.test(err.message))) {
-      console.warn("[QuoteForm] Extended fields not yet supported by schema, retrying with base payload", err);
-      ({ error: err } = await supabase.from("product_requests").insert(basePayload).select());
-    }
-
-    console.log("[QuoteForm] Insert result", { error: err });
-
-    setSubmitting(false);
-    if (err) {
-      console.error("[QuoteForm] Insert failed", err);
-      setError(t("Something went wrong. Please try again.", "حدث خطأ ما. يرجى المحاولة مرة أخرى."));
-    } else {
-      setSubmitted(true);
-    }
-  }
-
-  const productName = (p: DisplayProduct) =>
-    isAr
-      ? (isDbProduct(p) ? (p.name_ar || p.name) : p.nameAr)
-      : (isDbProduct(p) ? p.name : p.nameEn);
-  const productDesc = (p: DisplayProduct) =>
-    isAr
-      ? (isDbProduct(p) ? (p.description_ar || p.description || "") : p.descriptionAr)
-      : (isDbProduct(p) ? p.description ?? "" : p.descriptionEn);
-  const productCat = (p: DisplayProduct) => p.category;
-  const productImage = (p: DisplayProduct) => (isDbProduct(p) ? p.image_url : null);
-  const productFeatures = (p: DisplayProduct): string[] => {
-    if (isDbProduct(p)) return (isAr ? (p.features_ar || p.features) : p.features) ?? [];
-    return isAr ? p.featuresAr : p.featuresEn;
-  };
-  const productSizes = (p: DisplayProduct): string[] => {
-    if (isDbProduct(p)) return p.sizes ?? [];
-    return p.sizes ?? [];
-  };
-  const usageInstructions = (p: DisplayProduct): string => {
-    const ratio = isDbProduct(p) ? p.dilution_ratio : undefined;
-    if (!ratio) return t("Follow label instructions for best results.", "اتبع تعليمات الملصق للحصول على أفضل النتائج.");
-    if (/ready/i.test(ratio))
-      return t("Apply directly to the surface — no dilution required.", "يستخدم مباشرة على السطح — لا حاجة للتخفيف.");
-    const match = ratio.match(/1\s*:\s*(\d+)/);
-    if (match)
-      return t(
-        `Mix 1 part concentrate with ${match[1]} parts water for a ready-to-use solution.`,
-        `اخلط جزء واحد من المركز مع ${match[1]} جزء من الماء للحصول على محلول جاهز للاستخدام.`
-      );
-    return t("Follow label instructions for best results.", "اتبع تعليمات الملصق للحصول على أفضل النتائج.");
-  };
-
-  const inputCls =
-    "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#0D4261] transition-colors";
 
   const productJsonLd = !loading
     ? {
@@ -241,8 +79,8 @@ export default function Products() {
           position: i + 1,
           item: {
             "@type": "Product",
-            name: productName(p),
-            description: productDesc(p) || undefined,
+            name: productName(p, isAr),
+            description: productDesc(p, isAr) || undefined,
             image: productImage(p) || undefined,
             category: productCat(p) || undefined,
             brand: { "@type": "Brand", name: "CARZIX" },
@@ -336,7 +174,7 @@ export default function Products() {
                     {productImage(product) ? (
                       <img
                         src={productImage(product)!}
-                        alt={productName(product)}
+                        alt={productName(product, isAr)}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
@@ -372,9 +210,11 @@ export default function Products() {
 
                   {/* Info */}
                   <div className="flex flex-col flex-1 p-5">
-                    <h3 className="text-white font-bold text-base mb-1.5 leading-snug">
-                      {productName(product)}
-                    </h3>
+                    <Link href={`/products/${productSlug(product)}`}>
+                      <h3 className="text-white font-bold text-base mb-1.5 leading-snug hover:text-[#A29475] transition-colors cursor-pointer">
+                        {productName(product, isAr)}
+                      </h3>
+                    </Link>
                     {isDbProduct(product) && product.dilution_ratio && (
                       <div className="mb-2.5">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0D4261]/20 border border-[#A29475]/35 text-xs font-bold">
@@ -383,9 +223,9 @@ export default function Products() {
                         </span>
                       </div>
                     )}
-                    {productDesc(product) && (
+                    {productDesc(product, isAr) && (
                       <p className="text-white/40 text-xs leading-relaxed mb-3 flex-1 line-clamp-2">
-                        {productDesc(product)}
+                        {productDesc(product, isAr)}
                       </p>
                     )}
                     {productSizes(product).length > 0 && (
@@ -452,7 +292,7 @@ export default function Products() {
                 {productImage(quickView) ? (
                   <img
                     src={productImage(quickView)!}
-                    alt={productName(quickView)}
+                    alt={productName(quickView, isAr)}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -479,7 +319,7 @@ export default function Products() {
               {/* Content */}
               <div className="p-8">
                 <h2 className="text-white font-black text-2xl mb-2 leading-tight">
-                  {productName(quickView)}
+                  {productName(quickView, isAr)}
                 </h2>
                 {isDbProduct(quickView) && quickView.dilution_ratio && (
                   <div className="mb-4">
@@ -488,8 +328,8 @@ export default function Products() {
                     </span>
                   </div>
                 )}
-                {productDesc(quickView) && (
-                  <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView)}</p>
+                {productDesc(quickView, isAr) && (
+                  <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView, isAr)}</p>
                 )}
 
                 {/* Specifications */}
@@ -518,7 +358,7 @@ export default function Products() {
                     )}
                     <div>
                       <span className="text-white/40 text-xs block mb-1.5">{t("Usage Instructions", "تعليمات الاستخدام")}</span>
-                      <p className="text-white/65 text-sm leading-relaxed">{usageInstructions(quickView)}</p>
+                      <p className="text-white/65 text-sm leading-relaxed">{usageInstructions(quickView, t)}</p>
                     </div>
                     {isDbProduct(quickView) && quickView.suitable_for && (
                       <div>
@@ -532,11 +372,11 @@ export default function Products() {
                         </div>
                       </div>
                     )}
-                    {productFeatures(quickView).length > 0 && (
+                    {productFeatures(quickView, isAr).length > 0 && (
                       <div>
                         <span className="text-white/40 text-xs block mb-2">{t("Key Benefits", "المزايا الرئيسية")}</span>
                         <div className="flex flex-wrap gap-2">
-                          {productFeatures(quickView).map((f, i) => (
+                          {productFeatures(quickView, isAr).map((f, i) => (
                             <span
                               key={i}
                               className="px-3 py-1.5 bg-[#0D4261]/12 border border-[#A29475]/28 text-[#A29475] text-xs rounded"
@@ -582,203 +422,7 @@ export default function Products() {
       </AnimatePresence>
 
       {/* ── Request Quote Modal ── */}
-      <AnimatePresence>
-        {modalProduct && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
-            onClick={(e) => e.target === e.currentTarget && closeModal()}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md glass-dark rounded-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-            >
-              <button
-                onClick={closeModal}
-                className="absolute top-5 right-5 text-white/40 hover:text-white transition-colors"
-              >
-                <X size={18} />
-              </button>
-
-              {submitted ? (
-                <div className="flex flex-col items-center py-6 text-center">
-                  <CheckCircle size={40} className="text-[#129B82] mb-4" />
-                  <h3 className="text-white font-bold text-xl mb-2">
-                    {t("Request Sent!", "تم إرسال الطلب!")}
-                  </h3>
-                  <p className="text-white/50 text-sm mb-6">
-                    {t("We'll get back to you shortly regarding", "سنتواصل معك قريباً بخصوص")}{" "}
-                    <span className="text-[#A29475]">{productName(modalProduct)}</span>.
-                  </p>
-                  <button
-                    onClick={closeModal}
-                    className="px-6 py-2.5 bg-[#0D4261] text-white text-sm font-semibold rounded hover:bg-[#0a3350] transition-colors"
-                  >
-                    {t("Close", "إغلاق")}
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <h3 className="text-white font-bold text-xl mb-1">
-                    {t("Request a Quote", "طلب عرض سعر")}
-                  </h3>
-                  <p className="text-[#A29475] text-sm mb-6">{productName(modalProduct)}</p>
-
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Full Name *", "الاسم الكامل *")}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={form.customer_name}
-                        onChange={(e) => setForm((f) => ({ ...f, customer_name: e.target.value }))}
-                        className={inputCls}
-                        placeholder={t("Your full name", "اسمك الكامل")}
-                      />
-                      {errors.customer_name && <p className="text-red-400 text-xs mt-1">{errors.customer_name}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Email *", "البريد الإلكتروني *")}
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                        className={inputCls}
-                        placeholder="you@example.com"
-                      />
-                      {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Phone", "رقم الهاتف")}
-                      </label>
-                      <input
-                        type="tel"
-                        value={form.phone}
-                        onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                        className={inputCls}
-                        placeholder="+974 XXXX XXXX"
-                      />
-                      {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Product", "المنتج")}
-                      </label>
-                      <input
-                        type="text"
-                        readOnly
-                        value={form.product_name}
-                        className={inputCls + " cursor-not-allowed opacity-60"}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Company Name *", "اسم الشركة *")}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={form.company_name}
-                        onChange={(e) => setForm((f) => ({ ...f, company_name: e.target.value }))}
-                        className={inputCls}
-                        placeholder={t("Your company name", "اسم شركتك")}
-                      />
-                      {errors.company_name && <p className="text-red-400 text-xs mt-1">{errors.company_name}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("City *", "المدينة *")}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={form.city}
-                        onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
-                        className={inputCls}
-                        placeholder={t("e.g. Doha", "مثال: الدوحة")}
-                      />
-                      {errors.city && <p className="text-red-400 text-xs mt-1">{errors.city}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Business Type *", "نوع النشاط التجاري *")}
-                      </label>
-                      <select
-                        required
-                        value={form.business_type}
-                        onChange={(e) => setForm((f) => ({ ...f, business_type: e.target.value }))}
-                        className={inputCls}
-                      >
-                        <option value="" disabled className="bg-zinc-900">
-                          {t("Select business type", "اختر نوع النشاط التجاري")}
-                        </option>
-                        {BUSINESS_TYPES.map(({ value, labelEn, labelAr }) => (
-                          <option key={value} value={value} className="bg-zinc-900">
-                            {isAr ? labelAr : labelEn}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.business_type && <p className="text-red-400 text-xs mt-1">{errors.business_type}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Quantity *", "الكمية *")}
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="9999"
-                        required
-                        value={form.quantity}
-                        onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
-                        className={inputCls}
-                      />
-                      {errors.quantity && <p className="text-red-400 text-xs mt-1">{errors.quantity}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Notes", "ملاحظات")}
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={form.notes}
-                        onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                        className={inputCls + " resize-none"}
-                        placeholder={t("Any additional notes…", "أي ملاحظات إضافية…")}
-                      />
-                      {errors.notes && <p className="text-red-400 text-xs mt-1">{errors.notes}</p>}
-                    </div>
-
-                    {error && <p className="text-red-400 text-sm">{error}</p>}
-
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-3.5 bg-[#0D4261] hover:bg-[#0a3350] disabled:opacity-60 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      {submitting ? (
-                        <><Loader2 size={16} className="animate-spin" /> {t("Sending…", "جارٍ الإرسال…")}</>
-                      ) : (
-                        t("Submit Request", "إرسال الطلب")
-                      )}
-                    </button>
-                  </form>
-                </>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <RequestQuoteModal product={modalProduct} onClose={closeModal} />
     </>
   );
 }
