@@ -62,15 +62,20 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            {/* Instagram */}
+            {/* Instagram social button */}
             <a
               href="https://www.instagram.com/carzix.qa/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="CARZIX on Instagram"
-              className="w-8 h-8 flex items-center justify-center text-white/45 hover:text-[#A29475] transition-colors"
+              className="group/social relative w-9 h-9 flex items-center justify-center rounded-full border border-white/12 text-white/50 hover:text-white hover:border-[#A29475]/50 hover:bg-[#A29475]/10 hover:scale-110 transition-all duration-300"
             >
-              <Instagram size={17} />
+              <Instagram size={16} />
+              <span
+                className="pointer-events-none absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-black/95 border border-white/10 px-2.5 py-1 text-[11px] font-medium text-white/80 opacity-0 translate-y-1 group-hover/social:opacity-100 group-hover/social:translate-y-0 transition-all duration-200"
+              >
+                @carzix.qa
+              </span>
             </a>
             {/* Language toggle */}
             <button

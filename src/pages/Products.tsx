@@ -2,12 +2,23 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Loader2, Package, Filter } from "lucide-react";
 import DilutionCalculator from "@/components/DilutionCalculator";
+import ProductDilutionCalculator from "@/components/ProductDilutionCalculator";
+import Seo from "@/components/Seo";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { staticProducts, staticCategories } from "@/lib/products";
-import { validateName, validateEmail, validatePhone, validateQuantity, validateNotes } from "@/lib/validation";
+import {
+  validateName,
+  validateEmail,
+  validatePhone,
+  validateQuantity,
+  validateNotes,
+  validateCompanyName,
+  validateCity,
+  validateMonthlyVolume,
+} from "@/lib/validation";
 
 interface RequestForm {
   customer_name: string;
@@ -17,6 +28,9 @@ interface RequestForm {
   product_id: string;
   quantity: string;
   notes: string;
+  company_name: string;
+  city: string;
+  monthly_volume: string;
 }
 
 interface FormErrors {
@@ -25,6 +39,9 @@ interface FormErrors {
   phone?: string;
   quantity?: string;
   notes?: string;
+  company_name?: string;
+  city?: string;
+  monthly_volume?: string;
 }
 
 const emptyForm: RequestForm = {
@@ -35,6 +52,9 @@ const emptyForm: RequestForm = {
   product_id: "",
   quantity: "1",
   notes: "",
+  company_name: "",
+  city: "",
+  monthly_volume: "",
 };
 
 type DisplayProduct = Product | typeof staticProducts[0];
@@ -117,6 +137,12 @@ export default function Products() {
     if (qtyErr) errs.quantity = isAr ? qtyErr.ar : qtyErr.en;
     const notesErr = validateNotes(form.notes);
     if (notesErr) errs.notes = isAr ? notesErr.ar : notesErr.en;
+    const companyErr = validateCompanyName(form.company_name);
+    if (companyErr) errs.company_name = isAr ? companyErr.ar : companyErr.en;
+    const cityErr = validateCity(form.city);
+    if (cityErr) errs.city = isAr ? cityErr.ar : cityErr.en;
+    const volumeErr = validateMonthlyVolume(form.monthly_volume);
+    if (volumeErr) errs.monthly_volume = isAr ? volumeErr.ar : volumeErr.en;
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -127,7 +153,7 @@ export default function Products() {
     setSubmitting(true);
     setError("");
 
-    const payload = {
+    const basePayload = {
       customer_name: form.customer_name,
       email: form.email,
       phone: form.phone || null,
@@ -136,15 +162,23 @@ export default function Products() {
       quantity: parseInt(form.quantity) || 1,
       notes: form.notes || null,
     };
+    const extendedPayload = {
+      ...basePayload,
+      company_name: form.company_name,
+      city: form.city,
+      monthly_volume: parseInt(form.monthly_volume) || null,
+    };
 
-    console.log("[QuoteForm] Submitting quote request", payload);
+    console.log("[QuoteForm] Submitting quote request", extendedPayload);
 
-    const { data, error: err } = await supabase
-      .from("product_requests")
-      .insert(payload)
-      .select();
+    let { error: err } = await supabase.from("product_requests").insert(extendedPayload).select();
 
-    console.log("[QuoteForm] Insert result", { data, error: err });
+    if (err && (err.code === "PGRST204" || /column .* does not exist/i.test(err.message))) {
+      console.warn("[QuoteForm] Extended fields not yet supported by schema, retrying with base payload", err);
+      ({ error: err } = await supabase.from("product_requests").insert(basePayload).select());
+    }
+
+    console.log("[QuoteForm] Insert result", { error: err });
 
     setSubmitting(false);
     if (err) {
@@ -173,12 +207,52 @@ export default function Products() {
     if (isDbProduct(p)) return p.sizes ?? [];
     return p.sizes ?? [];
   };
+  const usageInstructions = (p: DisplayProduct): string => {
+    const ratio = isDbProduct(p) ? p.dilution_ratio : undefined;
+    if (!ratio) return t("Follow label instructions for best results.", "اتبع تعليمات الملصق للحصول على أفضل النتائج.");
+    if (/ready/i.test(ratio))
+      return t("Apply directly to the surface — no dilution required.", "يستخدم مباشرة على السطح — لا حاجة للتخفيف.");
+    const match = ratio.match(/1\s*:\s*(\d+)/);
+    if (match)
+      return t(
+        `Mix 1 part concentrate with ${match[1]} parts water for a ready-to-use solution.`,
+        `اخلط جزء واحد من المركز مع ${match[1]} جزء من الماء للحصول على محلول جاهز للاستخدام.`
+      );
+    return t("Follow label instructions for best results.", "اتبع تعليمات الملصق للحصول على أفضل النتائج.");
+  };
 
   const inputCls =
     "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#0D4261] transition-colors";
 
+  const productJsonLd = !loading
+    ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        itemListElement: filtered.slice(0, 24).map((p, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "Product",
+            name: productName(p),
+            description: productDesc(p) || undefined,
+            image: productImage(p) || undefined,
+            category: productCat(p) || undefined,
+            brand: { "@type": "Brand", name: "CARZIX" },
+          },
+        })),
+      }
+    : undefined;
+
   return (
     <>
+      <Seo
+        title={t("Our Products", "منتجاتنا")}
+        description={t(
+          "Browse CARZIX's full range of professional-grade car care concentrates — shampoos, polishes, glass and interior cleaners, tire care, and more.",
+          "تصفح كتالوج CARZIX الكامل من منتجات العناية بالسيارات الاحترافية — شامبوهات وتلميع ومنظفات زجاج وداخلية وعناية بالكفرات والمزيد."
+        )}
+        jsonLd={productJsonLd}
+      />
       {/* Hero */}
       <section className="relative pt-36 pb-20 bg-black overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,_rgba(13,66,97,0.25)_0%,_transparent_60%)]" />
@@ -307,12 +381,11 @@ export default function Products() {
                       </p>
                     )}
                     {productSizes(product).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-2">
-                        {productSizes(product).map((s, si) => (
-                          <span key={si} className="px-2 py-0.5 bg-[#0D4261]/10 border border-[#0D4261]/22 text-white/45 text-[10px] rounded font-mono">
-                            {s}
-                          </span>
-                        ))}
+                      <div className="flex items-center flex-wrap gap-1.5 mb-2 text-[10px]">
+                        <span className="text-white/35 font-medium">{t("Sizes:", "الأحجام:")}</span>
+                        <span className="text-white/55 font-mono tracking-wide">
+                          {productSizes(product).join(" | ")}
+                        </span>
                       </div>
                     )}
                     {isDbProduct(product) && product.suitable_for && (
@@ -347,7 +420,10 @@ export default function Products() {
         </div>
       </section>
 
-      {/* ── Dilution Calculator ── */}
+      {/* ── ROI / Per-Product Dilution Calculator ── */}
+      <ProductDilutionCalculator />
+
+      {/* ── Bulk Savings Calculator ── */}
       <DilutionCalculator />
 
       {/* ── Quick View Modal ── */}
@@ -411,46 +487,16 @@ export default function Products() {
                   <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView)}</p>
                 )}
 
-                {productFeatures(quickView).length > 0 && (
-                  <div className="mb-5">
-                    <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
-                      {t("Key Features", "المميزات الرئيسية")}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {productFeatures(quickView).map((f, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1.5 bg-[#0D4261]/12 border border-[#A29475]/28 text-[#A29475] text-xs rounded"
-                        >
-                          {f}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Operational Information */}
+                {/* Specifications */}
                 <div className="mb-7">
                   <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
-                    {t("Operational Information", "معلومات التشغيل")}
+                    {t("Specifications", "المواصفات")}
                   </p>
-                  <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-3">
+                  <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-4">
                     {isDbProduct(quickView) && quickView.dilution_ratio && (
                       <div className="flex items-center justify-between">
                         <span className="text-white/40 text-xs">{t("Dilution Ratio", "نسبة التخفيف")}</span>
                         <span className="text-[#A29475] font-bold text-sm">{quickView.dilution_ratio}</span>
-                      </div>
-                    )}
-                    {isDbProduct(quickView) && quickView.suitable_for && (
-                      <div>
-                        <span className="text-white/40 text-xs block mb-2">{t("Suitable For", "مناسب لـ")}</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {quickView.suitable_for.split(/[,،]/).map((s, i) => (
-                            <span key={i} className="px-2.5 py-1 bg-[#0D4261]/15 border border-[#0D4261]/30 text-white/60 text-xs rounded-full">
-                              {s.trim()}
-                            </span>
-                          ))}
-                        </div>
                       </div>
                     )}
                     {productSizes(quickView).length > 0 && (
@@ -460,6 +506,37 @@ export default function Products() {
                           {productSizes(quickView).map((s, i) => (
                             <span key={i} className="px-2.5 py-1 bg-[#0D4261]/10 border border-[#0D4261]/22 text-white/50 text-xs rounded font-mono">
                               {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-white/40 text-xs block mb-1.5">{t("Usage Instructions", "تعليمات الاستخدام")}</span>
+                      <p className="text-white/65 text-sm leading-relaxed">{usageInstructions(quickView)}</p>
+                    </div>
+                    {isDbProduct(quickView) && quickView.suitable_for && (
+                      <div>
+                        <span className="text-white/40 text-xs block mb-2">{t("Applications", "الاستخدامات")}</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {quickView.suitable_for.split(/[,،]/).map((s, i) => (
+                            <span key={i} className="px-2.5 py-1 bg-[#0D4261]/15 border border-[#0D4261]/30 text-white/60 text-xs rounded-full">
+                              {s.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {productFeatures(quickView).length > 0 && (
+                      <div>
+                        <span className="text-white/40 text-xs block mb-2">{t("Key Benefits", "المزايا الرئيسية")}</span>
+                        <div className="flex flex-wrap gap-2">
+                          {productFeatures(quickView).map((f, i) => (
+                            <span
+                              key={i}
+                              className="px-3 py-1.5 bg-[#0D4261]/12 border border-[#A29475]/28 text-[#A29475] text-xs rounded"
+                            >
+                              {f}
                             </span>
                           ))}
                         </div>
@@ -598,6 +675,49 @@ export default function Products() {
                         value={form.product_name}
                         className={inputCls + " cursor-not-allowed opacity-60"}
                       />
+                    </div>
+                    <div>
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
+                        {t("Company Name *", "اسم الشركة *")}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={form.company_name}
+                        onChange={(e) => setForm((f) => ({ ...f, company_name: e.target.value }))}
+                        className={inputCls}
+                        placeholder={t("Your company name", "اسم شركتك")}
+                      />
+                      {errors.company_name && <p className="text-red-400 text-xs mt-1">{errors.company_name}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
+                        {t("City *", "المدينة *")}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={form.city}
+                        onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+                        className={inputCls}
+                        placeholder={t("e.g. Doha", "مثال: الدوحة")}
+                      />
+                      {errors.city && <p className="text-red-400 text-xs mt-1">{errors.city}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-white/55 text-xs font-medium mb-1.5">
+                        {t("Monthly Consumption (Liters) *", "الاستهلاك الشهري (لتر) *")}
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        required
+                        value={form.monthly_volume}
+                        onChange={(e) => setForm((f) => ({ ...f, monthly_volume: e.target.value }))}
+                        className={inputCls}
+                        placeholder={t("e.g. 200", "مثال: 200")}
+                      />
+                      {errors.monthly_volume && <p className="text-red-400 text-xs mt-1">{errors.monthly_volume}</p>}
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">

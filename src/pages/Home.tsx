@@ -9,6 +9,7 @@ import Marquee from "@/components/Marquee";
 import BeforeAfter from "@/components/BeforeAfter";
 import DilutionCalculator from "@/components/DilutionCalculator";
 import ConcentrationSection from "@/components/ConcentrationSection";
+import Seo from "@/components/Seo";
 import { fadeUp, blurUp, fadeScale, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
@@ -67,6 +68,13 @@ export default function Home() {
 
   return (
     <div className="bg-black">
+      <Seo
+        title={t("Professional Car Care Products in Qatar", "منتجات عناية احترافية بالسيارات في قطر")}
+        description={t(
+          "CARZIX supplies German-engineered, professional-grade car care concentrates for studios, dealerships, and car washes across Qatar and the GCC. Bulk supply available.",
+          "توفر CARZIX منتجات عناية بالسيارات المركزة بتقنية ألمانية بدرجة احترافية للمحلات والوكلاء والمغاسل في قطر والخليج. التوريد بالجملة متوفر."
+        )}
+      />
       {/* ── Hero ── */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#0D4261] blur-[140px] opacity-18 animate-orb-breathe pointer-events-none" />
