@@ -6,6 +6,7 @@ import { fadeUp, stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import WhyProfessionals from "@/components/WhyProfessionals";
 import { validateName, validateEmail, validatePhone, validateMessage } from "@/lib/validation";
+import Seo from "@/components/Seo";
 
 interface Form {
   full_name: string;
@@ -89,6 +90,13 @@ export default function Contact() {
 
   return (
     <>
+      <Seo
+        title={t("Contact Us", "اتصل بنا")}
+        description={t(
+          "Get in touch with CARZIX for wholesale quotes, bulk orders, and product inquiries. Our team in Doha, Qatar responds within 24 hours.",
+          "تواصل مع CARZIX للحصول على عروض أسعار بالجملة والطلبات الكبيرة واستفسارات المنتجات. يرد فريقنا في الدوحة، قطر خلال 24 ساعة."
+        )}
+      />
       {/* Hero */}
       <section className="relative pt-36 pb-20 bg-black overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,_rgba(13,66,97,0.25)_0%,_transparent_60%)]" />

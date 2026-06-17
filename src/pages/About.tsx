@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Award, Shield, Leaf, Globe, ChevronRight } from "lucide-react";
 import { fadeUp, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
+import Seo from "@/components/Seo";
 
 export default function About() {
   const { t, isAr } = useLang();
@@ -68,6 +69,13 @@ export default function About() {
 
   return (
     <>
+      <Seo
+        title={t("About Us", "من نحن")}
+        description={t(
+          "CARZIX brings German-engineered, professional-grade car care technology to Qatar and the GCC, partnering with detailing studios, dealerships, and car care businesses.",
+          "تقدم CARZIX تقنية عناية احترافية بالسيارات بتقنية ألمانية إلى قطر والخليج، بالشراكة مع محلات التفصيل والوكلاء وشركات العناية بالسيارات."
+        )}
+      />
       {/* Hero */}
       <section className="relative pt-36 pb-24 bg-black overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,_rgba(13,66,97,0.25)_0%,_transparent_60%)]" />
