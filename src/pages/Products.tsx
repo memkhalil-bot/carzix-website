@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Loader2, Package, Filter } from "lucide-react";
 import DilutionCalculator from "@/components/DilutionCalculator";
-import ProductDilutionCalculator from "@/components/ProductDilutionCalculator";
 import Seo from "@/components/Seo";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
@@ -17,8 +16,17 @@ import {
   validateNotes,
   validateCompanyName,
   validateCity,
-  validateMonthlyVolume,
+  validateBusinessType,
 } from "@/lib/validation";
+
+const BUSINESS_TYPES = [
+  { value: "Car Wash", labelEn: "Car Wash", labelAr: "مغسلة سيارات" },
+  { value: "Detailing Center", labelEn: "Detailing Center", labelAr: "مركز تلميع" },
+  { value: "Distributor", labelEn: "Distributor", labelAr: "موزع" },
+  { value: "Retail Shop", labelEn: "Retail Shop", labelAr: "محل بيع بالتجزئة" },
+  { value: "Fleet Company", labelEn: "Fleet Company", labelAr: "شركة أسطول" },
+  { value: "Other", labelEn: "Other", labelAr: "أخرى" },
+];
 
 interface RequestForm {
   customer_name: string;
@@ -30,7 +38,7 @@ interface RequestForm {
   notes: string;
   company_name: string;
   city: string;
-  monthly_volume: string;
+  business_type: string;
 }
 
 interface FormErrors {
@@ -41,7 +49,7 @@ interface FormErrors {
   notes?: string;
   company_name?: string;
   city?: string;
-  monthly_volume?: string;
+  business_type?: string;
 }
 
 const emptyForm: RequestForm = {
@@ -54,7 +62,7 @@ const emptyForm: RequestForm = {
   notes: "",
   company_name: "",
   city: "",
-  monthly_volume: "",
+  business_type: "",
 };
 
 type DisplayProduct = Product | typeof staticProducts[0];
@@ -141,8 +149,8 @@ export default function Products() {
     if (companyErr) errs.company_name = isAr ? companyErr.ar : companyErr.en;
     const cityErr = validateCity(form.city);
     if (cityErr) errs.city = isAr ? cityErr.ar : cityErr.en;
-    const volumeErr = validateMonthlyVolume(form.monthly_volume);
-    if (volumeErr) errs.monthly_volume = isAr ? volumeErr.ar : volumeErr.en;
+    const businessTypeErr = validateBusinessType(form.business_type);
+    if (businessTypeErr) errs.business_type = isAr ? businessTypeErr.ar : businessTypeErr.en;
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -166,7 +174,7 @@ export default function Products() {
       ...basePayload,
       company_name: form.company_name,
       city: form.city,
-      monthly_volume: parseInt(form.monthly_volume) || null,
+      business_type: form.business_type,
     };
 
     console.log("[QuoteForm] Submitting quote request", extendedPayload);
@@ -420,10 +428,7 @@ export default function Products() {
         </div>
       </section>
 
-      {/* ── ROI / Per-Product Dilution Calculator ── */}
-      <ProductDilutionCalculator />
-
-      {/* ── Bulk Savings Calculator ── */}
+      {/* ── Dilution Calculator ── */}
       <DilutionCalculator />
 
       {/* ── Quick View Modal ── */}
@@ -706,18 +711,24 @@ export default function Products() {
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">
-                        {t("Monthly Consumption (Liters) *", "الاستهلاك الشهري (لتر) *")}
+                        {t("Business Type *", "نوع النشاط التجاري *")}
                       </label>
-                      <input
-                        type="number"
-                        min="1"
+                      <select
                         required
-                        value={form.monthly_volume}
-                        onChange={(e) => setForm((f) => ({ ...f, monthly_volume: e.target.value }))}
+                        value={form.business_type}
+                        onChange={(e) => setForm((f) => ({ ...f, business_type: e.target.value }))}
                         className={inputCls}
-                        placeholder={t("e.g. 200", "مثال: 200")}
-                      />
-                      {errors.monthly_volume && <p className="text-red-400 text-xs mt-1">{errors.monthly_volume}</p>}
+                      >
+                        <option value="" disabled className="bg-zinc-900">
+                          {t("Select business type", "اختر نوع النشاط التجاري")}
+                        </option>
+                        {BUSINESS_TYPES.map(({ value, labelEn, labelAr }) => (
+                          <option key={value} value={value} className="bg-zinc-900">
+                            {isAr ? labelAr : labelEn}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.business_type && <p className="text-red-400 text-xs mt-1">{errors.business_type}</p>}
                     </div>
                     <div>
                       <label className="block text-white/55 text-xs font-medium mb-1.5">

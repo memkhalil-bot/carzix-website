@@ -121,7 +121,7 @@ export type Database = {
           status: string | null;
           company_name: string | null;
           city: string | null;
-          monthly_volume: number | null;
+          business_type: string | null;
           created_at: string;
         };
         Insert: {
@@ -135,7 +135,7 @@ export type Database = {
           status?: string | null;
           company_name?: string | null;
           city?: string | null;
-          monthly_volume?: number | null;
+          business_type?: string | null;
         };
         Update: {
           id?: string;
@@ -149,7 +149,7 @@ export type Database = {
           status?: string | null;
           company_name?: string | null;
           city?: string | null;
-          monthly_volume?: number | null;
+          business_type?: string | null;
         };
         Relationships: [];
       };
