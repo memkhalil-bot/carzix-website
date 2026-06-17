@@ -96,17 +96,9 @@ export function validateCity(value: string): Msg | null {
   return null;
 }
 
-export function validateMonthlyVolume(value: string): Msg | null {
+export function validateBusinessType(value: string): Msg | null {
   const v = value.trim();
-  if (!v) return { en: "Monthly consumption is required.", ar: "الاستهلاك الشهري مطلوب." };
-  const n = Number(v);
-  if (!Number.isInteger(n) || n < 1)
-    return {
-      en: "Monthly consumption must be a whole number of at least 1.",
-      ar: "يجب أن يكون الاستهلاك الشهري عددًا صحيحًا 1 على الأقل.",
-    };
-  if (n > 999999)
-    return { en: "Monthly consumption value is too large.", ar: "قيمة الاستهلاك الشهري كبيرة جدًا." };
+  if (!v) return { en: "Business type is required.", ar: "نوع النشاط التجاري مطلوب." };
   return null;
 }
 
