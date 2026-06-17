@@ -134,6 +134,9 @@ const T = {
   email:         { ar: "البريد الإلكتروني",   en: "Email" },
   phone:         { ar: "الهاتف",              en: "Phone" },
   notes:         { ar: "ملاحظات",             en: "Notes" },
+  companyName:   { ar: "اسم الشركة",          en: "Company" },
+  city:          { ar: "المدينة",             en: "City" },
+  businessType:  { ar: "نوع النشاط التجاري",  en: "Business Type" },
   clientsSlider: { ar: "العملاء (شريط الشعار)", en: "Clients (Logo Slider)" },
   required:      { ar: "(مطلوب)",             en: "(required)" },
   imagePreview:  { ar: "معاينة الصورة",       en: "Image Preview" },
@@ -1413,6 +1416,24 @@ function RequestsTab({ lang }: { lang: Lang }) {
                       <div>
                         <p className="text-xs mb-1" style={{ color: C.muted }}>{t("phone", lang)}</p>
                         <a href={`tel:${r.phone}`} className="text-sm" style={{ color: C.text }}>{r.phone}</a>
+                      </div>
+                    )}
+                    {r.company_name && (
+                      <div>
+                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("companyName", lang)}</p>
+                        <p className="text-sm" style={{ color: C.text }}>{r.company_name}</p>
+                      </div>
+                    )}
+                    {r.city && (
+                      <div>
+                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("city", lang)}</p>
+                        <p className="text-sm" style={{ color: C.text }}>{r.city}</p>
+                      </div>
+                    )}
+                    {r.business_type && (
+                      <div>
+                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("businessType", lang)}</p>
+                        <p className="text-sm" style={{ color: C.text }}>{r.business_type}</p>
                       </div>
                     )}
                     {r.notes && (
