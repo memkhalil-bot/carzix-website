@@ -8,7 +8,9 @@ import TrustStrip from "@/components/TrustStrip";
 
 const Home           = lazy(() => import("@/pages/Home"));
 const Products       = lazy(() => import("@/pages/Products"));
+const ProductDetail  = lazy(() => import("@/pages/ProductDetail"));
 const About          = lazy(() => import("@/pages/About"));
+const Partners       = lazy(() => import("@/pages/Partners"));
 const Contact        = lazy(() => import("@/pages/Contact"));
 const AdminLogin     = lazy(() => import("@/pages/admin/Login"));
 const AdminDashboard = lazy(() => import("@/pages/admin/Dashboard"));
@@ -33,10 +35,12 @@ export default function App() {
             <main className="flex-1">
               <Suspense fallback={<div className="min-h-screen bg-black" />}>
                 <Switch>
-                  <Route path="/"         component={Home} />
-                  <Route path="/products" component={Products} />
-                  <Route path="/about"    component={About} />
-                  <Route path="/contact"  component={Contact} />
+                  <Route path="/"               component={Home} />
+                  <Route path="/products"       component={Products} />
+                  <Route path="/products/:slug" component={ProductDetail} />
+                  <Route path="/about"          component={About} />
+                  <Route path="/partners"       component={Partners} />
+                  <Route path="/contact"        component={Contact} />
                 </Switch>
               </Suspense>
             </main>

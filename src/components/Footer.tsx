@@ -67,6 +67,7 @@ export default function Footer() {
                 { href: "/", label: t("Home", "الرئيسية") },
                 { href: "/products", label: t("Products", "المنتجات") },
                 { href: "/about", label: t("About Us", "من نحن") },
+                { href: "/partners", label: t("Become a Partner", "كن شريكاً") },
                 { href: "/contact", label: t("Contact", "اتصل بنا") },
               ].map(({ href, label }) => (
                 <li key={href}>
