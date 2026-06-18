@@ -5,7 +5,7 @@ import { useLang } from "@/contexts/LanguageContext";
 
 const reasons = [
   { en: "German Engineered Formula", ar: "تركيبة ألمانية" },
-  { en: "Up To 400L From 1L Concentrate", ar: "1 لتر ينتج حتى 400 لتر" },
+  { en: "Up to 1:400 Dilution on Selected Formulas", ar: "تخفيف يصل إلى 1:400 في تركيبات مختارة" },
   { en: "Phosphate Free", ar: "خالي من الفوسفات" },
   { en: "Qatar Climate Ready", ar: "مناسب لمناخ قطر" },
   { en: "Consistent Professional Results", ar: "نتائج احترافية ثابتة" },

@@ -8,7 +8,7 @@ const EN = [
   "UV Protected",
   "Biodegradable Formula",
   "Safe For All Surfaces",
-  "1:400 Dilution Ratio",
+  "Up To 1:400 Dilution",
 ];
 
 const AR = [
@@ -19,7 +19,7 @@ const AR = [
   "محمي من الأشعة UV",
   "تركيبة قابلة للتحلل",
   "آمن لجميع الأسطح",
-  "نسبة تخفيف 1:400",
+  "تخفيف يصل إلى 1:400",
 ];
 
 export default function Marquee() {

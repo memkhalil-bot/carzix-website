@@ -67,7 +67,7 @@ export default function ConcentrationSection() {
             </h2>
           </motion.div>
 
-          {/* 1L → 400L animated display */}
+          {/* 1L → up to 400L animated display */}
           <motion.div variants={fadeScale} className="text-center mb-16">
             <div className="inline-flex flex-col items-center">
               {/* 1 */}
@@ -89,21 +89,25 @@ export default function ConcentrationSection() {
                 />
               </div>
 
-              {/* 400 */}
+              {/* Up to 400, on the highest-yield formulas */}
               <div>
                 <div className="text-[110px] sm:text-[140px] lg:text-[160px] font-black leading-none text-[#A29475] tabular-nums drop-shadow-[0_0_30px_rgba(162,148,117,0.3)]">
                   <Counter to={400} />
                 </div>
                 <p className="text-[#A29475]/50 text-sm font-semibold uppercase tracking-[0.22em] -mt-2">
-                  {t("Liters Ready-To-Use", "لتر جاهز للاستخدام")}
+                  {t("Max Liters Ready-To-Use (Selected Formulas)", "أعلى إنتاجية بالتر (تركيبات مختارة)")}
                 </p>
               </div>
             </div>
 
             {/* Ratio badge */}
             <div className="mt-8 inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0D4261]/20 border border-[#0D4261]/45 shadow-[0_0_24px_rgba(13,66,97,0.2)]">
-              <span className="text-white/50 text-sm">{t("Concentration ratio", "نسبة التركيز")}</span>
-              <span className="text-[#A29475] font-black text-xl tracking-wider">1 : 400</span>
+              <span className="text-[#A29475] font-black text-sm sm:text-base tracking-wide">
+                {t(
+                  "Up to 1:400 dilution on selected formulas",
+                  "تخفيف يصل إلى 1:400 في تركيبات مختارة"
+                )}
+              </span>
             </div>
           </motion.div>
 

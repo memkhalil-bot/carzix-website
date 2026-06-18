@@ -147,13 +147,13 @@ export default function Home() {
                 "تركيبات كيميائية ألمانية فائقة التركيز، تمنح مراكز التلميع والوكالات في دولة قطر أداءً استثنائياً وتوفيراً تشغيلياً لا يضاهى، معتمدة وموزعة حصرياً عبر شركة الدوحة العالمية للتجارة."
               )}
             </motion.p>
-            {/* Concentration ratio callout */}
+            {/* Concentration callout */}
             <motion.div variants={fadeUp} className="inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0D4261]/18 border border-[#0D4261]/35 mb-7">
-              <span className="text-[#A29475] font-black text-lg tabular-nums">1L</span>
-              <span className="text-[#0D4261]/50 font-bold text-lg">→</span>
-              <span className="text-white font-black text-lg tabular-nums">400L</span>
-              <span className="text-white/30 text-sm hidden sm:inline">
-                {t("Ready-To-Use", "جاهز للاستخدام")}
+              <span className="text-[#A29475] font-black text-sm sm:text-base">
+                {t(
+                  "High-concentration formulas with product-specific dilution ratios",
+                  "تركيبات عالية التركيز بنسب تخفيف مختلفة حسب كل منتج"
+                )}
               </span>
             </motion.div>
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
