@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle, Loader2, Package, Filter } from "lucide-react";
+import { motion } from "framer-motion";
+import { Loader2, Package, Filter } from "lucide-react";
 import DilutionCalculator from "@/components/DilutionCalculator";
 import RequestQuoteModal from "@/components/RequestQuoteModal";
 import Seo from "@/components/Seo";
@@ -17,9 +17,7 @@ import {
   productDesc,
   productCat,
   productImage,
-  productFeatures,
   productSizes,
-  usageInstructions,
   productSlug,
 } from "@/lib/productHelpers";
 
@@ -29,7 +27,6 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [modalProduct, setModalProduct] = useState<DisplayProduct | null>(null);
-  const [quickView, setQuickView] = useState<DisplayProduct | null>(null);
 
   useEffect(() => {
     supabase
@@ -191,21 +188,6 @@ export default function Products() {
                         {productCat(product)}
                       </span>
                     )}
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 gap-2">
-                      <button
-                        onClick={() => setQuickView(product)}
-                        className="w-full py-2 bg-white/8 backdrop-blur-sm border border-white/18 text-[#D1D5DB] text-xs font-semibold rounded hover:bg-white/18 transition-colors"
-                      >
-                        {t("Quick View", "عرض سريع")}
-                      </button>
-                      <button
-                        onClick={() => openModal(product)}
-                        className="w-full py-2 btn-cta text-[#111827] text-xs font-bold rounded"
-                      >
-                        {t("Request Quote", "طلب عرض سعر")}
-                      </button>
-                    </div>
                   </div>
 
                   {/* Info */}
@@ -245,19 +227,21 @@ export default function Products() {
                         ))}
                       </div>
                     )}
-                    <div className="flex items-center justify-between mt-auto pt-1">
-                      {isDbProduct(product) && product.price != null ? (
-                        <span className="text-[#A29475] font-bold text-sm">
-                          QAR {product.price.toLocaleString()}
-                        </span>
-                      ) : (
-                        <span className="text-white/30 text-xs">{t("Contact for price", "تواصل للسعر")}</span>
-                      )}
+                    <div className="mt-auto pt-1">
+                      <div className="mb-3">
+                        {isDbProduct(product) && product.price != null ? (
+                          <span className="text-[#A29475] font-bold text-sm">
+                            QAR {product.price.toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-white/30 text-xs">{t("Contact for price", "تواصل للسعر")}</span>
+                        )}
+                      </div>
                       <button
                         onClick={() => openModal(product)}
-                        className="btn-cta px-3 py-1.5 text-[#111827] text-xs font-bold rounded"
+                        className="w-full py-2.5 btn-cta text-[#111827] text-sm font-bold rounded"
                       >
-                        {t("Request Quote", "طلب عرض سعر")}
+                        {t("Request Bulk Order for Your Center", "طلب كمية تجارية لمركزك")}
                       </button>
                     </div>
                   </div>
@@ -270,156 +254,6 @@ export default function Products() {
 
       {/* ── Dilution Calculator ── */}
       <DilutionCalculator />
-
-      {/* ── Quick View Modal ── */}
-      <AnimatePresence>
-        {quickView && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
-            onClick={(e) => e.target === e.currentTarget && setQuickView(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              className="relative w-full max-w-2xl glass-dark rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto"
-            >
-              {/* Image area */}
-              <div className="relative h-52 bg-zinc-900 flex items-center justify-center">
-                {productImage(quickView) ? (
-                  <img
-                    src={productImage(quickView)!}
-                    alt={productName(quickView, isAr)}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-16 h-16 rounded-full bg-[#0D4261]/20 border border-[#0D4261]/40 flex items-center justify-center">
-                      <span className="text-[#A29475] font-black text-xl">CZ</span>
-                    </div>
-                    <span className="text-[#A29475]/60 text-xs tracking-widest uppercase">{productCat(quickView)}</span>
-                  </div>
-                )}
-                <button
-                  onClick={() => setQuickView(null)}
-                  className="absolute top-4 right-4 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-colors"
-                >
-                  <X size={16} />
-                </button>
-                {productCat(quickView) && (
-                  <span className="absolute bottom-4 start-4 px-3 py-1 bg-black/70 text-[#A29475] text-xs rounded">
-                    {productCat(quickView)}
-                  </span>
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="p-8">
-                <h2 className="text-white font-black text-2xl mb-2 leading-tight">
-                  {productName(quickView, isAr)}
-                </h2>
-                {isDbProduct(quickView) && quickView.dilution_ratio && (
-                  <div className="mb-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#0D4261]/20 border border-[#A29475]/40 text-[#A29475] text-sm font-bold tracking-wider shadow-[0_0_12px_rgba(162,148,117,0.12)]">
-                      {quickView.dilution_ratio}
-                    </span>
-                  </div>
-                )}
-                {productDesc(quickView, isAr) && (
-                  <p className="text-white/55 text-sm leading-relaxed mb-6">{productDesc(quickView, isAr)}</p>
-                )}
-
-                {/* Specifications */}
-                <div className="mb-7">
-                  <p className="text-white/35 text-xs uppercase tracking-widest mb-3">
-                    {t("Specifications", "المواصفات")}
-                  </p>
-                  <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-4">
-                    {isDbProduct(quickView) && quickView.dilution_ratio && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-white/40 text-xs">{t("Dilution Ratio", "نسبة التخفيف")}</span>
-                        <span className="text-[#A29475] font-bold text-sm">{quickView.dilution_ratio}</span>
-                      </div>
-                    )}
-                    {productSizes(quickView).length > 0 && (
-                      <div>
-                        <span className="text-white/40 text-xs block mb-2">{t("Available Sizes", "الأحجام المتاحة")}</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {productSizes(quickView).map((s, i) => (
-                            <span key={i} className="px-2.5 py-1 bg-[#0D4261]/10 border border-[#0D4261]/22 text-white/50 text-xs rounded font-mono">
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    <div>
-                      <span className="text-white/40 text-xs block mb-1.5">{t("Usage Instructions", "تعليمات الاستخدام")}</span>
-                      <p className="text-white/65 text-sm leading-relaxed">{usageInstructions(quickView, t)}</p>
-                    </div>
-                    {isDbProduct(quickView) && quickView.suitable_for && (
-                      <div>
-                        <span className="text-white/40 text-xs block mb-2">{t("Applications", "الاستخدامات")}</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {quickView.suitable_for.split(/[,،]/).map((s, i) => (
-                            <span key={i} className="px-2.5 py-1 bg-[#0D4261]/15 border border-[#0D4261]/30 text-white/60 text-xs rounded-full">
-                              {s.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {productFeatures(quickView, isAr).length > 0 && (
-                      <div>
-                        <span className="text-white/40 text-xs block mb-2">{t("Key Benefits", "المزايا الرئيسية")}</span>
-                        <div className="flex flex-wrap gap-2">
-                          {productFeatures(quickView, isAr).map((f, i) => (
-                            <span
-                              key={i}
-                              className="px-3 py-1.5 bg-[#0D4261]/12 border border-[#A29475]/28 text-[#A29475] text-xs rounded"
-                            >
-                              {f}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    <div className="pt-2 border-t border-white/8 flex flex-wrap gap-2">
-                      {[
-                        { en: "Professional Grade", ar: "درجة احترافية" },
-                        { en: "Phosphate Free", ar: "خالي من الفوسفات" },
-                        { en: "GCC Climate Tested", ar: "مختبر لمناخ الخليج" },
-                      ].map(({ en, ar }) => (
-                        <span key={en} className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#129B82]/10 border border-[#129B82]/22 text-[#129B82] text-[10px] rounded-full">
-                          <CheckCircle size={9} /> {isAr ? ar : en}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => { openModal(quickView); setQuickView(null); }}
-                    className="flex-1 btn-cta py-3.5 text-[#111827] font-bold rounded"
-                  >
-                    {t("Request a Quote", "طلب عرض سعر")}
-                  </button>
-                  <button
-                    onClick={() => setQuickView(null)}
-                    className="px-6 py-3.5 border border-white/15 text-white/55 hover:text-white text-sm rounded transition-colors"
-                  >
-                    {t("Close", "إغلاق")}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── Request Quote Modal ── */}
       <RequestQuoteModal product={modalProduct} onClose={closeModal} />

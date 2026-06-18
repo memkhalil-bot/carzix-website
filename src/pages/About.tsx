@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { Award, Shield, Leaf, Globe, ChevronRight } from "lucide-react";
+import { Award, Handshake, Zap, Truck, ChevronRight } from "lucide-react";
 import { fadeUp, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import Seo from "@/components/Seo";
@@ -11,31 +11,31 @@ export default function About() {
   const values = [
     {
       icon: Award,
-      titleEn: "German Technology",
-      titleAr: "تكنولوجيا ألمانية",
+      titleEn: "Superior German Engineering",
+      titleAr: "هندسة ألمانية فائقة",
       descEn: "Our formulas are developed using cutting-edge European automotive chemistry, delivering professional results that meet international detailing standards.",
       descAr: "تركيباتنا مطورة بكيمياء السيارات الأوروبية المتطورة، تقدم نتائج احترافية تلبي معايير التفصيل الدولية.",
     },
     {
-      icon: Shield,
-      titleEn: "Premium Quality",
-      titleAr: "جودة عالية",
-      descEn: "Every product is rigorously tested to perform flawlessly in Qatar's demanding climate — extreme heat, dust, and humidity.",
-      descAr: "كل منتج يُختبر بدقة لضمان أدائه في مناخ قطر القاسي — الحرارة الشديدة والغبار والرطوبة.",
+      icon: Handshake,
+      titleEn: "Trusted Qatari Partnership",
+      titleAr: "شراكة قطرية موثوقة",
+      descEn: "Distributed exclusively in Qatar through Doha International Trading Company, ensuring direct supply and dedicated support for every account.",
+      descAr: "نوزّع منتجاتنا في دولة قطر بشكل حصري عبر شركة الدوحة العالمية للتجارة، لضمان إمداد مباشر ودعم مخصص لكل عميل.",
     },
     {
-      icon: Leaf,
-      titleEn: "Eco-Friendly",
-      titleAr: "صديق للبيئة",
-      descEn: "Phosphate-free, biodegradable formulas that are safe for the environment and your team without compromising on performance.",
-      descAr: "تركيبات خالية من الفوسفات وقابلة للتحلل، آمنة للبيئة وفريقك دون المساس بالأداء.",
+      icon: Zap,
+      titleEn: "Operational & Cost Efficiency",
+      titleAr: "كفاءة تشغيلية واقتصادية",
+      descEn: "Concentrated, high-yield formulas that lower consumption costs and maximize margins for car washes, detailing centers, and fleets.",
+      descAr: "تركيبات مركزة عالية الإنتاجية تخفض تكاليف الاستهلاك وتعزز هوامش الربح للمغاسل ومراكز التلميع والأساطيل.",
     },
     {
-      icon: Globe,
-      titleEn: "Qatar & GCC",
-      titleAr: "قطر والخليج",
-      descEn: "Proudly serving Qatar and the wider GCC region — supplying detailing studios, dealerships, and enthusiasts with professional-grade products.",
-      descAr: "نخدم بفخر قطر ومنطقة الخليج العربي — نزود محلات التفصيل والوكلاء والهواة بمنتجات احترافية.",
+      icon: Truck,
+      titleEn: "Direct Local Supply",
+      titleAr: "إمداد محلي مباشر",
+      descEn: "Fast, reliable delivery across Qatar within 24–48 hours, backed by local stock and dedicated commercial support.",
+      descAr: "توصيل سريع وموثوق في جميع مناطق دولة قطر خلال 24–48 ساعة، مدعوم بمخزون محلي ودعم تجاري مخصص.",
     },
   ];
 
@@ -61,7 +61,7 @@ export default function About() {
     {
       year: "2025",
       titleAr: "التوسع المحلي",
-      eventEn: "Expanding product line and distribution network to serve more studios and businesses across Qatar and the GCC.",
+      eventEn: "Expanding product line and distribution network to serve more studios and businesses across Qatar.",
       eventAr: "ضاعفنا خطوط إنتاجنا وعززنا شبكة خدماتنا لتلبية الطلب المتزايد في السوق الاحترافي داخل دولة قطر.",
     },
     {
@@ -77,8 +77,8 @@ export default function About() {
       <Seo
         title={t("About Us", "من نحن")}
         description={t(
-          "CARZIX brings German-engineered, professional-grade car care technology to Qatar and the GCC, partnering with detailing studios, dealerships, and car care businesses.",
-          "تقدم CARZIX تقنية عناية احترافية بالسيارات بتقنية ألمانية إلى قطر والخليج، بالشراكة مع محلات التفصيل والوكلاء وشركات العناية بالسيارات."
+          "CARZIX brings German-engineered, professional-grade car care technology to Qatar, partnering with detailing centers, authorized dealerships, and automotive fleets through our exclusive distributor, Doha International Trading Company.",
+          "تقدم CARZIX تقنية عناية احترافية بالسيارات بتقنية ألمانية إلى دولة قطر، بالشراكة مع كبرى مراكز التلميع والوكالات المعتمدة وأساطيل السيارات عبر وكيلنا الحصري شركة الدوحة العالمية للتجارة."
         )}
       />
       {/* Hero */}
@@ -112,7 +112,7 @@ export default function About() {
             </motion.h1>
             <motion.p variants={fadeUp} className="text-white/55 text-lg leading-relaxed">
               {t(
-                "CARZIX is Qatar's dedicated automotive detailing products brand — bringing professional-grade formulas developed with European technology to studios, dealerships, and enthusiasts across the GCC.",
+                "CARZIX is Qatar's dedicated automotive detailing products brand — bringing professional-grade formulas developed with European technology to detailing centers, authorized dealerships, and automotive fleets across Qatar through our exclusive distributor, Doha International Trading Company.",
                 "CARZIX هي العلامة الرائدة في هندسة تركيبات العناية بالسيارات في دولة قطر. نلتزم بجلب أحدث الابتكارات والتكنولوجيا الألمانية المتطورة المصممة خصيصاً لتلبية احتياجات كبرى مراكز التلميع الاحترافي (Detailing)، الوكالات المعتمدة، وأساطيل السيارات في السوق القطري، وذلك عبر وكيلنا الحصري شركة الدوحة العالمية للتجارة."
               )}
             </motion.p>
@@ -153,8 +153,8 @@ export default function About() {
             {[
               { labelEn: "Professional Grade", labelAr: "درجة احترافية", subEn: "All products", subAr: "جميع المنتجات" },
               { labelEn: "German Technology", labelAr: "تكنولوجيا ألمانية", subEn: "Formula standards", subAr: "معايير التركيبة" },
-              { labelEn: "Qatar & GCC", labelAr: "قطر والخليج", subEn: "Service region", subAr: "منطقة الخدمة" },
-              { labelEn: "6 Categories", labelAr: "6 فئات", subEn: "Product range", subAr: "نطاق المنتجات" },
+              { labelEn: "Qatar", labelAr: "دولة قطر", subEn: "Service region", subAr: "منطقة الخدمة" },
+              { labelEn: "Main Categories", labelAr: "فئات رئيسية", subEn: "Product range", subAr: "نطاق المنتجات" },
             ].map(({ labelEn, labelAr, subEn, subAr }) => (
               <motion.div key={labelEn} variants={fadeUp} className="glass card-shine rounded-xl py-6 px-4">
                 <div className="text-white font-black text-lg mb-1">{isAr ? labelAr : labelEn}</div>

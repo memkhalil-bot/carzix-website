@@ -7,7 +7,7 @@ export default function TrustStrip() {
   const items = [
     t("German Technology", "تقنية ألمانية"),
     t("Professional Grade Formula", "تركيبة بدرجة احترافية"),
-    t("GCC Tested", "مختبر في الخليج"),
+    t("Qatar Climate Tested", "مختبر لمناخ قطر"),
     t("Commercial Car Care Solutions", "حلول عناية تجارية للسيارات"),
     t("Bulk Supply Available", "توريد بالجملة متوفر"),
   ];

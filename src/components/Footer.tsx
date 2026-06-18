@@ -31,8 +31,8 @@ export default function Footer() {
             </div>
             <p className="text-white/45 text-sm leading-relaxed mb-5">
               {t(
-                "Professional-grade automotive detailing and car care products for Qatar and the GCC. Trusted by studios, dealerships, and enthusiasts.",
-                "منتجات عناية وتلميع سيارات احترافية لقطر والخليج العربي. موثوق بها من المحلات والوكلاء والهواة."
+                "Professional-grade automotive detailing and car care products for Qatar's detailing centers, dealerships, and automotive fleets.",
+                "منتجات عناية وتلميع سيارات احترافية لكبرى مراكز التلميع والوكالات المعتمدة وأساطيل السيارات في دولة قطر."
               )}
             </p>
             <div className="flex gap-3">
@@ -145,7 +145,7 @@ export default function Footer() {
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} CARZIX. {t("All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
-          <p className="text-white/25 text-xs">{t("Doha, Qatar · GCC", "الدوحة، دولة قطر")}</p>
+          <p className="text-white/25 text-xs">{t("Doha, Qatar", "الدوحة، دولة قطر")}</p>
         </div>
       </div>
     </footer>
