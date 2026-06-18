@@ -144,7 +144,7 @@ export default function Footer() {
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} CARZIX. {t("All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
-          <p className="text-white/25 text-xs">{t("Doha, Qatar · GCC", "الدوحة، دولة قطر · الخليج")}</p>
+          <p className="text-white/25 text-xs">{t("Doha, Qatar · GCC", "الدوحة، دولة قطر")}</p>
         </div>
       </div>
     </footer>

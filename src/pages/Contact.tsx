@@ -94,7 +94,7 @@ export default function Contact() {
         title={t("Contact Us", "اتصل بنا")}
         description={t(
           "Get in touch with CARZIX for wholesale quotes, bulk orders, and product inquiries. Our team in Doha, Qatar responds within 24 hours.",
-          "تواصل مع CARZIX للحصول على عروض أسعار بالجملة والطلبات الكبيرة واستفسارات المنتجات. يرد فريقنا في الدوحة، قطر خلال 24 ساعة."
+          "تواصل مع CARZIX للحصول على عروض أسعار بالجملة والطلبات الكبيرة واستفسارات المنتجات. يرد فريقنا في الدوحة، دولة قطر خلال 24 ساعة."
         )}
       />
       {/* Hero */}

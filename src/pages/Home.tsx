@@ -53,7 +53,7 @@ export default function Home() {
     {
       icon: Zap,
       titleEn: "Engineered for Results",
-      titleAr: "كفاءة تشغيلية واقتصادية عالية",
+      titleAr: "كفاءة تشغيلية واقتصادية",
       descEn: "Concentrated, high-performance formulas that deliver measurable results with every application — for studios and enthusiasts alike.",
       descAr: "تركيبات فائقة التركيز وعالية الأداء تحقق نتائج مذهلة وقابلة للقياس مع كل تطبيق؛ مصممة خصيصاً للمحترفين وأصحاب الأعمال لخفض التكاليف التشغيلية ومضاعفة الأرباح.",
     },
