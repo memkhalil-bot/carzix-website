@@ -14,6 +14,7 @@ export default function Navbar() {
     { href: "/", label: t("Home", "الرئيسية") },
     { href: "/products", label: t("Products", "المنتجات") },
     { href: "/about", label: t("About", "من نحن") },
+    { href: "/partners", label: t("Partners", "الشراكات") },
     { href: "/contact", label: t("Contact", "اتصل بنا") },
   ];
 
