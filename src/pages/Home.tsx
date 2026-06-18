@@ -54,7 +54,7 @@ export default function Home() {
       icon: Zap,
       titleEn: "Engineered for Results",
       titleAr: "كفاءة تشغيلية واقتصادية",
-      descEn: "Concentrated, high-performance formulas that deliver measurable results with every application — for studios and enthusiasts alike.",
+      descEn: "Concentrated, high-performance formulas that deliver measurable results with every application — for detailing studios and professional businesses alike.",
       descAr: "تركيبات فائقة التركيز وعالية الأداء تحقق نتائج مذهلة وقابلة للقياس مع كل تطبيق؛ مصممة خصيصاً للمحترفين وأصحاب الأعمال لخفض التكاليف التشغيلية ومضاعفة الأرباح.",
     },
     {
@@ -71,8 +71,8 @@ export default function Home() {
       <Seo
         title={t("Professional Car Care Products in Qatar", "منتجات عناية احترافية بالسيارات في قطر")}
         description={t(
-          "CARZIX supplies German-engineered, professional-grade car care concentrates for studios, dealerships, and car washes across Qatar and the GCC. Bulk supply available.",
-          "توفر CARZIX منتجات عناية بالسيارات المركزة بتقنية ألمانية بدرجة احترافية للمحلات والوكلاء والمغاسل في قطر والخليج. التوريد بالجملة متوفر."
+          "CARZIX supplies German-engineered, professional-grade car care concentrates for detailing studios, dealerships, and automotive fleets across Qatar. Bulk supply available through our exclusive distributor, Doha International Trading Company.",
+          "توفر CARZIX منتجات عناية بالسيارات المركزة بتقنية ألمانية بدرجة احترافية لكبرى مراكز التلميع والوكالات المعتمدة وأساطيل السيارات في دولة قطر، عبر وكيلنا الحصري شركة الدوحة العالمية للتجارة. التوريد بالجملة متوفر."
         )}
       />
       {/* ── Hero ── */}
@@ -117,7 +117,7 @@ export default function Home() {
             className="order-last lg:order-first"
           >
             <motion.p variants={fadeUp} className="text-[#A29475] text-xs font-semibold tracking-widest uppercase mb-4">
-              {t("Professional Car Care · Qatar & GCC", "منتجات العناية الاحترافية · قطر والخليج")}
+              {t("Professional Car Care · Qatar", "منتجات العناية الاحترافية · قطر")}
             </motion.p>
             <motion.h1
               variants={blurUp}
@@ -143,7 +143,7 @@ export default function Home() {
             </motion.h1>
             <motion.p variants={fadeUp} className="text-white/55 text-base sm:text-lg leading-relaxed mb-5 max-w-lg">
               {t(
-                "German-engineered high-concentration formulas built for detailing studios, dealerships and automotive fleets across Qatar and the GCC.",
+                "German-engineered high-concentration formulas built for detailing studios, dealerships and automotive fleets across Qatar.",
                 "تركيبات كيميائية ألمانية فائقة التركيز، تمنح مراكز التلميع والوكالات في دولة قطر أداءً استثنائياً وتوفيراً تشغيلياً لا يضاهى، معتمدة وموزعة حصرياً عبر شركة الدوحة العالمية للتجارة."
               )}
             </motion.p>
@@ -416,7 +416,7 @@ export default function Home() {
                   step: "01",
                   titleEn: "Browse Catalogue",
                   titleAr: "استكشف الكتالوج الفني",
-                  descEn: "Explore our full range of professional detailing products across 6 categories.",
+                  descEn: "Explore our full range of professional detailing products across our main categories.",
                   descAr: "استعرض مجموعتنا المتكاملة من التركيبات والمنظفات الألمانية الموزعة عبر فئات رئيسية مصممة لتلبية احتياجات منشأتك.",
                 },
                 {
@@ -518,8 +518,8 @@ export default function Home() {
           </motion.h2>
           <motion.p variants={fadeUp} className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
             {t(
-              "Browse our professional catalogue and submit your requirements. Serving studios and businesses across Qatar and the GCC.",
-              "تصفح كتالوجنا الاحترافي وأرسل متطلباتك. نخدم المحلات والشركات في قطر والخليج."
+              "Browse our professional catalogue and submit your requirements. Serving detailing centers, agencies, and fleets across Qatar.",
+              "تصفح كتالوجنا الاحترافي وأرسل متطلباتك. نخدم مراكز التلميع والوكالات والأساطيل في دولة قطر."
             )}
           </motion.p>
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">

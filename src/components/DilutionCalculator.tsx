@@ -1,30 +1,86 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ChevronRight, FlaskConical } from "lucide-react";
+import { ChevronRight, FlaskConical, Info, Loader2 } from "lucide-react";
 import { fadeUp, stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
+import { supabase } from "@/lib/supabase";
+import type { Product } from "@/lib/types";
 
-function fmt(n: number): string {
-  if (n === 0) return "0";
-  if (n < 0.01) return n.toFixed(3);
-  if (n < 10) return n.toFixed(2);
-  if (n < 100) return n.toFixed(1);
-  return Math.round(n).toLocaleString();
+const DEFAULT_SIZES_L = [1, 5, 20];
+
+function parseRatioDenominator(ratio: string | null): number | null {
+  if (!ratio) return null;
+  const match = ratio.match(/1\s*:\s*(\d+)/);
+  return match ? Number(match[1]) : null;
+}
+
+function isReadyToUse(ratio: string | null): boolean {
+  return !!ratio && /ready/i.test(ratio);
+}
+
+function hasUsableRatio(ratio: string | null): boolean {
+  return !!ratio && ratio.trim() !== "" && (isReadyToUse(ratio) || parseRatioDenominator(ratio) !== null);
+}
+
+function parseSizeToLiters(size: string): number | null {
+  const s = size.trim();
+  const literMatch = s.match(/^([\d.]+)\s*l$/i);
+  if (literMatch) return parseFloat(literMatch[1]);
+  const mlMatch = s.match(/^([\d.]+)\s*ml$/i);
+  if (mlMatch) return parseFloat(mlMatch[1]) / 1000;
+  return null;
 }
 
 export default function DilutionCalculator() {
   const { t, isAr } = useLang();
-  const [dailyCars, setDailyCars] = useState(50);
-  const [workingDays, setWorkingDays] = useState(26);
-  const [avgUsageMl, setAvgUsageMl] = useState(500);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState<string>("");
+  const [packageLiters, setPackageLiters] = useState<number>(20);
+  const [customLiters, setCustomLiters] = useState<string>("");
 
-  const monthlyCars = dailyCars * workingDays;
-  const dilutedNeeded = monthlyCars * (avgUsageMl / 1000);
-  const concentrateNeeded = dilutedNeeded / 400;
+  useEffect(() => {
+    supabase
+      .from("products")
+      .select("*")
+      .eq("status", "active")
+      .then(({ data }) => {
+        if (data) setProducts(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const usableProducts = useMemo(
+    () => products.filter((p) => hasUsableRatio(p.dilution_ratio)),
+    [products]
+  );
+
+  useEffect(() => {
+    if (selectedId || usableProducts.length === 0) return;
+    const firstDiluted = usableProducts.find((p) => !isReadyToUse(p.dilution_ratio));
+    setSelectedId((firstDiluted ?? usableProducts[0]).id);
+  }, [usableProducts, selectedId]);
+
+  const selectedProduct = usableProducts.find((p) => p.id === selectedId) ?? null;
+  const ready = isReadyToUse(selectedProduct?.dilution_ratio ?? null);
+  const ratioDenominator = parseRatioDenominator(selectedProduct?.dilution_ratio ?? null);
+
+  const sizeOptions = useMemo(() => {
+    const parsed = (selectedProduct?.sizes ?? [])
+      .map(parseSizeToLiters)
+      .filter((n): n is number => n !== null && n > 0);
+    return Array.from(new Set([...DEFAULT_SIZES_L, ...parsed])).sort((a, b) => a - b);
+  }, [selectedProduct]);
+
+  const effectiveLiters = customLiters && Number(customLiters) > 0 ? Number(customLiters) : packageLiters;
+
+  const readyToUseLiters = ratioDenominator ? effectiveLiters * ratioDenominator : null;
+  const carsMin = readyToUseLiters ? Math.round(readyToUseLiters / 20) : null;
+  const carsMax = readyToUseLiters ? Math.round(readyToUseLiters / 16) : null;
 
   const inputCls =
-    "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3.5 text-white text-xl font-bold text-center focus:outline-none focus:border-[#0D4261] transition-colors";
+    "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3.5 text-white text-base font-semibold focus:outline-none focus:border-[#0D4261] transition-colors";
 
   return (
     <section className="py-20 bg-[#04090F] border-y border-white/8 relative overflow-hidden">
@@ -53,137 +109,130 @@ export default function DilutionCalculator() {
         {/* Intro line */}
         <motion.p variants={fadeUp} className="text-white/40 text-base text-center max-w-lg mx-auto mb-10">
           {t(
-            "Calculate exactly how much concentrate your business needs.",
-            "اكتشف كمية المنتج المركز التي يحتاجها نشاطك خلال ثوانٍ."
+            "Select a product and package size to calculate the exact ready-to-use yield for your business.",
+            "اختر المنتج وحجم العبوة لحساب كمية المحلول الجاهز للاستخدام بدقة لنشاطك."
           )}
         </motion.p>
 
         {/* Calculator card */}
         <motion.div variants={fadeUp} className="glass-dark rounded-2xl overflow-hidden">
-          {/* Inputs */}
-          <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-white/40 text-xs font-semibold mb-2 tracking-wider uppercase">
-                {t("Cars Per Day", "عدد السيارات يومياً")}
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={dailyCars}
-                onChange={(e) => setDailyCars(Math.max(1, Number(e.target.value) || 1))}
-                className={inputCls}
-              />
+          {loading ? (
+            <div className="flex items-center justify-center gap-3 p-16 text-white/40">
+              <Loader2 size={22} className="animate-spin" />
+              <span className="text-sm">{t("Loading products…", "جارٍ تحميل المنتجات…")}</span>
             </div>
-            <div>
-              <label className="block text-white/40 text-xs font-semibold mb-2 tracking-wider uppercase">
-                {t("Working Days / Month", "أيام العمل شهرياً")}
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="31"
-                value={workingDays}
-                onChange={(e) => setWorkingDays(Math.min(31, Math.max(1, Number(e.target.value) || 1)))}
-                className={inputCls}
-              />
+          ) : usableProducts.length === 0 ? (
+            <div className="flex items-center justify-center p-16 text-white/40 text-sm text-center">
+              {t("No products with dilution data are available right now.", "لا توجد منتجات تحتوي على بيانات تخفيف متاحة حالياً.")}
             </div>
-            <div>
-              <label className="block text-white/40 text-xs font-semibold mb-2 tracking-wider uppercase">
-                {t("Avg. Usage Per Car (ml)", "متوسط الاستهلاك (مل/سيارة)")}
-              </label>
-              <input
-                type="number"
-                min="10"
-                step="10"
-                value={avgUsageMl}
-                onChange={(e) => setAvgUsageMl(Math.max(10, Number(e.target.value) || 10))}
-                className={inputCls}
-              />
-            </div>
-          </div>
-
-          {/* Premium KPI results */}
-          <div className="border-t border-white/8 p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Monthly Cars */}
-              <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 text-center">
-                <p className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Monthly Cars", "السيارات شهرياً")}
-                </p>
-                <p className="text-white font-black text-4xl mb-1 tabular-nums">
-                  {monthlyCars.toLocaleString()}
-                </p>
-                <p className="text-white/20 text-xs">{t("vehicles", "مركبة")}</p>
+          ) : (
+            <>
+              {/* Inputs */}
+              <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-white/40 text-xs font-semibold mb-2 tracking-wider uppercase">
+                    {t("Product", "المنتج")}
+                  </label>
+                  <select
+                    value={selectedId}
+                    onChange={(e) => setSelectedId(e.target.value)}
+                    className={inputCls}
+                  >
+                    {usableProducts.map((p) => (
+                      <option key={p.id} value={p.id} className="bg-zinc-900">
+                        {isAr ? p.name_ar || p.name : p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-white/40 text-xs font-semibold mb-2 tracking-wider uppercase">
+                    {t("Package Size (Liters)", "حجم العبوة (لتر)")}
+                  </label>
+                  <select
+                    value={customLiters ? "" : packageLiters}
+                    onChange={(e) => {
+                      setCustomLiters("");
+                      setPackageLiters(Number(e.target.value));
+                    }}
+                    disabled={ready}
+                    className={inputCls + (ready ? " opacity-40 cursor-not-allowed" : "")}
+                  >
+                    {sizeOptions.map((s) => (
+                      <option key={s} value={s} className="bg-zinc-900">
+                        {s} L
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Monthly Ready-To-Use Requirement */}
-              <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 text-center">
-                <p className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Monthly Ready-To-Use Req.", "احتياجك من المحلول الجاهز")}
-                </p>
-                <p className="text-[#129B82] font-black text-4xl mb-1 tabular-nums">
-                  {fmt(dilutedNeeded)}
-                </p>
-                <p className="text-white/20 text-xs">{t("liters", "لتر")}</p>
+              {/* Result */}
+              <div className="border-t border-white/8 p-8">
+                {ready ? (
+                  <div className="rounded-xl bg-[#0D4261]/15 border border-[#0D4261]/30 p-6 flex items-start gap-3 text-center sm:text-start">
+                    <Info size={18} className="text-[#A29475] shrink-0 mt-0.5" />
+                    <p className="text-white/80 text-sm leading-relaxed">
+                      {t(
+                        "This product is ready to use with German-grade efficiency and does not require dilution.",
+                        "هذا المنتج جاهز للاستخدام مباشرة بأعلى كفاءة ألمانية، ولا يتطلب أي تخفيف."
+                      )}
+                    </p>
+                  </div>
+                ) : readyToUseLiters !== null ? (
+                  <div className="text-center">
+                    <p className="text-white/40 text-sm mb-2">
+                      {t("Produces up to", "تنتج لك حتى")}
+                    </p>
+                    <p className="text-[#129B82] font-black text-5xl sm:text-6xl tabular-nums mb-2 drop-shadow-[0_0_18px_rgba(18,155,130,0.35)]">
+                      {readyToUseLiters.toLocaleString()}L
+                    </p>
+                    <p className="text-white/50 text-sm mb-6">
+                      {t("of ready-to-use solution", "من المحلول الجاهز للاستخدام")}
+                    </p>
+                    {carsMin !== null && carsMax !== null && (
+                      <p className="text-white/55 text-sm">
+                        {isAr ? (
+                          <>
+                            يكفي لغسيل ما يقارب{" "}
+                            <span className="text-white font-bold">{carsMin.toLocaleString()}</span>
+                            {" "}إلى{" "}
+                            <span className="text-white font-bold">{carsMax.toLocaleString()}</span>
+                            {" "}سيارة
+                          </>
+                        ) : (
+                          <>
+                            Enough for approximately{" "}
+                            <span className="text-white font-bold">{carsMin.toLocaleString()}</span>
+                            {" "}to{" "}
+                            <span className="text-white font-bold">{carsMax.toLocaleString()}</span>
+                            {" "}cars
+                          </>
+                        )}
+                      </p>
+                    )}
+                  </div>
+                ) : null}
               </div>
 
-              {/* Monthly Concentrate Requirement — HIGHLIGHTED */}
-              <div className="relative rounded-xl overflow-hidden border border-[#A29475]/40 p-5 text-center shadow-[0_0_28px_rgba(162,148,117,0.14)]">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0D4261]/18 via-[#0D4261]/8 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,_rgba(162,148,117,0.1)_0%,_transparent_65%)] pointer-events-none" />
-                <p className="relative text-[#A29475]/55 text-[10px] font-semibold uppercase tracking-widest mb-3">
-                  {t("Monthly Concentrate Req.", "احتياجك من المركز")}
+              {/* Footer */}
+              <div className="p-8 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-5">
+                <p className="text-white/35 text-sm leading-relaxed max-w-md">
+                  {t(
+                    "Drastically reduce storage, shipping, and consumption costs for car washes, detailing centers, and dealerships.",
+                    "تقليل كبير في تكاليف التخزين والشحن والاستهلاك للمغاسل ومراكز التلميع والوكالات."
+                  )}
                 </p>
-                <p className="relative text-[#A29475] font-black text-5xl mb-1 tabular-nums drop-shadow-[0_0_14px_rgba(162,148,117,0.45)]">
-                  {fmt(concentrateNeeded)}
-                </p>
-                <p className="relative text-[#A29475]/35 text-xs">{t("liters", "لتر")}</p>
+                <Link
+                  href="/contact"
+                  className="btn-cta shrink-0 inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
+                >
+                  {t("Get Commercial Quote", "احصل على عرض سعر تجاري")}
+                  <ChevronRight size={16} className={isAr ? "rotate-180" : ""} />
+                </Link>
               </div>
-            </div>
-          </div>
-
-          {/* Insight strip */}
-          <div className="px-8 py-5 bg-[#0D4261]/15 border-t border-[#0D4261]/30 text-center space-y-1">
-            <p className="text-white font-semibold text-base">
-              {isAr ? (
-                <>
-                  تحتاج فقط إلى{" "}
-                  <span className="text-[#A29475] font-black">{fmt(concentrateNeeded)} {t("L", "لتر")}</span>
-                  {" "}من المركز لخدمة{" "}
-                  <span className="text-[#129B82] font-black">{monthlyCars.toLocaleString()}</span>
-                  {" "}سيارة شهرياً
-                </>
-              ) : (
-                <>
-                  Only{" "}
-                  <span className="text-[#A29475] font-black">{fmt(concentrateNeeded)} L</span>
-                  {" "}of concentrate to serve{" "}
-                  <span className="text-[#129B82] font-black">{monthlyCars.toLocaleString()}</span>
-                  {" "}cars/month
-                </>
-              )}
-            </p>
-            <p className="text-white/30 text-xs">
-              {t("Every 1L of CARZIX produces up to 400L ready-to-use.", "كل لتر من CARZIX ينتج حتى 400 لتر جاهز للاستخدام.")}
-            </p>
-          </div>
-
-          {/* Footer */}
-          <div className="p-8 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-5">
-            <p className="text-white/35 text-sm leading-relaxed max-w-md">
-              {t(
-                "Drastically reduce storage, shipping, and consumption costs for car washes, detailing centers, and dealerships.",
-                "تقليل كبير في تكاليف التخزين والشحن والاستهلاك للمغاسل ومراكز التلميع والوكالات."
-              )}
-            </p>
-            <Link
-              href="/contact"
-              className="btn-cta shrink-0 inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
-            >
-              {t("Get Commercial Quote", "احصل على عرض سعر تجاري")}
-              <ChevronRight size={16} />
-            </Link>
-          </div>
+            </>
+          )}
         </motion.div>
       </motion.div>
     </section>

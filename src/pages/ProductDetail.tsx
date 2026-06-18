@@ -200,7 +200,7 @@ export default function ProductDetail() {
                 {[
                   { en: "Professional Grade", ar: "درجة احترافية" },
                   { en: "Phosphate Free", ar: "خالي من الفوسفات" },
-                  { en: "GCC Climate Tested", ar: "مختبر لمناخ الخليج" },
+                  { en: "Qatar Climate Tested", ar: "مختبر لمناخ قطر" },
                 ].map(({ en, ar }) => (
                   <span key={en} className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#129B82]/10 border border-[#129B82]/22 text-[#129B82] text-[10px] rounded-full">
                     <CheckCircle size={9} /> {isAr ? ar : en}
