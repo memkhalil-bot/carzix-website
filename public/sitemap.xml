@@ -20,4 +20,12 @@
     <loc>https://carzix-website.vercel.app/contact</loc>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://carzix-website.vercel.app/privacy-policy</loc>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://carzix-website.vercel.app/terms</loc>
+    <priority>0.3</priority>
+  </url>
 </urlset>
