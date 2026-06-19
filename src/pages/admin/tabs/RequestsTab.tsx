@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Loader2, Check, X, ChevronDown, Download } from "lucide-react";
+import { Loader2, Check, X, ChevronDown, Download, Calendar, AlertCircle, ClipboardList } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
@@ -9,6 +9,9 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { EmptyState } from "@/components/admin/AdminTable";
 import { inputStyle } from "@/components/admin/formControls";
 import { normalizedRequestStatus, statusBadgeColor } from "../requestStatus";
+import { isDueToday, isOverdue, hasNoFollowUp, matchesFollowUpFilter } from "../followUp";
+import type { FollowUpFilter } from "../followUp";
+import { SalesDetailsModal } from "./SalesDetailsModal";
 
 function csvEscape(value: unknown): string {
   const s = value == null ? "" : String(value);
@@ -27,6 +30,11 @@ const CSV_COLUMNS: { key: keyof ProductRequest; header: string }[] = [
   { key: "product_name",  header: "product_name" },
   { key: "quantity",      header: "quantity" },
   { key: "notes",         header: "notes" },
+  { key: "internal_notes",     header: "internal_notes" },
+  { key: "next_follow_up_at",  header: "next_follow_up_at" },
+  { key: "lost_reason",        header: "lost_reason" },
+  { key: "estimated_value",    header: "estimated_value" },
+  { key: "quoted_value",       header: "quoted_value" },
 ];
 
 function exportRequestsCsv(requests: ProductRequest[]) {
@@ -47,6 +55,13 @@ function exportRequestsCsv(requests: ProductRequest[]) {
 const STATUS_FILTERS = ["all", "new", "contacted", "quoted", "won", "lost"] as const;
 type StatusFilter = typeof STATUS_FILTERS[number];
 
+const FOLLOW_UP_FILTERS: { key: FollowUpFilter; labelKey: "followUpAll" | "followUpDueToday" | "followUpOverdue" | "followUpNone" }[] = [
+  { key: "all",        labelKey: "followUpAll" },
+  { key: "dueToday",   labelKey: "followUpDueToday" },
+  { key: "overdue",    labelKey: "followUpOverdue" },
+  { key: "noFollowUp", labelKey: "followUpNone" },
+];
+
 function matchesSearch(r: ProductRequest, query: string): boolean {
   if (!query) return true;
   const needle = query.toLowerCase();
@@ -60,6 +75,32 @@ function statusLabel(status: string | null | undefined, lang: Lang): string {
   return t(keyMap[normalizedRequestStatus(status)], lang);
 }
 
+function formatMoney(value: number | null): string {
+  return `QAR ${value!.toLocaleString()}`;
+}
+
+function FollowUpIndicator({ r, lang }: { r: ProductRequest; lang: Lang }) {
+  if (!r.next_follow_up_at) {
+    if (hasNoFollowUp(r.next_follow_up_at, r.status)) {
+      return (
+        <span className="inline-flex items-center gap-1 text-xs" style={{ color: C.muted }}>
+          <Calendar size={11} /> {t("followUpNone", lang)}
+        </span>
+      );
+    }
+    return null;
+  }
+  const overdue = isOverdue(r.next_follow_up_at, r.status);
+  const dueToday = isDueToday(r.next_follow_up_at);
+  const color = overdue ? C.danger : dueToday ? C.warning : C.muted;
+  return (
+    <span className="inline-flex items-center gap-1 text-xs font-medium" style={{ color }}>
+      {overdue ? <AlertCircle size={11} /> : <Calendar size={11} />}
+      {new Date(r.next_follow_up_at).toLocaleDateString()}
+    </span>
+  );
+}
+
 export function RequestsTab({ lang }: { lang: Lang }) {
   const [requests, setRequests] = useState<ProductRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,6 +108,8 @@ export function RequestsTab({ lang }: { lang: Lang }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [businessTypeFilter, setBusinessTypeFilter] = useState<string>("all");
+  const [followUpFilter, setFollowUpFilter] = useState<FollowUpFilter>("all");
+  const [salesDetailsRequest, setSalesDetailsRequest] = useState<ProductRequest | null>(null);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -100,6 +143,12 @@ export function RequestsTab({ lang }: { lang: Lang }) {
     showFeedback("success", t("updateSuccess", lang));
   }
 
+  function handleSalesDetailsSaved(updated: ProductRequest) {
+    setRequests((prev) => prev.map((r) => r.id === updated.id ? updated : r));
+    setSalesDetailsRequest(null);
+    showFeedback("success", t("saveDetailsSuccess", lang));
+  }
+
   const businessTypeOptions = Array.from(
     new Set(requests.map((r) => r.business_type).filter((v): v is string => !!v))
   ).sort();
@@ -107,15 +156,24 @@ export function RequestsTab({ lang }: { lang: Lang }) {
   const filtered = requests.filter((r) =>
     matchesSearch(r, search) &&
     (statusFilter === "all" || normalizedRequestStatus(r.status) === statusFilter) &&
-    (businessTypeFilter === "all" || r.business_type === businessTypeFilter)
+    (businessTypeFilter === "all" || r.business_type === businessTypeFilter) &&
+    matchesFollowUpFilter(r, followUpFilter)
   );
 
-  const filtersActive = search !== "" || statusFilter !== "all" || businessTypeFilter !== "all";
+  const followUpCounts: Record<FollowUpFilter, number> = {
+    all: requests.length,
+    dueToday: requests.filter((r) => isDueToday(r.next_follow_up_at)).length,
+    overdue: requests.filter((r) => isOverdue(r.next_follow_up_at, r.status)).length,
+    noFollowUp: requests.filter((r) => hasNoFollowUp(r.next_follow_up_at, r.status)).length,
+  };
+
+  const filtersActive = search !== "" || statusFilter !== "all" || businessTypeFilter !== "all" || followUpFilter !== "all";
 
   function clearFilters() {
     setSearch("");
     setStatusFilter("all");
     setBusinessTypeFilter("all");
+    setFollowUpFilter("all");
   }
 
   const inp = inputStyle();
@@ -145,6 +203,25 @@ export function RequestsTab({ lang }: { lang: Lang }) {
           {feedback.message}
         </div>
       )}
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {FOLLOW_UP_FILTERS.map((f) => {
+          const active = followUpFilter === f.key;
+          const accent = f.key === "overdue" ? C.danger : f.key === "dueToday" ? C.warning : C.action;
+          return (
+            <button
+              key={f.key}
+              onClick={() => setFollowUpFilter(f.key)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+              style={active
+                ? { background: `${accent}1F`, color: accent, border: `1px solid ${accent}55` }
+                : { background: C.surface2, color: C.muted, border: `1px solid ${C.border}` }}
+            >
+              {t(f.labelKey, lang)} · {followUpCounts[f.key]}
+            </button>
+          );
+        })}
+      </div>
 
       <div className="grid sm:grid-cols-4 gap-3 mb-5">
         <div className="sm:col-span-2">
@@ -195,6 +272,13 @@ export function RequestsTab({ lang }: { lang: Lang }) {
                     </p>
                   </div>
                   <StatusBadge color={statusBadgeColor(r.status)}>{statusLabel(r.status, lang)}</StatusBadge>
+                  <FollowUpIndicator r={r} lang={lang} />
+                  {r.estimated_value != null && (
+                    <span className="text-xs" style={{ color: C.muted }}>{t("estimatedValue", lang)}: {formatMoney(r.estimated_value)}</span>
+                  )}
+                  {r.quoted_value != null && (
+                    <span className="text-xs font-medium" style={{ color: C.warning }}>{t("quotedValue", lang)}: {formatMoney(r.quoted_value)}</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-xs" style={{ color: C.muted }}>{new Date(r.created_at).toLocaleDateString()}</span>
@@ -239,6 +323,18 @@ export function RequestsTab({ lang }: { lang: Lang }) {
                         <p className="text-sm leading-relaxed" style={{ color: C.text }}>{r.notes}</p>
                       </div>
                     )}
+                    {normalizedRequestStatus(r.status) === "lost" && r.lost_reason && (
+                      <div className="sm:col-span-2">
+                        <p className="text-xs mb-1" style={{ color: C.danger }}>{t("lostReason", lang)}</p>
+                        <p className="text-sm leading-relaxed" style={{ color: C.text }}>{r.lost_reason}</p>
+                      </div>
+                    )}
+                    {r.internal_notes && (
+                      <div className="sm:col-span-2">
+                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("internalNotes", lang)}</p>
+                        <p className="text-sm leading-relaxed" style={{ color: C.text }}>{r.internal_notes}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {(() => {
@@ -278,12 +374,26 @@ export function RequestsTab({ lang }: { lang: Lang }) {
                       style={{ background: C.surface2, color: C.muted, border: `1px solid ${C.border}` }}>
                       {t("replyEmail", lang)}
                     </a>
+                    <button onClick={() => setSalesDetailsRequest(r)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium"
+                      style={{ background: C.actionDim, color: C.actionHi, border: `1px solid ${C.action}55` }}>
+                      <ClipboardList size={12} /> {t("salesDetails", lang)}
+                    </button>
                   </div>
                 </div>
               )}
             </div>
           ))}
         </div>
+      )}
+
+      {salesDetailsRequest && (
+        <SalesDetailsModal
+          lang={lang}
+          request={salesDetailsRequest}
+          onClose={() => setSalesDetailsRequest(null)}
+          onSaved={handleSalesDetailsSaved}
+        />
       )}
     </div>
   );

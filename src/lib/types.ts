@@ -128,6 +128,11 @@ export type Database = {
           company_name: string | null;
           city: string | null;
           business_type: string | null;
+          internal_notes: string | null;
+          next_follow_up_at: string | null;
+          lost_reason: string | null;
+          estimated_value: number | null;
+          quoted_value: number | null;
           created_at: string;
         };
         Insert: {
@@ -142,6 +147,11 @@ export type Database = {
           company_name?: string | null;
           city?: string | null;
           business_type?: string | null;
+          internal_notes?: string | null;
+          next_follow_up_at?: string | null;
+          lost_reason?: string | null;
+          estimated_value?: number | null;
+          quoted_value?: number | null;
         };
         Update: {
           id?: string;
@@ -156,6 +166,11 @@ export type Database = {
           company_name?: string | null;
           city?: string | null;
           business_type?: string | null;
+          internal_notes?: string | null;
+          next_follow_up_at?: string | null;
+          lost_reason?: string | null;
+          estimated_value?: number | null;
+          quoted_value?: number | null;
         };
         Relationships: [];
       };

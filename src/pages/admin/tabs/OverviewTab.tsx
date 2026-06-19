@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, ClipboardList, Inbox, PhoneCall, FileText, Trophy, XCircle, Package, Star } from "lucide-react";
+import { Loader2, ClipboardList, Inbox, PhoneCall, FileText, Trophy, XCircle, Package, Star, CalendarClock, AlertCircle, CalendarOff, Wallet, CircleDollarSign, Percent } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
@@ -8,6 +8,15 @@ import { t } from "@/components/admin/i18n";
 import { MetricCard } from "@/components/admin/MetricCard";
 import { StatusBadge, type BadgeColor } from "@/components/admin/StatusBadge";
 import { normalizedRequestStatus, statusBadgeColor } from "../requestStatus";
+import { isDueToday, isOverdue, hasNoFollowUp } from "../followUp";
+
+function sum(values: (number | null)[]): number {
+  return values.reduce((acc: number, v) => acc + (v ?? 0), 0);
+}
+
+function formatMoney(value: number): string {
+  return `QAR ${value.toLocaleString()}`;
+}
 
 function mostRequestedProduct(requests: ProductRequest[]): { name: string; count: number } | null {
   const counts = new Map<string, number>();
@@ -51,6 +60,22 @@ export function OverviewTab({ lang, requests, loading }: { lang: Lang; requests:
   const latest5 = requests.slice(0, 5);
   const topProduct = mostRequestedProduct(requests);
 
+  const dueTodayCount = requests.filter((r) => isDueToday(r.next_follow_up_at)).length;
+  const overdueCount = requests.filter((r) => isOverdue(r.next_follow_up_at, r.status)).length;
+  const noFollowUpCount = requests.filter((r) => hasNoFollowUp(r.next_follow_up_at, r.status)).length;
+
+  const estimatedPipelineValue = sum(
+    requests.filter((r) => normalizedRequestStatus(r.status) !== "lost").map((r) => r.estimated_value)
+  );
+  const quotedPipelineValue = sum(
+    requests.filter((r) => {
+      const s = normalizedRequestStatus(r.status);
+      return s === "quoted" || s === "won";
+    }).map((r) => r.quoted_value)
+  );
+  const wonValue = sum(requests.filter((r) => normalizedRequestStatus(r.status) === "won").map((r) => r.quoted_value));
+  const conversionRate = total > 0 ? (byStatus.won / total) * 100 : 0;
+
   if (loading) {
     return (
       <div className="flex justify-center py-16">
@@ -81,6 +106,16 @@ export function OverviewTab({ lang, requests, loading }: { lang: Lang; requests:
           accent={C.action}
           icon={<Star size={16} />}
         />
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard label={t("followUpsDueToday", lang)}  value={dueTodayCount}    accent={C.warning} icon={<CalendarClock size={16} />} />
+        <MetricCard label={t("overdueFollowUps", lang)}   value={overdueCount}     accent={C.danger}  icon={<AlertCircle size={16} />} />
+        <MetricCard label={t("noFollowUpRequests", lang)} value={noFollowUpCount}  accent={C.muted}   icon={<CalendarOff size={16} />} />
+        <MetricCard label={t("conversionRate", lang)}     value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<Percent size={16} />} />
+        <MetricCard label={t("estPipelineValue", lang)}    value={formatMoney(estimatedPipelineValue)} accent={C.action}  icon={<Wallet size={16} />} />
+        <MetricCard label={t("quotedPipelineValue", lang)} value={formatMoney(quotedPipelineValue)}    accent={C.warning} icon={<CircleDollarSign size={16} />} />
+        <MetricCard label={t("wonValueLabel", lang)}       value={formatMoney(wonValue)}                accent={C.success} icon={<Trophy size={16} />} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
