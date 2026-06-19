@@ -377,7 +377,7 @@ export function ProductModal({ lang, editProduct, onClose, onSaved }: ProductMod
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={saving}
               className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
-              style={{ background: C.action, color: "#0A0B0A" }}>
+              style={{ background: C.action, color: "#FFFFFF" }}>
               {saving ? <Loader2 size={14} className="animate-spin" /> : null}
               {saving ? t("saving", lang) : t("save", lang)}
             </button>

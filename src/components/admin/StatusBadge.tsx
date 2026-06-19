@@ -4,9 +4,9 @@ export type BadgeColor = "green" | "blue" | "red" | "gray" | "yellow";
 
 const COLORS: Record<BadgeColor, { bg: string; color: string; border: string }> = {
   green:  { bg: "#22C55E18", color: C.success, border: "#22C55E30" },
-  blue:   { bg: "#3B82F618", color: C.info,    border: "#3B82F630" },
+  blue:   { bg: "#1565A018", color: C.info,    border: "#1565A030" },
   red:    { bg: "#EF444418", color: C.danger,  border: "#EF444430" },
-  yellow: { bg: "#F59E0B18", color: C.warning, border: "#F59E0B30" },
+  yellow: { bg: "#D4AF3718", color: C.warning, border: "#D4AF3730" },
   gray:   { bg: "#8E958A18", color: C.muted,   border: "#8E958A30" },
 };
 

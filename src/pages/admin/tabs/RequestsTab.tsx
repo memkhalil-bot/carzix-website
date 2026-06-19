@@ -131,7 +131,7 @@ export function RequestsTab({ lang }: { lang: Lang }) {
         </div>
         <button onClick={() => exportRequestsCsv(filtered)} disabled={filtered.length === 0}
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40"
-          style={{ background: C.action, color: "#0A0B0A" }}>
+          style={{ background: C.action, color: "#FFFFFF" }}>
           <Download size={14} /> {t("exportCsv", lang)}
         </button>
       </div>
@@ -247,12 +247,12 @@ export function RequestsTab({ lang }: { lang: Lang }) {
                         <>
                           <button onClick={() => updateStatus(r.id, "contacted")} disabled={current === "contacted"}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                            style={{ background: "#3B82F615", color: C.info, border: "1px solid #3B82F630" }}>
+                            style={{ background: "#1565A015", color: C.info, border: "1px solid #1565A030" }}>
                             <Check size={12} /> {t("markContacted", lang)}
                           </button>
                           <button onClick={() => updateStatus(r.id, "quoted")} disabled={current === "quoted"}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium disabled:opacity-40"
-                            style={{ background: "#F59E0B15", color: C.warning, border: "1px solid #F59E0B30" }}>
+                            style={{ background: "#D4AF3715", color: C.warning, border: "1px solid #D4AF3730" }}>
                             <Check size={12} /> {t("markQuoted", lang)}
                           </button>
                           <button onClick={() => updateStatus(r.id, "won")} disabled={current === "won"}
