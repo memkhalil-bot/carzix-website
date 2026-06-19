@@ -1,3 +1,5 @@
+import { trackEvent } from "@/lib/analytics";
+
 const WHATSAPP_MESSAGE = encodeURIComponent("Hello CARZIX,\nI would like a wholesale quotation.");
 
 export default function WhatsAppButton() {
@@ -7,6 +9,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
+      onClick={() => trackEvent("click_whatsapp", { source_page: window.location.pathname })}
       className="group fixed bottom-6 right-6 z-40 w-14 h-14 flex items-center justify-center"
     >
       <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping" />

@@ -5,6 +5,7 @@ import { ChevronRight, CheckCircle, Loader2, Package } from "lucide-react";
 import Seo from "@/components/Seo";
 import RequestQuoteModal from "@/components/RequestQuoteModal";
 import { supabase } from "@/lib/supabase";
+import { trackEvent } from "@/lib/analytics";
 import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
@@ -48,6 +49,10 @@ export default function ProductDetail() {
   const related = product
     ? allProducts.filter((p) => p !== product && productCat(p) === productCat(product)).slice(0, 3)
     : [];
+
+  useEffect(() => {
+    if (product) trackEvent("view_product_detail", { product_slug: slug ?? "", language: isAr ? "ar" : "en" });
+  }, [slug, !!product]);
 
   if (loading) {
     return (
@@ -212,7 +217,10 @@ export default function ProductDetail() {
               </div>
 
               <button
-                onClick={() => setQuoteProduct(product)}
+                onClick={() => {
+                  trackEvent("click_request_quote", { product_name: name, source_page: "product_detail" });
+                  setQuoteProduct(product);
+                }}
                 className="btn-cta inline-flex items-center gap-2 px-8 py-4 text-[#111827] font-bold rounded"
               >
                 {t("Request a Quote", "طلب عرض سعر")}

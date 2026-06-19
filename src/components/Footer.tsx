@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Phone, Mail, MapPin, Instagram } from "lucide-react";
 import { useLang } from "@/contexts/LanguageContext";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Footer() {
   const { t, isAr } = useLang();
@@ -92,13 +93,25 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3">
                 <Phone size={13} className="text-[#A29475] shrink-0" />
-                <a href="tel:+97472252572" dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white/45 hover:text-white text-sm transition-colors">
+                <a
+                  href="tel:+97472252572"
+                  dir="ltr"
+                  style={{ unicodeBidi: "isolate" }}
+                  onClick={() => trackEvent("click_contact_phone", { source_page: "footer" })}
+                  className="text-white/45 hover:text-white text-sm transition-colors"
+                >
                   +974 72252572
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={13} className="text-[#A29475] shrink-0" />
-                <a href="mailto:hello@carzix.qa" dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white/45 hover:text-white text-sm transition-colors">
+                <a
+                  href="mailto:hello@carzix.qa"
+                  dir="ltr"
+                  style={{ unicodeBidi: "isolate" }}
+                  onClick={() => trackEvent("click_contact_email", { source_page: "footer" })}
+                  className="text-white/45 hover:text-white text-sm transition-colors"
+                >
                   hello@carzix.qa
                 </a>
               </li>
