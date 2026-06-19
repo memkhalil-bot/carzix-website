@@ -121,7 +121,15 @@ export default function Footer() {
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} CARZIX. {t("All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
-          <p className="text-white/25 text-xs">{t("Doha, Qatar", "الدوحة، دولة قطر")}</p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy-policy" className="text-white/25 hover:text-[#A29475] text-xs transition-colors">
+              {t("Privacy Policy", "سياسة الخصوصية")}
+            </Link>
+            <Link href="/terms" className="text-white/25 hover:text-[#A29475] text-xs transition-colors">
+              {t("Terms & Conditions", "الشروط والأحكام")}
+            </Link>
+            <p className="text-white/25 text-xs">{t("Doha, Qatar", "الدوحة، دولة قطر")}</p>
+          </div>
         </div>
       </div>
     </footer>
