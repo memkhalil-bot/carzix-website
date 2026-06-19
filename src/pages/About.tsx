@@ -44,7 +44,7 @@ export default function About() {
       year: "2022",
       titleAr: "من الرؤية إلى السوق",
       eventEn: "CARZIX brand established in Qatar — focused on bringing premium professional-grade detailing formulas to the region.",
-      eventAr: "تأسست علامة CARZIX في جمهورية مصر العربية بأيدي خبراء متخصصين، برؤية واضحة لجلب وتطوير كيمياء وتركيبات تفصيل احترافية فاخرة تلبي تطلعات السوق وتضع معايير جديدة للجودة.",
+      eventAr: "تأسست علامة CARZIX في دولة قطر بأيدي خبراء متخصصين، برؤية واضحة لجلب وتطوير كيمياء وتركيبات تفصيل احترافية فاخرة تلبي تطلعات السوق وتضع معايير جديدة للجودة.",
     },
     {
       year: "2023",

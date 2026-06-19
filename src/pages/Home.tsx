@@ -35,9 +35,12 @@ export default function Home() {
       .select("*")
       .eq("status", "active")
       .limit(6)
-      .then(({ data }) => {
-        if (data && data.length > 0) setDbProducts(data);
-      });
+      .then(
+        ({ data }) => {
+          if (data && data.length > 0) setDbProducts(data);
+        },
+        () => {}
+      );
   }, []);
 
   const featuredStatic = staticProducts.slice(0, 6);

@@ -13,9 +13,12 @@ export default function ClientsSlider() {
       .select("*")
       .eq("active", true)
       .order("display_order")
-      .then(({ data }) => {
-        if (data && data.length > 0) setClients(data);
-      });
+      .then(
+        ({ data }) => {
+          if (data && data.length > 0) setClients(data);
+        },
+        () => {}
+      );
   }, []);
 
   if (clients.length === 0) return null;

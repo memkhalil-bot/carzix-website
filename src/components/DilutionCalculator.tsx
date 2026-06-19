@@ -45,10 +45,13 @@ export default function DilutionCalculator() {
       .from("products")
       .select("*")
       .eq("status", "active")
-      .then(({ data }) => {
-        if (data) setProducts(data);
-        setLoading(false);
-      });
+      .then(
+        ({ data }) => {
+          if (data) setProducts(data);
+          setLoading(false);
+        },
+        () => setLoading(false)
+      );
   }, []);
 
   const usableProducts = useMemo(
