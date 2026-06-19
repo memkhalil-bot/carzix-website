@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type React from "react";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, ClipboardList } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
@@ -77,11 +77,16 @@ export function SalesDetailsModal({ lang, request, onClose, onSaved }: SalesDeta
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="relative w-full max-w-lg my-8 mx-4 rounded-2xl shadow-xl"
+        className="relative w-full max-w-lg my-8 mx-4 rounded-2xl shadow-2xl"
         style={{ background: C.surface, border: `1px solid ${C.border}` }}
       >
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${C.border}` }}>
-          <h2 className="text-base font-bold" style={{ color: C.text }}>{t("salesDetails", lang)}</h2>
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: C.actionDim, color: C.action }}>
+              <ClipboardList size={15} />
+            </div>
+            <h2 className="text-base font-bold" style={{ color: C.text }}>{t("salesDetails", lang)}</h2>
+          </div>
           <button onClick={onClose} className="p-1.5 rounded-lg" style={{ color: C.muted, background: C.surface2 }}>
             <X size={16} />
           </button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, ClipboardList, Inbox, PhoneCall, FileText, Trophy, XCircle, Package, Star, CalendarClock, AlertCircle, CalendarOff, Wallet, CircleDollarSign, Percent, BarChart3 } from "lucide-react";
+import { Loader2, ClipboardList, Inbox, PhoneCall, FileText, Trophy, XCircle, Package, Star, CalendarClock, AlertCircle, CalendarOff, Wallet, CircleDollarSign, Percent, BarChart3, Gauge, Users2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
@@ -7,6 +7,8 @@ import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { MetricCard } from "@/components/admin/MetricCard";
 import { StatusBadge, type BadgeColor } from "@/components/admin/StatusBadge";
+import { SectionHeader } from "@/components/admin/SectionHeader";
+import { ErrorState } from "@/components/admin/AdminTable";
 import { normalizedRequestStatus, statusBadgeColor } from "../requestStatus";
 import { isDueToday, isOverdue, hasNoFollowUp } from "../followUp";
 
@@ -43,7 +45,7 @@ const PIPELINE_BAR_COLOR: Record<string, string> = {
   new: C.warning, contacted: C.info, quoted: C.warning, won: C.success, lost: C.danger,
 };
 
-export function OverviewTab({ lang, requests, loading }: { lang: Lang; requests: ProductRequest[]; loading: boolean }) {
+export function OverviewTab({ lang, requests, loading, error }: { lang: Lang; requests: ProductRequest[]; loading: boolean; error?: boolean }) {
   const [activeProducts, setActiveProducts] = useState<number | null>(null);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export function OverviewTab({ lang, requests, loading }: { lang: Lang; requests:
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <div
         className="flex items-center gap-3 rounded-2xl p-4"
         style={{ background: C.surface, border: `1px solid ${C.border}` }}
@@ -94,36 +96,44 @@ export function OverviewTab({ lang, requests, loading }: { lang: Lang; requests:
         <p className="text-sm" style={{ color: C.muted }}>{t("analyticsNote", lang)}</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard label={t("totalRequests", lang)}     value={total}              accent={C.action}  icon={<ClipboardList size={16} />} />
-        <MetricCard label={t("newRequests", lang)}       value={byStatus.new}       accent={C.warning} icon={<Inbox size={16} />} />
-        <MetricCard label={t("contactedRequests", lang)} value={byStatus.contacted} accent={C.info}    icon={<PhoneCall size={16} />} />
-        <MetricCard label={t("quotedRequests", lang)}    value={byStatus.quoted}    accent={C.warning} icon={<FileText size={16} />} />
-        <MetricCard label={t("wonRequests", lang)}       value={byStatus.won}       accent={C.success} icon={<Trophy size={16} />} />
-        <MetricCard label={t("lostRequests", lang)}      value={byStatus.lost}      accent={C.danger}  icon={<XCircle size={16} />} />
-        <MetricCard
-          label={t("activeProducts", lang)}
-          value={activeProducts ?? "…"}
-          accent={C.action}
-          icon={<Package size={16} />}
-        />
-        <MetricCard
-          label={t("mostRequestedProduct", lang)}
-          value={topProduct ? topProduct.name : "—"}
-          sub={topProduct ? `${topProduct.count} ${t("productReqs", lang)}` : undefined}
-          accent={C.action}
-          icon={<Star size={16} />}
-        />
+      {error && <ErrorState message={t("loadError", lang)} />}
+
+      <div>
+        <SectionHeader title={t("pipelineSummary", lang)} icon={<Gauge size={15} />} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard label={t("totalRequests", lang)}     value={total}              accent={C.action}  icon={<ClipboardList size={16} />} />
+          <MetricCard label={t("newRequests", lang)}       value={byStatus.new}       accent={C.warning} icon={<Inbox size={16} />} />
+          <MetricCard label={t("contactedRequests", lang)} value={byStatus.contacted} accent={C.info}    icon={<PhoneCall size={16} />} />
+          <MetricCard label={t("quotedRequests", lang)}    value={byStatus.quoted}    accent={C.warning} icon={<FileText size={16} />} />
+          <MetricCard label={t("wonRequests", lang)}       value={byStatus.won}       accent={C.success} icon={<Trophy size={16} />} />
+          <MetricCard label={t("lostRequests", lang)}      value={byStatus.lost}      accent={C.danger}  icon={<XCircle size={16} />} />
+          <MetricCard
+            label={t("activeProducts", lang)}
+            value={activeProducts ?? "…"}
+            accent={C.action}
+            icon={<Package size={16} />}
+          />
+          <MetricCard
+            label={t("mostRequestedProduct", lang)}
+            value={topProduct ? topProduct.name : "—"}
+            sub={topProduct ? `${topProduct.count} ${t("productReqs", lang)}` : undefined}
+            accent={C.action}
+            icon={<Star size={16} />}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard label={t("followUpsDueToday", lang)}  value={dueTodayCount}    accent={C.warning} icon={<CalendarClock size={16} />} />
-        <MetricCard label={t("overdueFollowUps", lang)}   value={overdueCount}     accent={C.danger}  icon={<AlertCircle size={16} />} />
-        <MetricCard label={t("noFollowUpRequests", lang)} value={noFollowUpCount}  accent={C.muted}   icon={<CalendarOff size={16} />} />
-        <MetricCard label={t("conversionRate", lang)}     value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<Percent size={16} />} />
-        <MetricCard label={t("estPipelineValue", lang)}    value={formatMoney(estimatedPipelineValue)} accent={C.action}  icon={<Wallet size={16} />} />
-        <MetricCard label={t("quotedPipelineValue", lang)} value={formatMoney(quotedPipelineValue)}    accent={C.warning} icon={<CircleDollarSign size={16} />} />
-        <MetricCard label={t("wonValueLabel", lang)}       value={formatMoney(wonValue)}                accent={C.success} icon={<Trophy size={16} />} />
+      <div>
+        <SectionHeader title={lang === "ar" ? "المتابعة والأداء" : "Follow-ups & Performance"} icon={<Users2 size={15} />} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard label={t("followUpsDueToday", lang)}  value={dueTodayCount}    accent={C.warning} icon={<CalendarClock size={16} />} />
+          <MetricCard label={t("overdueFollowUps", lang)}   value={overdueCount}     accent={C.danger}  icon={<AlertCircle size={16} />} />
+          <MetricCard label={t("noFollowUpRequests", lang)} value={noFollowUpCount}  accent={C.muted}   icon={<CalendarOff size={16} />} />
+          <MetricCard label={t("conversionRate", lang)}     value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<Percent size={16} />} />
+          <MetricCard label={t("estPipelineValue", lang)}    value={formatMoney(estimatedPipelineValue)} accent={C.action}  icon={<Wallet size={16} />} />
+          <MetricCard label={t("quotedPipelineValue", lang)} value={formatMoney(quotedPipelineValue)}    accent={C.warning} icon={<CircleDollarSign size={16} />} />
+          <MetricCard label={t("wonValueLabel", lang)}       value={formatMoney(wonValue)}                accent={C.success} icon={<Trophy size={16} />} />
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">

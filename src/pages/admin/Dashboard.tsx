@@ -19,15 +19,19 @@ export default function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [overviewRequests, setOverviewRequests] = useState<ProductRequest[]>([]);
   const [overviewLoading, setOverviewLoading] = useState(true);
+  const [overviewError, setOverviewError] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   // Auth guard — verify active Supabase session
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) setLocation("/admin/login");
+      else setUserEmail(data.session.user.email ?? null);
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) setLocation("/admin/login");
+      else setUserEmail(session.user.email ?? null);
     });
 
     return () => listener.subscription.unsubscribe();
@@ -41,7 +45,12 @@ export default function AdminDashboard() {
         .from("product_requests")
         .select("*")
         .order("created_at", { ascending: false });
-      if (error) console.error("[Dashboard] product_requests SELECT failed:", error);
+      if (error) {
+        console.error("[Dashboard] product_requests SELECT failed:", error);
+        setOverviewError(true);
+      } else {
+        setOverviewError(false);
+      }
       setOverviewRequests((data ?? []) as ProductRequest[]);
       setOverviewLoading(false);
     }
@@ -62,8 +71,9 @@ export default function AdminDashboard() {
       mobileOpen={mobileOpen}
       setMobileOpen={setMobileOpen}
       onLogout={handleLogout}
+      userEmail={userEmail}
     >
-      {tab === "overview" && <OverviewTab lang={lang} requests={overviewRequests} loading={overviewLoading} />}
+      {tab === "overview" && <OverviewTab lang={lang} requests={overviewRequests} loading={overviewLoading} error={overviewError} />}
       {tab === "requests" && <RequestsTab lang={lang} />}
       {tab === "products"  && <ProductsTab lang={lang} />}
       {tab === "clients"   && <ClientsTab lang={lang} />}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Loader2, AlertTriangle } from "lucide-react";
 import { C } from "./theme";
 import type { Lang } from "./theme";
 
@@ -41,6 +42,26 @@ export function EmptyState({ message }: { message: string }) {
       style={{ background: C.surface, border: `1px dashed ${C.border}`, color: C.muted }}
     >
       {message}
+    </div>
+  );
+}
+
+export function LoadingState() {
+  return (
+    <div className="flex justify-center py-16">
+      <Loader2 size={28} style={{ color: C.action }} className="animate-spin" />
+    </div>
+  );
+}
+
+export function ErrorState({ message }: { message: string }) {
+  return (
+    <div
+      className="flex items-center gap-3 py-5 px-6 rounded-xl text-sm"
+      style={{ background: "#EF444412", border: `1px solid #EF444440`, color: C.danger }}
+    >
+      <AlertTriangle size={18} className="shrink-0" />
+      <span>{message}</span>
     </div>
   );
 }

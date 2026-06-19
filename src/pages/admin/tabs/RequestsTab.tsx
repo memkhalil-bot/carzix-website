@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Loader2, Check, X, ChevronDown, Download, Calendar, AlertCircle, ClipboardList } from "lucide-react";
+import { Check, X, ChevronDown, Download, Calendar, AlertCircle, ClipboardList } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { EmptyState } from "@/components/admin/AdminTable";
+import { EmptyState, LoadingState, ErrorState } from "@/components/admin/AdminTable";
+import { SectionHeader } from "@/components/admin/SectionHeader";
+import { Toolbar, ToolbarChip } from "@/components/admin/Toolbar";
 import { inputStyle } from "@/components/admin/formControls";
 import { normalizedRequestStatus, statusBadgeColor } from "../requestStatus";
 import { isDueToday, isOverdue, hasNoFollowUp, matchesFollowUpFilter } from "../followUp";
@@ -104,6 +106,7 @@ function FollowUpIndicator({ r, lang }: { r: ProductRequest; lang: Lang }) {
 export function RequestsTab({ lang }: { lang: Lang }) {
   const [requests, setRequests] = useState<ProductRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -119,7 +122,12 @@ export function RequestsTab({ lang }: { lang: Lang }) {
       .from("product_requests")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error) console.error("[RequestsTab] product_requests SELECT error:", error);
+    if (error) {
+      console.error("[RequestsTab] product_requests SELECT error:", error);
+      setLoadError(true);
+    } else {
+      setLoadError(false);
+    }
     setRequests(data ?? []);
     setLoading(false);
   }, []);
@@ -180,19 +188,20 @@ export function RequestsTab({ lang }: { lang: Lang }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold" style={{ color: C.text }}>{t("quoteReqs", lang)}</h2>
-          <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{ background: C.surface2, color: C.muted, border: `1px solid ${C.border}` }}>
-            {filtered.length}
-          </span>
-        </div>
-        <button onClick={() => exportRequestsCsv(filtered)} disabled={filtered.length === 0}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40"
-          style={{ background: C.action, color: "#FFFFFF" }}>
-          <Download size={14} /> {t("exportCsv", lang)}
-        </button>
-      </div>
+      <SectionHeader
+        title={t("quoteReqs", lang)}
+        count={filtered.length}
+        icon={<ClipboardList size={15} />}
+        actions={
+          <button onClick={() => exportRequestsCsv(filtered)} disabled={filtered.length === 0}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40"
+            style={{ background: C.action, color: "#FFFFFF" }}>
+            <Download size={14} /> {t("exportCsv", lang)}
+          </button>
+        }
+      />
+
+      {loadError && <div className="mb-5"><ErrorState message={t("loadError", lang)} /></div>}
 
       {feedback && (
         <div className="mb-4 px-3 py-2 rounded-lg text-sm" style={
@@ -204,56 +213,45 @@ export function RequestsTab({ lang }: { lang: Lang }) {
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <Toolbar className="!mb-3">
         {FOLLOW_UP_FILTERS.map((f) => {
-          const active = followUpFilter === f.key;
           const accent = f.key === "overdue" ? C.danger : f.key === "dueToday" ? C.warning : C.action;
           return (
-            <button
-              key={f.key}
-              onClick={() => setFollowUpFilter(f.key)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
-              style={active
-                ? { background: `${accent}1F`, color: accent, border: `1px solid ${accent}55` }
-                : { background: C.surface2, color: C.muted, border: `1px solid ${C.border}` }}
-            >
+            <ToolbarChip key={f.key} active={followUpFilter === f.key} accent={accent} onClick={() => setFollowUpFilter(f.key)}>
               {t(f.labelKey, lang)} · {followUpCounts[f.key]}
-            </button>
+            </ToolbarChip>
           );
         })}
-      </div>
+      </Toolbar>
 
-      <div className="grid sm:grid-cols-4 gap-3 mb-5">
-        <div className="sm:col-span-2">
-          <input style={inp} placeholder={t("searchPlaceholder", lang)} value={search} onChange={(e) => setSearch(e.target.value)} />
+      <Toolbar>
+        <div className="grid sm:grid-cols-4 gap-3 flex-1 w-full">
+          <div className="sm:col-span-2">
+            <input style={inp} placeholder={t("searchPlaceholder", lang)} value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <select style={inp} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}>
+            <option value="all">{t("allStatuses", lang)}</option>
+            <option value="new">{t("newBadge", lang)}</option>
+            <option value="contacted">{t("contacted", lang)}</option>
+            <option value="quoted">{t("quoted", lang)}</option>
+            <option value="won">{t("won", lang)}</option>
+            <option value="lost">{t("lost", lang)}</option>
+          </select>
+          <select style={inp} value={businessTypeFilter} onChange={(e) => setBusinessTypeFilter(e.target.value)}>
+            <option value="all">{t("allBusinessTypes", lang)}</option>
+            {businessTypeOptions.map((bt) => <option key={bt} value={bt}>{bt}</option>)}
+          </select>
         </div>
-        <select style={inp} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}>
-          <option value="all">{t("allStatuses", lang)}</option>
-          <option value="new">{t("newBadge", lang)}</option>
-          <option value="contacted">{t("contacted", lang)}</option>
-          <option value="quoted">{t("quoted", lang)}</option>
-          <option value="won">{t("won", lang)}</option>
-          <option value="lost">{t("lost", lang)}</option>
-        </select>
-        <select style={inp} value={businessTypeFilter} onChange={(e) => setBusinessTypeFilter(e.target.value)}>
-          <option value="all">{t("allBusinessTypes", lang)}</option>
-          {businessTypeOptions.map((bt) => <option key={bt} value={bt}>{bt}</option>)}
-        </select>
-      </div>
-
-      {filtersActive && (
-        <div className="mb-5">
-          <button onClick={clearFilters} className="px-3 py-1.5 rounded-lg text-xs font-medium"
+        {filtersActive && (
+          <button onClick={clearFilters} className="px-3 py-1.5 rounded-lg text-xs font-medium shrink-0"
             style={{ background: C.surface2, color: C.muted, border: `1px solid ${C.border}` }}>
             {t("clearFilters", lang)}
           </button>
-        </div>
-      )}
+        )}
+      </Toolbar>
 
       {loading ? (
-        <div className="flex justify-center py-16">
-          <Loader2 size={28} style={{ color: C.action }} className="animate-spin" />
-        </div>
+        <LoadingState />
       ) : requests.length === 0 ? (
         <EmptyState message={t("noRequests", lang)} />
       ) : filtered.length === 0 ? (
