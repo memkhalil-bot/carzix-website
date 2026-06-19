@@ -35,10 +35,13 @@ export default function Products() {
       .eq("status", "active")
       .order("display_order", { ascending: true })
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data && data.length > 0) setDbProducts(data);
-        setLoading(false);
-      });
+      .then(
+        ({ data }) => {
+          if (data && data.length > 0) setDbProducts(data);
+          setLoading(false);
+        },
+        () => setLoading(false)
+      );
   }, []);
 
   const useStatic = dbProducts.length === 0;

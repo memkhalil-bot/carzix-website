@@ -34,10 +34,13 @@ export default function ProductDetail() {
       .from("products")
       .select("*")
       .eq("status", "active")
-      .then(({ data }) => {
-        if (data && data.length > 0) setDbProducts(data);
-        setLoading(false);
-      });
+      .then(
+        ({ data }) => {
+          if (data && data.length > 0) setDbProducts(data);
+          setLoading(false);
+        },
+        () => setLoading(false)
+      );
   }, []);
 
   const allProducts: DisplayProduct[] = dbProducts.length > 0 ? dbProducts : staticProducts;
