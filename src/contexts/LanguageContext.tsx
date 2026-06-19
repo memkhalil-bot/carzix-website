@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 type Lang = "en" | "ar";
 
@@ -22,7 +23,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
   }, [lang]);
 
-  const toggleLang = () => setLang((l) => (l === "en" ? "ar" : "en"));
+  const toggleLang = () =>
+    setLang((l) => {
+      const next = l === "en" ? "ar" : "en";
+      trackEvent("switch_language", { from: l, to: next });
+      return next;
+    });
   const t = (en: string, ar: string) => (lang === "ar" ? ar : en);
 
   return (

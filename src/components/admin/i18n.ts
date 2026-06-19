@@ -118,6 +118,7 @@ export const T = {
   mostRequestedProduct: { ar: "الأكثر طلباً",         en: "Most Requested Product" },
   pipelineSummary:   { ar: "ملخص مراحل الطلبات",      en: "Pipeline Summary" },
   noDataYet:         { ar: "لا توجد بيانات بعد.",     en: "No data yet." },
+  analyticsNote:     { ar: "بيانات حركة الزوار متاحة في Vercel Web Analytics.", en: "Website traffic is available in Vercel Web Analytics." },
 
   // Search / filters / export
   searchPlaceholder:    { ar: "بحث بالاسم، الشركة، البريد، الهاتف، المنتج، أو المدينة…", en: "Search name, company, email, phone, product, or city…" },

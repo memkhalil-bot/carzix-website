@@ -10,6 +10,7 @@ import BeforeAfter from "@/components/BeforeAfter";
 import DilutionCalculator from "@/components/DilutionCalculator";
 import ConcentrationSection from "@/components/ConcentrationSection";
 import Seo from "@/components/Seo";
+import { trackEvent } from "@/lib/analytics";
 import { fadeUp, blurUp, fadeScale, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
@@ -479,6 +480,7 @@ export default function Home() {
               href="https://wa.me/97472252572"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackEvent("click_whatsapp", { source_page: "/" })}
               className="btn-teal inline-flex items-center gap-2 px-6 py-3.5 text-white font-semibold rounded"
             >
               <MessageCircle size={16} /> {t("WhatsApp Us", "واتساب")}

@@ -6,6 +6,7 @@ import DilutionCalculator from "@/components/DilutionCalculator";
 import RequestQuoteModal from "@/components/RequestQuoteModal";
 import Seo from "@/components/Seo";
 import { supabase } from "@/lib/supabase";
+import { trackEvent } from "@/lib/analytics";
 import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
@@ -64,6 +65,10 @@ export default function Products() {
       ];
 
   function openModal(product: DisplayProduct) {
+    trackEvent("click_request_quote", {
+      product_name: productName(product, isAr),
+      source_page: "/products",
+    });
     setModalProduct(product);
   }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, ClipboardList, Inbox, PhoneCall, FileText, Trophy, XCircle, Package, Star, CalendarClock, AlertCircle, CalendarOff, Wallet, CircleDollarSign, Percent } from "lucide-react";
+import { Loader2, ClipboardList, Inbox, PhoneCall, FileText, Trophy, XCircle, Package, Star, CalendarClock, AlertCircle, CalendarOff, Wallet, CircleDollarSign, Percent, BarChart3 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
@@ -86,6 +86,14 @@ export function OverviewTab({ lang, requests, loading }: { lang: Lang; requests:
 
   return (
     <div className="space-y-6">
+      <div
+        className="flex items-center gap-3 rounded-2xl p-4"
+        style={{ background: C.surface, border: `1px solid ${C.border}` }}
+      >
+        <BarChart3 size={16} style={{ color: C.action }} />
+        <p className="text-sm" style={{ color: C.muted }}>{t("analyticsNote", lang)}</p>
+      </div>
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard label={t("totalRequests", lang)}     value={total}              accent={C.action}  icon={<ClipboardList size={16} />} />
         <MetricCard label={t("newRequests", lang)}       value={byStatus.new}       accent={C.warning} icon={<Inbox size={16} />} />
