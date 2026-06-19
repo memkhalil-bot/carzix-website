@@ -71,7 +71,7 @@ export function ClientsTab({ lang }: { lang: Lang }) {
         <div className="flex items-center gap-2">
           <button onClick={() => setShowAdd((v) => !v)}
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
-            style={{ background: C.action, color: "#0A0B0A" }}>
+            style={{ background: C.action, color: "#FFFFFF" }}>
             <Plus size={14} /> {t("addClient", lang)}
           </button>
           <button onClick={load} disabled={loading}
@@ -110,7 +110,7 @@ export function ClientsTab({ lang }: { lang: Lang }) {
           <div className="flex gap-2 pt-1">
             <button type="submit" disabled={saving}
               className="px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
-              style={{ background: C.action, color: "#0A0B0A" }}>
+              style={{ background: C.action, color: "#FFFFFF" }}>
               {saving ? t("saving", lang) : t("saveClient", lang)}
             </button>
             <button type="button" onClick={() => setShowAdd(false)}

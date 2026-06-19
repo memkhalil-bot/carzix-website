@@ -42,7 +42,7 @@ function NavButton({
       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isRTL ? "flex-row-reverse text-right" : "text-left"}`}
       style={
         active
-          ? { background: C.actionDim, color: C.action, border: `1px solid #22C55E40` }
+          ? { background: C.actionDim, color: C.action, border: `1px solid #0F4C7540` }
           : { color: C.muted, border: "1px solid transparent" }
       }
       onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = C.surface2; }}

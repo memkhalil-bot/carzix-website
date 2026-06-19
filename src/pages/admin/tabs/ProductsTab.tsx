@@ -67,7 +67,7 @@ export function ProductsTab({ lang }: { lang: Lang }) {
         <div className="flex items-center gap-2">
           <button onClick={openAdd}
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
-            style={{ background: C.action, color: "#0A0B0A" }}>
+            style={{ background: C.action, color: "#FFFFFF" }}>
             <Plus size={14} /> {t("addProduct", lang)}
           </button>
           <button onClick={load} disabled={loading}
@@ -132,7 +132,7 @@ export function ProductsTab({ lang }: { lang: Lang }) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <button onClick={() => openEdit(p)}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium"
-                      style={{ background: "#3B82F615", color: C.info, border: "1px solid #3B82F630" }}
+                      style={{ background: "#1565A015", color: C.info, border: "1px solid #1565A030" }}
                       title={t("edit", lang)}>
                       <Pencil size={12} /> {t("edit", lang)}
                     </button>
