@@ -1,8 +1,6 @@
 import { Link } from "wouter";
-import { Phone, Mail, MapPin, Instagram, MessageCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram } from "lucide-react";
 import { useLang } from "@/contexts/LanguageContext";
-
-const WHATSAPP_MESSAGE = encodeURIComponent("Hello CARZIX,\nI would like a wholesale quotation.");
 
 export default function Footer() {
   const { t, isAr } = useLang();
@@ -22,11 +20,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="mb-4">
+            <div className="mb-4 inline-block bg-white rounded-lg px-4 py-2.5">
               <img
                 src={isAr ? "/logo-ar.png" : "/logo-en.png"}
                 alt="CARZIX"
-                className="h-10 w-auto"
+                className="h-11 w-auto block"
               />
             </div>
             <p className="text-white/45 text-sm leading-relaxed mb-5">
@@ -44,15 +42,6 @@ export default function Footer() {
                 className="w-9 h-9 rounded border border-white/10 flex items-center justify-center text-white/40 hover:text-[#A29475] hover:border-[#A29475]/40 hover:-translate-y-0.5 transition-all"
               >
                 <Instagram size={16} />
-              </a>
-              <a
-                href={`https://wa.me/97472252572?text=${WHATSAPP_MESSAGE}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="CARZIX on WhatsApp"
-                className="w-9 h-9 rounded border border-white/10 flex items-center justify-center text-white/40 hover:text-[#129B82] hover:border-[#129B82]/40 hover:-translate-y-0.5 transition-all"
-              >
-                <MessageCircle size={16} />
               </a>
             </div>
           </div>
@@ -111,19 +100,6 @@ export default function Footer() {
                 <Mail size={13} className="text-[#A29475] shrink-0" />
                 <a href="mailto:hello@carzix.qa" dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white/45 hover:text-white text-sm transition-colors">
                   hello@carzix.qa
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <MessageCircle size={13} className="text-[#129B82] shrink-0" />
-                <a
-                  href={`https://wa.me/97472252572?text=${WHATSAPP_MESSAGE}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  dir="ltr"
-                  style={{ unicodeBidi: "isolate" }}
-                  className="text-white/45 hover:text-white text-sm transition-colors"
-                >
-                  +974 72252572
                 </a>
               </li>
               <li className="flex items-start gap-3">
