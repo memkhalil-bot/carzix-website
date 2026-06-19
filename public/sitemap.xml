@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://carzix-website.vercel.app/</loc>
+    <loc>https://www.carzix.qa/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://carzix-website.vercel.app/products</loc>
+    <loc>https://www.carzix.qa/products</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://carzix-website.vercel.app/partners</loc>
+    <loc>https://www.carzix.qa/partners</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://carzix-website.vercel.app/about</loc>
+    <loc>https://www.carzix.qa/about</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://carzix-website.vercel.app/contact</loc>
+    <loc>https://www.carzix.qa/contact</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://carzix-website.vercel.app/privacy-policy</loc>
+    <loc>https://www.carzix.qa/privacy-policy</loc>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://carzix-website.vercel.app/terms</loc>
+    <loc>https://www.carzix.qa/terms</loc>
     <priority>0.3</priority>
   </url>
 </urlset>

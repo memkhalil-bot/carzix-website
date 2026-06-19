@@ -8,7 +8,7 @@ interface SeoProps {
   jsonLd?: object | object[];
 }
 
-const DEFAULT_OG_IMAGE = "https://carzix-website.vercel.app/og-image.png";
+const DEFAULT_OG_IMAGE = "https://www.carzix.qa/og-image.png";
 
 function upsertMeta(attr: "name" | "property", key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`);
