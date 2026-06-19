@@ -148,6 +148,35 @@ export const T = {
   confirmDeleteClient:  { ar: "هل أنت متأكد من حذف هذا العميل؟", en: "Delete this client? This action cannot be undone." },
   confirmDeleteMessage: { ar: "هل أنت متأكد من حذف هذه الرسالة؟", en: "Delete this message? This action cannot be undone." },
   confirm:              { ar: "تأكيد",  en: "Confirm" },
+
+  // Sales pipeline — request notes / follow-up / values
+  salesDetails:       { ar: "تفاصيل المبيعات",          en: "Sales Details" },
+  internalNotes:      { ar: "ملاحظات داخلية",           en: "Internal Notes" },
+  internalNotesHint:  { ar: "مرئية للمسؤولين فقط",      en: "Visible to admins only" },
+  nextFollowUp:       { ar: "تاريخ المتابعة القادم",    en: "Next Follow-up" },
+  estimatedValue:     { ar: "القيمة التقديرية",         en: "Estimated Value" },
+  quotedValue:        { ar: "القيمة المعروضة",          en: "Quoted Value" },
+  lostReason:         { ar: "سبب الخسارة",              en: "Lost Reason" },
+  lostReasonPlaceholder: { ar: "سبب رفض العميل أو فقدان الطلب…", en: "Why was this request lost?" },
+  saveDetails:        { ar: "حفظ التفاصيل",             en: "Save Details" },
+  saveDetailsSuccess: { ar: "تم حفظ التفاصيل بنجاح.",   en: "Details saved successfully." },
+  saveDetailsError:   { ar: "فشل حفظ التفاصيل. حاول مرة أخرى.", en: "Failed to save details. Please try again." },
+  notSet:             { ar: "غير محدد",                 en: "Not set" },
+
+  // Follow-up filter chips
+  followUpAll:        { ar: "الكل",                    en: "All" },
+  followUpDueToday:   { ar: "مستحق اليوم",              en: "Due Today" },
+  followUpOverdue:    { ar: "متأخر",                    en: "Overdue" },
+  followUpNone:       { ar: "بدون متابعة",              en: "No Follow-up" },
+
+  // Overview — pipeline metrics
+  followUpsDueToday:    { ar: "متابعات مستحقة اليوم",       en: "Follow-ups Due Today" },
+  overdueFollowUps:     { ar: "متابعات متأخرة",             en: "Overdue Follow-ups" },
+  noFollowUpRequests:   { ar: "طلبات بدون متابعة",          en: "Requests With No Follow-up" },
+  estPipelineValue:     { ar: "القيمة التقديرية للخط",      en: "Estimated Pipeline Value" },
+  quotedPipelineValue:  { ar: "القيمة المعروضة للخط",       en: "Quoted Pipeline Value" },
+  wonValueLabel:        { ar: "قيمة الصفقات الرابحة",       en: "Won Value" },
+  conversionRate:       { ar: "معدل التحويل",                en: "Conversion Rate" },
 } as const;
 
 export function t(key: keyof typeof T, lang: Lang): string {
