@@ -119,6 +119,9 @@ export const T = {
   pipelineSummary:   { ar: "ملخص مراحل الطلبات",      en: "Pipeline Summary" },
   noDataYet:         { ar: "لا توجد بيانات بعد.",     en: "No data yet." },
   analyticsNote:     { ar: "بيانات حركة الزوار متاحة في Vercel Web Analytics.", en: "Website traffic is available in Vercel Web Analytics." },
+  loadError:         { ar: "فشل تحميل البيانات. يرجى التحديث.", en: "Failed to load data. Please refresh." },
+  myAccount:         { ar: "حسابي",                    en: "My Account" },
+  signedInAs:        { ar: "تم تسجيل الدخول كـ",        en: "Signed in as" },
 
   // Search / filters / export
   searchPlaceholder:    { ar: "بحث بالاسم، الشركة، البريد، الهاتف، المنتج، أو المدينة…", en: "Search name, company, email, phone, product, or city…" },

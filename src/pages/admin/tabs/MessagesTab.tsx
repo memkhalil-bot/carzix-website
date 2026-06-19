@@ -1,12 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { Loader2, Check, ChevronDown, Trash2 } from "lucide-react";
+import { Check, ChevronDown, Trash2, MessageSquare } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ContactMessage } from "@/lib/types";
 import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { EmptyState } from "@/components/admin/AdminTable";
+import { EmptyState, LoadingState } from "@/components/admin/AdminTable";
+import { SectionHeader } from "@/components/admin/SectionHeader";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 
 export function MessagesTab({ lang }: { lang: Lang }) {
@@ -38,19 +39,10 @@ export function MessagesTab({ lang }: { lang: Lang }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold" style={{ color: C.text }}>{t("contactMsgs", lang)}</h2>
-          <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{ background: C.surface2, color: C.muted, border: `1px solid ${C.border}` }}>
-            {messages.length}
-          </span>
-        </div>
-      </div>
+      <SectionHeader title={t("contactMsgs", lang)} count={messages.length} icon={<MessageSquare size={15} />} />
 
       {loading ? (
-        <div className="flex justify-center py-16">
-          <Loader2 size={28} style={{ color: C.action }} className="animate-spin" />
-        </div>
+        <LoadingState />
       ) : messages.length === 0 ? (
         <EmptyState message={t("noMessages", lang)} />
       ) : (

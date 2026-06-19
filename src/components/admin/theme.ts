@@ -17,6 +17,7 @@ export const C = {
   danger:    "#EF4444",
   info:      "#1565A0",
   brand:     "#D4AF37",
+  goldHi:    "#E5C158",
 } as const;
 
 export type Lang = "ar" | "en";

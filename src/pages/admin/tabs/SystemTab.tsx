@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
-import { Globe, Tag, Database, ShieldCheck, ClipboardList } from "lucide-react";
+import { Globe, Tag, Database, ShieldCheck, ClipboardList, Settings } from "lucide-react";
 import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { AdminCard } from "@/components/admin/AdminCard";
+import { SectionHeader } from "@/components/admin/SectionHeader";
 
 function InfoRow({ icon, label, value, valueAccent }: { icon: ReactNode; label: string; value: ReactNode; valueAccent?: boolean }) {
   return (
@@ -21,11 +23,9 @@ function InfoRow({ icon, label, value, valueAccent }: { icon: ReactNode; label: 
 
 export function SystemTab({ lang }: { lang: Lang }) {
   return (
-    <div className="rounded-2xl p-6" style={{ background: C.surface, border: `1px solid ${C.border}`, maxWidth: 640 }}>
-      <h2 className="text-lg font-bold mb-1" style={{ color: C.text }}>{t("systemTitle", lang)}</h2>
-      <p className="text-sm mb-2" style={{ color: C.muted }}>{t("systemSubtitle", lang)}</p>
-
-      <div>
+    <div>
+      <SectionHeader title={t("systemTitle", lang)} subtitle={t("systemSubtitle", lang)} icon={<Settings size={15} />} />
+      <AdminCard style={{ maxWidth: 640 }}>
         <InfoRow
           icon={<Globe size={16} />}
           label={t("publicSiteStatus", lang)}
@@ -34,7 +34,7 @@ export function SystemTab({ lang }: { lang: Lang }) {
         <InfoRow
           icon={<Tag size={16} />}
           label={t("dashboardVersion", lang)}
-          value="V2 Lite"
+          value="V3"
         />
         <InfoRow
           icon={<Database size={16} />}
@@ -51,7 +51,7 @@ export function SystemTab({ lang }: { lang: Lang }) {
           label={t("quoteRlsLabel", lang)}
           value={t("quoteRlsValue", lang)}
         />
-      </div>
+      </AdminCard>
     </div>
   );
 }
