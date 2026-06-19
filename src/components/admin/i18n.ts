@@ -34,6 +34,8 @@ export const T = {
   sizes:         { ar: "الأحجام المتاحة",      en: "Available Sizes" },
   suitableFor:   { ar: "مناسب لـ",             en: "Suitable For" },
   dilutionRatio: { ar: "نسبة التخفيف",         en: "Dilution Ratio" },
+  featured:      { ar: "مميز",                 en: "Featured" },
+  featuredProduct: { ar: "منتج مميز",          en: "Featured Product" },
   active:        { ar: "نشط",                  en: "Active" },
   inactive:      { ar: "غير نشط",             en: "Inactive" },
   activate:      { ar: "تفعيل",               en: "Activate" },
