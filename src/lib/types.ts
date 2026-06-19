@@ -17,6 +17,8 @@ export type Database = {
           sizes: string[] | null;
           suitable_for: string | null;
           dilution_ratio: string | null;
+          display_order: number;
+          is_featured: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -34,6 +36,8 @@ export type Database = {
           sizes?: string[] | null;
           suitable_for?: string | null;
           dilution_ratio?: string | null;
+          display_order?: number;
+          is_featured?: boolean;
         };
         Update: {
           id?: string;
@@ -50,6 +54,8 @@ export type Database = {
           sizes?: string[] | null;
           suitable_for?: string | null;
           dilution_ratio?: string | null;
+          display_order?: number;
+          is_featured?: boolean;
           updated_at?: string;
         };
         Relationships: [];

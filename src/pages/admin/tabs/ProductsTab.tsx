@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Loader2, Plus, RefreshCw, Pencil, Check, X, Trash2 } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Pencil, Check, X, Trash2, Star } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
@@ -19,7 +19,11 @@ export function ProductsTab({ lang }: { lang: Lang }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("products")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: false });
     setProducts((data ?? []) as Product[]);
     setLoading(false);
   }, []);
@@ -30,6 +34,12 @@ export function ProductsTab({ lang }: { lang: Lang }) {
     const next = current === "active" ? "inactive" : "active";
     await supabase.from("products").update({ status: next }).eq("id", id);
     setProducts((prev) => prev.map((p) => p.id === id ? { ...p, status: next } : p));
+  }
+
+  async function toggleFeatured(id: string, current: boolean | null | undefined) {
+    const next = !current;
+    await supabase.from("products").update({ is_featured: next }).eq("id", id);
+    setProducts((prev) => prev.map((p) => p.id === id ? { ...p, is_featured: next } : p));
   }
 
   async function confirmDelete() {
@@ -92,6 +102,8 @@ export function ProductsTab({ lang }: { lang: Lang }) {
               <Th lang={lang}>{t("name", lang)}</Th>
               <Th lang={lang}>{t("category", lang)}</Th>
               <Th lang={lang}>{t("price", lang)}</Th>
+              <Th lang={lang}>{t("displayOrder", lang)}</Th>
+              <Th lang={lang}>{t("featured", lang)}</Th>
               <Th lang={lang}>{t("status", lang)}</Th>
               <Th lang={lang}>{t("actions", lang)}</Th>
             </tr>
@@ -122,6 +134,19 @@ export function ProductsTab({ lang }: { lang: Lang }) {
                   {p.price != null
                     ? <span style={{ color: C.warning }}>QAR {p.price.toLocaleString()}</span>
                     : <span style={{ color: C.muted }}>—</span>}
+                </Td>
+                <Td><span style={{ color: C.muted }}>{p.display_order ?? 999}</span></Td>
+                <Td>
+                  <button onClick={() => toggleFeatured(p.id, p.is_featured)}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium"
+                    style={{
+                      background: p.is_featured ? "#F59E0B15" : C.surface2,
+                      color:      p.is_featured ? C.warning   : C.muted,
+                      border:     `1px solid ${p.is_featured ? "#F59E0B30" : C.border}`,
+                    }}>
+                    <Star size={12} fill={p.is_featured ? C.warning : "none"} />
+                    {p.is_featured ? t("featured", lang) : "—"}
+                  </button>
                 </Td>
                 <Td>
                   <StatusBadge color={productStatusBadgeColor(p.status)}>

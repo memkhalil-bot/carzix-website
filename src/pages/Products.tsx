@@ -33,6 +33,7 @@ export default function Products() {
       .from("products")
       .select("*")
       .eq("status", "active")
+      .order("display_order", { ascending: true })
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         if (data && data.length > 0) setDbProducts(data);

@@ -22,6 +22,8 @@ export interface Product {
   sizes?: string[] | null;
   suitable_for?: string | null;
   dilution_ratio?: string | null;
+  display_order?: number | null;
+  is_featured?: boolean | null;
   created_at: string;
 }
 
@@ -52,6 +54,8 @@ interface ProductFormState {
   sizes: string;
   suitable_for: string;
   dilution_ratio: string;
+  display_order: string;
+  is_featured: boolean;
 }
 
 const EMPTY_FORM: ProductFormState = {
@@ -68,6 +72,8 @@ const EMPTY_FORM: ProductFormState = {
   sizes: "",
   suitable_for: "",
   dilution_ratio: "",
+  display_order: "999",
+  is_featured: false,
 };
 
 function productToForm(p: Product): ProductFormState {
@@ -85,6 +91,8 @@ function productToForm(p: Product): ProductFormState {
     sizes: p.sizes?.join(", ") ?? "",
     suitable_for: p.suitable_for ?? "",
     dilution_ratio: p.dilution_ratio ?? "",
+    display_order: p.display_order != null ? String(p.display_order) : "999",
+    is_featured: p.is_featured ?? false,
   };
 }
 
@@ -107,7 +115,7 @@ export function ProductModal({ lang, editProduct, onClose, onSaved }: ProductMod
 
   const isEdit = editProduct !== null;
 
-  function setField<K extends keyof ProductFormState>(key: K, value: string) {
+  function setField<K extends keyof ProductFormState>(key: K, value: ProductFormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -176,6 +184,8 @@ export function ProductModal({ lang, editProduct, onClose, onSaved }: ProductMod
       sizes: parseArr(form.sizes).length ? parseArr(form.sizes) : null,
       suitable_for: form.suitable_for.trim() || null,
       dilution_ratio: form.dilution_ratio.trim() || null,
+      display_order: form.display_order ? parseInt(form.display_order, 10) : 999,
+      is_featured: form.is_featured,
     };
 
     let err: { message?: string } | null = null;
@@ -365,6 +375,22 @@ export function ProductModal({ lang, editProduct, onClose, onSaved }: ProductMod
               <LabelEl>{t("dilutionRatio", lang)}</LabelEl>
               <input style={inp} placeholder="1:10"
                 value={form.dilution_ratio} onChange={(e) => setField("dilution_ratio", e.target.value)} />
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <LabelEl>{t("displayOrder", lang)}</LabelEl>
+              <input type="number" step="1" style={inp} placeholder="999"
+                value={form.display_order} onChange={(e) => setField("display_order", e.target.value)} />
+            </div>
+            <div className="flex items-end pb-1.5">
+              <label className="flex items-center gap-2 cursor-pointer text-sm" style={{ color: C.text }}>
+                <input type="checkbox" checked={form.is_featured}
+                  onChange={(e) => setField("is_featured", e.target.checked)}
+                  style={{ accentColor: C.action }} />
+                {t("featuredProduct", lang)}
+              </label>
             </div>
           </div>
 
