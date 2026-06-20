@@ -174,6 +174,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      analytics_events: {
+        Row: {
+          id: string;
+          event_name: string;
+          pathname: string | null;
+          product_id: string | null;
+          product_name: string | null;
+          category: string | null;
+          source: string | null;
+          metadata: Record<string, unknown> | null;
+          created_at: string;
+        };
+        Insert: {
+          event_name: string;
+          pathname?: string | null;
+          product_id?: string | null;
+          product_name?: string | null;
+          category?: string | null;
+          source?: string | null;
+          metadata?: Record<string, unknown> | null;
+        };
+        Update: {
+          event_name?: string;
+          pathname?: string | null;
+          product_id?: string | null;
+          product_name?: string | null;
+          category?: string | null;
+          source?: string | null;
+          metadata?: Record<string, unknown> | null;
+        };
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
@@ -186,3 +218,4 @@ export type Product = Database["public"]["Tables"]["products"]["Row"];
 export type Client = Database["public"]["Tables"]["clients"]["Row"];
 export type ContactMessage = Database["public"]["Tables"]["contact_messages"]["Row"];
 export type ProductRequest = Database["public"]["Tables"]["product_requests"]["Row"];
+export type AnalyticsEventRow = Database["public"]["Tables"]["analytics_events"]["Row"];

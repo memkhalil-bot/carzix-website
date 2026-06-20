@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, Instagram } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LanguageContext";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 
 export default function Navbar() {
   const { t, toggleLang, lang, isAr } = useLang();
@@ -87,6 +88,7 @@ export default function Navbar() {
             </button>
             <Link
               href="/contact"
+              onClick={() => trackInternalEvent("quote_click", { source: "general" })}
               className="btn-cta px-5 py-2.5 text-[#111827] text-sm font-semibold rounded"
             >
               {t("Request Quote", "طلب عرض سعر")}
@@ -138,6 +140,7 @@ export default function Navbar() {
             </a>
             <Link
               href="/contact"
+              onClick={() => trackInternalEvent("quote_click", { source: "general" })}
               className="mt-3 px-5 py-3 btn-cta text-[#111827] text-sm font-semibold rounded text-center"
             >
               {t("Request Quote", "طلب عرض سعر")}

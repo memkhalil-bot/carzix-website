@@ -6,6 +6,7 @@ import type { Lang } from "@/components/admin/theme";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import type { TabId } from "@/components/admin/AdminSidebar";
 import { OverviewTab } from "./tabs/OverviewTab";
+import { AnalyticsTab } from "./tabs/AnalyticsTab";
 import { ProductsTab } from "./tabs/ProductsTab";
 import { ClientsTab } from "./tabs/ClientsTab";
 import { MessagesTab } from "./tabs/MessagesTab";
@@ -74,6 +75,7 @@ export default function AdminDashboard() {
       userEmail={userEmail}
     >
       {tab === "overview" && <OverviewTab lang={lang} requests={overviewRequests} loading={overviewLoading} error={overviewError} />}
+      {tab === "analytics" && <AnalyticsTab lang={lang} />}
       {tab === "requests" && <RequestsTab lang={lang} />}
       {tab === "products"  && <ProductsTab lang={lang} />}
       {tab === "clients"   && <ClientsTab lang={lang} />}

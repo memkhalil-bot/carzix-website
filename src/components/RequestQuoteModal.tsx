@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { trackEvent } from "@/lib/analytics";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 import { useLang } from "@/contexts/LanguageContext";
 import { type DisplayProduct, isDbProduct, productName } from "@/lib/productHelpers";
 import {
@@ -154,6 +155,11 @@ export default function RequestQuoteModal({ product, onClose }: RequestQuoteModa
       trackEvent("submit_quote_request", {
         product_name: form.product_name,
         language: isAr ? "ar" : "en",
+      });
+      trackInternalEvent("quote_submit", {
+        product_id: isDbProduct(product) ? product.id : null,
+        product_name: form.product_name || null,
+        metadata: { business_type: form.business_type || null, city: form.city || null },
       });
     }
   }
