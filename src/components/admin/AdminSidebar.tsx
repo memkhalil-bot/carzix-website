@@ -1,33 +1,35 @@
 import {
-  LayoutDashboard, Package, Users, MessageSquare, ClipboardList, Settings, LogOut,
+  LayoutDashboard, Package, Users, MessageSquare, ClipboardList, Settings, LogOut, BarChart3,
 } from "lucide-react";
 import { C } from "./theme";
 import type { Lang } from "./theme";
 import { t, T } from "./i18n";
 
-export const NAV_IDS = ["overview", "requests", "products", "clients", "messages", "system"] as const;
+export const NAV_IDS = ["overview", "analytics", "requests", "products", "clients", "messages", "system"] as const;
 export type TabId = typeof NAV_IDS[number];
 
 const NAV_ICONS: Record<TabId, React.ElementType> = {
-  overview: LayoutDashboard,
-  requests: ClipboardList,
-  products: Package,
-  clients:  Users,
-  messages: MessageSquare,
-  system:   Settings,
+  overview:  LayoutDashboard,
+  analytics: BarChart3,
+  requests:  ClipboardList,
+  products:  Package,
+  clients:   Users,
+  messages:  MessageSquare,
+  system:    Settings,
 };
 
 const NAV_LABEL_KEYS: Record<TabId, keyof typeof T> = {
-  overview: "overview",
-  requests: "requests",
-  products: "products",
-  clients:  "clients",
-  messages: "messages",
-  system:   "system",
+  overview:  "overview",
+  analytics: "analyticsTab",
+  requests:  "requests",
+  products:  "products",
+  clients:   "clients",
+  messages:  "messages",
+  system:    "system",
 };
 
 const NAV_GROUPS: { titleKey: keyof typeof T; ids: TabId[] }[] = [
-  { titleKey: "navWorkspace", ids: ["overview", "requests", "products"] },
+  { titleKey: "navWorkspace", ids: ["overview", "analytics", "requests", "products"] },
   { titleKey: "navMore",      ids: ["clients", "messages", "system"] },
 ];
 

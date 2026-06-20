@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { Phone, Mail, MapPin, Instagram } from "lucide-react";
 import { useLang } from "@/contexts/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 
 export default function Footer() {
   const { t, isAr } = useLang();
@@ -97,7 +98,10 @@ export default function Footer() {
                   href="tel:+97472252572"
                   dir="ltr"
                   style={{ unicodeBidi: "isolate" }}
-                  onClick={() => trackEvent("click_contact_phone", { source_page: "footer" })}
+                  onClick={() => {
+                    trackEvent("click_contact_phone", { source_page: "footer" });
+                    trackInternalEvent("contact_click", { source: "footer", metadata: { type: "phone" } });
+                  }}
                   className="text-white/45 hover:text-white text-sm transition-colors"
                 >
                   +974 72252572
@@ -109,7 +113,10 @@ export default function Footer() {
                   href="mailto:hello@carzix.qa"
                   dir="ltr"
                   style={{ unicodeBidi: "isolate" }}
-                  onClick={() => trackEvent("click_contact_email", { source_page: "footer" })}
+                  onClick={() => {
+                    trackEvent("click_contact_email", { source_page: "footer" });
+                    trackInternalEvent("contact_click", { source: "footer", metadata: { type: "email" } });
+                  }}
                   className="text-white/45 hover:text-white text-sm transition-colors"
                 >
                   hello@carzix.qa

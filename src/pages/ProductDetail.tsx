@@ -6,6 +6,7 @@ import Seo from "@/components/Seo";
 import RequestQuoteModal from "@/components/RequestQuoteModal";
 import { supabase } from "@/lib/supabase";
 import { trackEvent } from "@/lib/analytics";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
@@ -51,7 +52,15 @@ export default function ProductDetail() {
     : [];
 
   useEffect(() => {
-    if (product) trackEvent("view_product_detail", { product_slug: slug ?? "", language: isAr ? "ar" : "en" });
+    if (product) {
+      trackEvent("view_product_detail", { product_slug: slug ?? "", language: isAr ? "ar" : "en" });
+      trackInternalEvent("product_view", {
+        product_id: isDbProduct(product) ? product.id : null,
+        product_name: isDbProduct(product) ? product.name : product.nameEn,
+        category: productCat(product),
+        pathname: `/products/${slug ?? ""}`,
+      });
+    }
   }, [slug, !!product]);
 
   if (loading) {
@@ -219,6 +228,11 @@ export default function ProductDetail() {
               <button
                 onClick={() => {
                   trackEvent("click_request_quote", { product_name: name, source_page: "product_detail" });
+                  trackInternalEvent("quote_click", {
+                    product_id: isDbProduct(product) ? product.id : null,
+                    product_name: isDbProduct(product) ? product.name : product.nameEn,
+                    source: "product_detail",
+                  });
                   setQuoteProduct(product);
                 }}
                 className="btn-cta inline-flex items-center gap-2 px-8 py-4 text-[#111827] font-bold rounded"

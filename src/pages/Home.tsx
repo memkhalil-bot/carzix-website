@@ -11,6 +11,7 @@ import DilutionCalculator from "@/components/DilutionCalculator";
 import ConcentrationSection from "@/components/ConcentrationSection";
 import Seo from "@/components/Seo";
 import { trackEvent } from "@/lib/analytics";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 import { fadeUp, blurUp, fadeScale, staggerSlow as stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
@@ -163,6 +164,7 @@ export default function Home() {
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
               <Link
                 href="/contact"
+                onClick={() => trackInternalEvent("quote_click", { source: "hero" })}
                 className="btn-cta inline-flex items-center gap-2 px-7 py-3.5 text-[#111827] font-bold rounded"
               >
                 {t("Request a Quote", "اطلب عرض سعر")}
@@ -480,7 +482,10 @@ export default function Home() {
               href="https://wa.me/97472252572"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => trackEvent("click_whatsapp", { source_page: "/" })}
+              onClick={() => {
+                trackEvent("click_whatsapp", { source_page: "/" });
+                trackInternalEvent("whatsapp_click", { source: "contact_section" });
+              }}
               className="btn-teal inline-flex items-center gap-2 px-6 py-3.5 text-white font-semibold rounded"
             >
               <MessageCircle size={16} /> {t("WhatsApp Us", "واتساب")}

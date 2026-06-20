@@ -2,6 +2,7 @@ import type { Lang } from "./theme";
 
 export const T = {
   overview:      { ar: "الرئيسية",            en: "Overview" },
+  analytics:     { ar: "التحليلات",            en: "Analytics" },
   products:      { ar: "المنتجات",            en: "Products" },
   clients:       { ar: "العملاء",             en: "Clients" },
   messages:      { ar: "الرسائل",             en: "Messages" },
@@ -181,6 +182,20 @@ export const T = {
   quotedPipelineValue:  { ar: "القيمة المعروضة للخط",       en: "Quoted Pipeline Value" },
   wonValueLabel:        { ar: "قيمة الصفقات الرابحة",       en: "Won Value" },
   conversionRate:       { ar: "معدل التحويل",                en: "Conversion Rate" },
+
+  // Analytics tab
+  analyticsTab:         { ar: "التحليلات",                   en: "Analytics" },
+  analyticsSubtitle:    { ar: "أحداث تجارية داخلية من زوار الموقع — بدون بيانات شخصية.", en: "Internal commercial events from site visitors — no personal data." },
+  last7Days:            { ar: "آخر 7 أيام",                  en: "Last 7 Days" },
+  last30Days:           { ar: "آخر 30 يوماً",                en: "Last 30 Days" },
+  allTime:              { ar: "كل الوقت",                    en: "All Time" },
+  totalEvents:          { ar: "إجمالي الأحداث",              en: "Total Events" },
+  productViewsLabel:    { ar: "مشاهدات المنتجات",            en: "Product Views" },
+  quoteClicksLabel:     { ar: "نقرات طلب السعر",             en: "Quote Clicks" },
+  quoteSubmitsLabel:    { ar: "طلبات الأسعار المرسلة",       en: "Quote Submissions" },
+  whatsappClicksLabel:  { ar: "نقرات واتساب",                en: "WhatsApp Clicks" },
+  topViewedProducts:    { ar: "الأكثر مشاهدة",               en: "Top Viewed Products" },
+  topRequestedProducts: { ar: "الأكثر طلباً (عروض الأسعار)", en: "Top Requested Products" },
 } as const;
 
 export function t(key: keyof typeof T, lang: Lang): string {

@@ -7,6 +7,7 @@ import RequestQuoteModal from "@/components/RequestQuoteModal";
 import Seo from "@/components/Seo";
 import { supabase } from "@/lib/supabase";
 import { trackEvent } from "@/lib/analytics";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 import type { Product } from "@/lib/types";
 import { fadeUp, stagger, fadeScale } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
@@ -68,6 +69,12 @@ export default function Products() {
     trackEvent("click_request_quote", {
       product_name: productName(product, isAr),
       source_page: "/products",
+    });
+    trackInternalEvent("quote_click", {
+      product_id: isDbProduct(product) ? product.id : null,
+      product_name: isDbProduct(product) ? product.name : product.nameEn,
+      category: productCat(product),
+      source: "product_card",
     });
     setModalProduct(product);
   }

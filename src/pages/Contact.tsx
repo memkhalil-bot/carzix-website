@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, CheckCircle, Loader2, Instagram } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { trackEvent, type AnalyticsEvent } from "@/lib/analytics";
+import { trackEvent as trackInternalEvent } from "@/lib/internalAnalytics";
 import { fadeUp, stagger } from "@/lib/motion";
 import { useLang } from "@/contexts/LanguageContext";
 import WhyProfessionals from "@/components/WhyProfessionals";
@@ -40,9 +41,10 @@ export default function Contact() {
     value: string;
     href?: string;
     event?: AnalyticsEvent;
+    contactType?: "phone" | "email";
   }[] = [
-    { icon: Phone, labelEn: "Phone", labelAr: "الهاتف", value: "+974 72252572", href: "tel:+97472252572", event: "click_contact_phone" },
-    { icon: Mail, labelEn: "Email", labelAr: "البريد الإلكتروني", value: "hello@carzix.qa", href: "mailto:hello@carzix.qa", event: "click_contact_email" },
+    { icon: Phone, labelEn: "Phone", labelAr: "الهاتف", value: "+974 72252572", href: "tel:+97472252572", event: "click_contact_phone", contactType: "phone" },
+    { icon: Mail, labelEn: "Email", labelAr: "البريد الإلكتروني", value: "hello@carzix.qa", href: "mailto:hello@carzix.qa", event: "click_contact_email", contactType: "email" },
     { icon: MapPin, labelEn: "Location", labelAr: "الموقع", value: t("Doha – Qatar", "الدوحة، دولة قطر"), href: undefined },
   ];
 
@@ -154,7 +156,7 @@ export default function Contact() {
                 )}
               </motion.p>
 
-              {contactInfo.map(({ icon: Icon, labelEn, labelAr, value, href, event }) => (
+              {contactInfo.map(({ icon: Icon, labelEn, labelAr, value, href, event, contactType }) => (
                 <motion.div
                   key={labelEn}
                   variants={fadeUp}
@@ -170,7 +172,10 @@ export default function Contact() {
                         href={href}
                         dir="ltr"
                         style={{ unicodeBidi: "isolate" }}
-                        onClick={() => event && trackEvent(event, { source_page: "/contact" })}
+                        onClick={() => {
+                          if (event) trackEvent(event, { source_page: "/contact" });
+                          if (contactType) trackInternalEvent("contact_click", { source: "/contact", metadata: { type: contactType } });
+                        }}
                         className="text-white text-sm font-medium hover:text-[#A29475] transition-colors"
                       >
                         {value}
@@ -324,14 +329,20 @@ export default function Contact() {
           <p className="text-white/45 text-sm">{t("Prefer to call or WhatsApp?", "تفضل الاتصال أو واتساب؟")}</p>
           <a
             href="tel:+97472252572"
-            onClick={() => trackEvent("click_contact_phone", { source_page: "/contact" })}
+            onClick={() => {
+              trackEvent("click_contact_phone", { source_page: "/contact" });
+              trackInternalEvent("contact_click", { source: "/contact", metadata: { type: "phone" } });
+            }}
             className="btn-brand inline-flex items-center gap-2 px-6 py-3 text-white font-semibold text-sm rounded"
           >
             <Phone size={14} /> <span dir="ltr" style={{ unicodeBidi: "isolate" }}>+974 72252572</span>
           </a>
           <a
             href="mailto:hello@carzix.qa"
-            onClick={() => trackEvent("click_contact_email", { source_page: "/contact" })}
+            onClick={() => {
+              trackEvent("click_contact_email", { source_page: "/contact" });
+              trackInternalEvent("contact_click", { source: "/contact", metadata: { type: "email" } });
+            }}
             className="inline-flex items-center gap-2 px-6 py-3 border border-white/18 hover:border-white/35 text-white/65 hover:text-white text-sm font-medium rounded transition-colors"
           >
             <Mail size={14} /> <span dir="ltr" style={{ unicodeBidi: "isolate" }}>hello@carzix.qa</span>
