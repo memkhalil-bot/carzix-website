@@ -6,6 +6,7 @@ import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { MetricCard } from "@/components/admin/MetricCard";
+import { BentoGrid } from "@/components/admin/BentoGrid";
 import { StatusBadge, type BadgeColor } from "@/components/admin/StatusBadge";
 import { SectionHeader } from "@/components/admin/SectionHeader";
 import { ErrorState } from "@/components/admin/AdminTable";
@@ -100,8 +101,8 @@ export function OverviewTab({ lang, requests, loading, error }: { lang: Lang; re
 
       <div>
         <SectionHeader title={t("pipelineSummary", lang)} icon={<Gauge size={15} />} />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard label={t("totalRequests", lang)}     value={total}              accent={C.action}  icon={<ClipboardList size={16} />} />
+        <BentoGrid>
+          <MetricCard label={t("totalRequests", lang)}     value={total}              accent={C.brand}   icon={<ClipboardList size={16} />} size="hero" />
           <MetricCard label={t("newRequests", lang)}       value={byStatus.new}       accent={C.warning} icon={<Inbox size={16} />} />
           <MetricCard label={t("contactedRequests", lang)} value={byStatus.contacted} accent={C.info}    icon={<PhoneCall size={16} />} />
           <MetricCard label={t("quotedRequests", lang)}    value={byStatus.quoted}    accent={C.warning} icon={<FileText size={16} />} />
@@ -120,20 +121,20 @@ export function OverviewTab({ lang, requests, loading, error }: { lang: Lang; re
             accent={C.action}
             icon={<Star size={16} />}
           />
-        </div>
+        </BentoGrid>
       </div>
 
       <div>
         <SectionHeader title={lang === "ar" ? "المتابعة والأداء" : "Follow-ups & Performance"} icon={<Users2 size={15} />} />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <BentoGrid>
+          <MetricCard label={t("conversionRate", lang)}     value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<Percent size={16} />} size="hero" />
           <MetricCard label={t("followUpsDueToday", lang)}  value={dueTodayCount}    accent={C.warning} icon={<CalendarClock size={16} />} />
           <MetricCard label={t("overdueFollowUps", lang)}   value={overdueCount}     accent={C.danger}  icon={<AlertCircle size={16} />} />
           <MetricCard label={t("noFollowUpRequests", lang)} value={noFollowUpCount}  accent={C.muted}   icon={<CalendarOff size={16} />} />
-          <MetricCard label={t("conversionRate", lang)}     value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<Percent size={16} />} />
           <MetricCard label={t("estPipelineValue", lang)}    value={formatMoney(estimatedPipelineValue)} accent={C.action}  icon={<Wallet size={16} />} />
           <MetricCard label={t("quotedPipelineValue", lang)} value={formatMoney(quotedPipelineValue)}    accent={C.warning} icon={<CircleDollarSign size={16} />} />
           <MetricCard label={t("wonValueLabel", lang)}       value={formatMoney(wonValue)}                accent={C.success} icon={<Trophy size={16} />} />
-        </div>
+        </BentoGrid>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">

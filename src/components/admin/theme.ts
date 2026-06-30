@@ -18,6 +18,8 @@ export const C = {
   info:      "#1565A0",
   brand:     "#D4AF37",
   goldHi:    "#E5C158",
+  goldDim:   "#D4AF3722",
+  goldBorder: "#D4AF3755",
 } as const;
 
 export type Lang = "ar" | "en";

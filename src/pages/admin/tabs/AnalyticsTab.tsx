@@ -5,6 +5,7 @@ import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { MetricCard } from "@/components/admin/MetricCard";
+import { BentoGrid } from "@/components/admin/BentoGrid";
 import { SectionHeader } from "@/components/admin/SectionHeader";
 import { Toolbar, ToolbarChip } from "@/components/admin/Toolbar";
 import { TableWrap, Th, Td, EmptyState, LoadingState, ErrorState } from "@/components/admin/AdminTable";
@@ -115,14 +116,14 @@ export function AnalyticsTab({ lang }: { lang: Lang }) {
         <LoadingState />
       ) : (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <BentoGrid>
+            <MetricCard label={t("conversionRate", lang)} value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<TrendingUp size={16} />} size="hero" />
             <MetricCard label={t("totalEvents", lang)} value={rows.length} accent={C.action} icon={<BarChart3 size={16} />} />
             <MetricCard label={t("productViewsLabel", lang)} value={productViews} accent={C.info} icon={<Eye size={16} />} />
             <MetricCard label={t("quoteClicksLabel", lang)} value={quoteClicks} accent={C.warning} icon={<MousePointerClick size={16} />} />
             <MetricCard label={t("quoteSubmitsLabel", lang)} value={quoteSubmits} accent={C.success} icon={<Send size={16} />} />
             <MetricCard label={t("whatsappClicksLabel", lang)} value={whatsappClicks} accent={C.success} icon={<MessageCircle size={16} />} />
-            <MetricCard label={t("conversionRate", lang)} value={`${conversionRate.toFixed(1)}%`} accent={C.success} icon={<TrendingUp size={16} />} />
-          </div>
+          </BentoGrid>
 
           <div className="grid lg:grid-cols-2 gap-5">
             <div>

@@ -58,7 +58,7 @@ function NavButton({
       )}
       <span
         className="flex items-center justify-center w-7 h-7 rounded-md shrink-0 transition-colors duration-150"
-        style={active ? { background: C.action, color: "#FFFFFF" } : { background: "transparent", color: C.mutedDim }}
+        style={active ? { background: C.brand, color: "#000000" } : { background: "transparent", color: C.mutedDim }}
       >
         <Icon size={15} />
       </span>

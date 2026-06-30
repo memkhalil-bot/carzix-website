@@ -7,6 +7,8 @@ import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { MetricCard } from "@/components/admin/MetricCard";
+import { BentoGrid } from "@/components/admin/BentoGrid";
 import { Th, Td, TableWrap, EmptyState, LoadingState } from "@/components/admin/AdminTable";
 import { SectionHeader } from "@/components/admin/SectionHeader";
 import { AdminCard } from "@/components/admin/AdminCard";
@@ -60,6 +62,8 @@ export function ClientsTab({ lang }: { lang: Lang }) {
   }
 
   const inp = inputStyle();
+  const activeCount = clients.filter((c) => c.active).length;
+  const hiddenCount = clients.length - activeCount;
 
   return (
     <div>
@@ -82,6 +86,16 @@ export function ClientsTab({ lang }: { lang: Lang }) {
           </>
         }
       />
+
+      {!loading && clients.length > 0 && (
+        <div className="mb-5">
+          <BentoGrid>
+            <MetricCard label={t("totalClients", lang)} value={clients.length} accent={C.brand} icon={<Building2 size={16} />} size="hero" />
+            <MetricCard label={t("activeClients", lang)} value={activeCount} accent={C.success} icon={<Building2 size={16} />} />
+            <MetricCard label={t("hiddenClients", lang)} value={hiddenCount} accent={C.muted} icon={<Building2 size={16} />} />
+          </BentoGrid>
+        </div>
+      )}
 
       {showAdd && (
         <AdminCard className="mb-5">

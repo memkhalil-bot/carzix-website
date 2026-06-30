@@ -18,7 +18,7 @@ export function SectionHeader({ title, subtitle, count, icon, actions, className
           {icon && (
             <div
               className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-              style={{ background: C.actionDim, color: C.action }}
+              style={{ background: C.goldDim, color: C.brand }}
             >
               {icon}
             </div>

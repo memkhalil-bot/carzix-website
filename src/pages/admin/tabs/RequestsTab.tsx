@@ -6,6 +6,8 @@ import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { MetricCard } from "@/components/admin/MetricCard";
+import { BentoGrid } from "@/components/admin/BentoGrid";
 import { EmptyState, LoadingState, ErrorState } from "@/components/admin/AdminTable";
 import { SectionHeader } from "@/components/admin/SectionHeader";
 import { Toolbar, ToolbarChip } from "@/components/admin/Toolbar";
@@ -168,6 +170,9 @@ export function RequestsTab({ lang }: { lang: Lang }) {
     matchesFollowUpFilter(r, followUpFilter)
   );
 
+  const statusCounts = { new: 0, contacted: 0, quoted: 0, won: 0, lost: 0 };
+  for (const r of requests) statusCounts[normalizedRequestStatus(r.status)]++;
+
   const followUpCounts: Record<FollowUpFilter, number> = {
     all: requests.length,
     dueToday: requests.filter((r) => isDueToday(r.next_follow_up_at)).length,
@@ -200,6 +205,19 @@ export function RequestsTab({ lang }: { lang: Lang }) {
           </button>
         }
       />
+
+      {!loading && requests.length > 0 && (
+        <div className="mb-5">
+          <BentoGrid>
+            <MetricCard label={t("totalRequests", lang)} value={requests.length} accent={C.brand} icon={<ClipboardList size={16} />} size="hero" />
+            <MetricCard label={t("newBadge", lang)} value={statusCounts.new} accent={C.warning} icon={<ClipboardList size={16} />} />
+            <MetricCard label={t("contacted", lang)} value={statusCounts.contacted} accent={C.info} icon={<ClipboardList size={16} />} />
+            <MetricCard label={t("quoted", lang)} value={statusCounts.quoted} accent={C.warning} icon={<ClipboardList size={16} />} />
+            <MetricCard label={t("won", lang)} value={statusCounts.won} accent={C.success} icon={<ClipboardList size={16} />} />
+            <MetricCard label={t("lost", lang)} value={statusCounts.lost} accent={C.danger} icon={<ClipboardList size={16} />} />
+          </BentoGrid>
+        </div>
+      )}
 
       {loadError && <div className="mb-5"><ErrorState message={t("loadError", lang)} /></div>}
 
