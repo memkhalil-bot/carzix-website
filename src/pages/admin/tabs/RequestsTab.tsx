@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Check, X, ChevronDown, Download, Calendar, AlertCircle, ClipboardList } from "lucide-react";
+import type { ReactNode } from "react";
+import { Check, X, ChevronDown, Download, Calendar, AlertCircle, ClipboardList, Copy, Mail, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { ProductRequest } from "@/lib/types";
 import { C } from "@/components/admin/theme";
@@ -16,6 +17,79 @@ import { normalizedRequestStatus, statusBadgeColor } from "../requestStatus";
 import { isDueToday, isOverdue, hasNoFollowUp, matchesFollowUpFilter } from "../followUp";
 import type { FollowUpFilter } from "../followUp";
 import { SalesDetailsModal } from "./SalesDetailsModal";
+
+function toWhatsAppLink(phone: string): string {
+  return `https://wa.me/${phone.replace(/[^\d]/g, "")}`;
+}
+
+async function copyToClipboard(value: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(value);
+      return true;
+    } catch {
+      // fall through to legacy fallback below
+    }
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = value;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function FieldActionButton({ onClick, label, color, children }: { onClick: () => void; label: string; color?: string; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      title={label}
+      aria-label={label}
+      className="inline-flex items-center justify-center w-6 h-6 rounded shrink-0 transition-colors"
+      style={{ color: color ?? C.muted, background: C.surface2, border: `1px solid ${C.border}` }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function CopyableField({
+  label,
+  value,
+  copyLabel,
+  onCopy,
+  valueColor,
+  extraActions,
+}: {
+  label: string;
+  value: string;
+  copyLabel: string;
+  onCopy: () => void;
+  valueColor?: string;
+  extraActions?: ReactNode;
+}) {
+  return (
+    <div>
+      <p className="text-xs mb-1" style={{ color: C.muted }}>{label}</p>
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <p className="text-sm break-all" style={{ color: valueColor ?? C.text, userSelect: "text" }}>{value}</p>
+        <FieldActionButton onClick={onCopy} label={copyLabel}>
+          <Copy size={12} />
+        </FieldActionButton>
+        {extraActions}
+      </div>
+    </div>
+  );
+}
 
 function csvEscape(value: unknown): string {
   const s = value == null ? "" : String(value);
@@ -140,6 +214,11 @@ export function RequestsTab({ lang }: { lang: Lang }) {
     if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
     setFeedback({ type, message });
     feedbackTimer.current = setTimeout(() => setFeedback(null), 3500);
+  }
+
+  async function handleCopy(value: string) {
+    const ok = await copyToClipboard(value);
+    showFeedback(ok ? "success" : "error", t(ok ? "copied" : "copyError", lang));
   }
 
   async function updateStatus(id: string, status: string) {
@@ -305,50 +384,81 @@ export function RequestsTab({ lang }: { lang: Lang }) {
               {expanded === r.id && (
                 <div className="px-4 pb-4 space-y-3" style={{ borderTop: `1px solid ${C.border}` }}>
                   <div className="grid sm:grid-cols-2 gap-3 pt-3">
-                    <div>
-                      <p className="text-xs mb-1" style={{ color: C.muted }}>{t("email", lang)}</p>
-                      <a href={`mailto:${r.email}`} className="text-sm" style={{ color: C.action }}>{r.email}</a>
-                    </div>
+                    <CopyableField
+                      label={t("fullName", lang)}
+                      value={r.customer_name}
+                      copyLabel={t("copyName", lang)}
+                      onCopy={() => handleCopy(r.customer_name)}
+                    />
+                    <CopyableField
+                      label={t("email", lang)}
+                      value={r.email}
+                      copyLabel={t("copyEmail", lang)}
+                      valueColor={C.action}
+                      onCopy={() => handleCopy(r.email)}
+                      extraActions={
+                        <a href={`mailto:${r.email}`} onClick={(e) => e.stopPropagation()}
+                          title={t("sendEmail", lang)} aria-label={t("sendEmail", lang)}
+                          className="inline-flex items-center justify-center w-6 h-6 rounded shrink-0 transition-colors"
+                          style={{ color: C.muted, background: C.surface2, border: `1px solid ${C.border}` }}>
+                          <Mail size={12} />
+                        </a>
+                      }
+                    />
                     {r.phone && (
-                      <div>
-                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("phone", lang)}</p>
-                        <a href={`tel:${r.phone}`} className="text-sm" style={{ color: C.text }}>{r.phone}</a>
-                      </div>
+                      <CopyableField
+                        label={t("phone", lang)}
+                        value={r.phone}
+                        copyLabel={t("copyPhone", lang)}
+                        onCopy={() => handleCopy(r.phone!)}
+                        extraActions={
+                          <a href={toWhatsAppLink(r.phone)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                            title={t("openWhatsapp", lang)} aria-label={t("openWhatsapp", lang)}
+                            className="inline-flex items-center justify-center w-6 h-6 rounded shrink-0 transition-colors"
+                            style={{ color: C.success, background: C.surface2, border: `1px solid ${C.border}` }}>
+                            <MessageCircle size={12} />
+                          </a>
+                        }
+                      />
                     )}
                     {r.company_name && (
-                      <div>
-                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("companyName", lang)}</p>
-                        <p className="text-sm" style={{ color: C.text }}>{r.company_name}</p>
-                      </div>
+                      <CopyableField
+                        label={t("companyName", lang)}
+                        value={r.company_name}
+                        copyLabel={t("copyCompany", lang)}
+                        onCopy={() => handleCopy(r.company_name!)}
+                      />
                     )}
                     {r.city && (
-                      <div>
-                        <p className="text-xs mb-1" style={{ color: C.muted }}>{t("city", lang)}</p>
-                        <p className="text-sm" style={{ color: C.text }}>{r.city}</p>
-                      </div>
+                      <CopyableField
+                        label={t("city", lang)}
+                        value={r.city}
+                        copyLabel={t("copyCity", lang)}
+                        onCopy={() => handleCopy(r.city!)}
+                      />
                     )}
                     {r.business_type && (
                       <div>
                         <p className="text-xs mb-1" style={{ color: C.muted }}>{t("businessType", lang)}</p>
-                        <p className="text-sm" style={{ color: C.text }}>{r.business_type}</p>
+                        <p className="text-sm" style={{ color: C.text, userSelect: "text" }}>{r.business_type}</p>
                       </div>
                     )}
                     {r.notes && (
                       <div className="sm:col-span-2">
                         <p className="text-xs mb-1" style={{ color: C.muted }}>{t("notes", lang)}</p>
-                        <p className="text-sm leading-relaxed" style={{ color: C.text }}>{r.notes}</p>
+                        <p className="text-sm leading-relaxed" style={{ color: C.text, userSelect: "text" }}>{r.notes}</p>
                       </div>
                     )}
                     {normalizedRequestStatus(r.status) === "lost" && r.lost_reason && (
                       <div className="sm:col-span-2">
                         <p className="text-xs mb-1" style={{ color: C.danger }}>{t("lostReason", lang)}</p>
-                        <p className="text-sm leading-relaxed" style={{ color: C.text }}>{r.lost_reason}</p>
+                        <p className="text-sm leading-relaxed" style={{ color: C.text, userSelect: "text" }}>{r.lost_reason}</p>
                       </div>
                     )}
                     {r.internal_notes && (
                       <div className="sm:col-span-2">
                         <p className="text-xs mb-1" style={{ color: C.muted }}>{t("internalNotes", lang)}</p>
-                        <p className="text-sm leading-relaxed" style={{ color: C.text }}>{r.internal_notes}</p>
+                        <p className="text-sm leading-relaxed" style={{ color: C.text, userSelect: "text" }}>{r.internal_notes}</p>
                       </div>
                     )}
                   </div>
