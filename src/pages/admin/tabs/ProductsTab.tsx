@@ -5,6 +5,8 @@ import { C } from "@/components/admin/theme";
 import type { Lang } from "@/components/admin/theme";
 import { t } from "@/components/admin/i18n";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { MetricCard } from "@/components/admin/MetricCard";
+import { BentoGrid } from "@/components/admin/BentoGrid";
 import { Th, Td, TableWrap, EmptyState, LoadingState } from "@/components/admin/AdminTable";
 import { SectionHeader } from "@/components/admin/SectionHeader";
 import { AdminCard } from "@/components/admin/AdminCard";
@@ -67,6 +69,10 @@ export function ProductsTab({ lang }: { lang: Lang }) {
     load();
   }
 
+  const activeCount = products.filter((p) => p.status === "active").length;
+  const inactiveCount = products.length - activeCount;
+  const featuredCount = products.filter((p) => p.is_featured).length;
+
   return (
     <div>
       <SectionHeader
@@ -88,6 +94,17 @@ export function ProductsTab({ lang }: { lang: Lang }) {
           </>
         }
       />
+
+      {!loading && products.length > 0 && (
+        <div className="mb-5">
+          <BentoGrid>
+            <MetricCard label={t("totalProducts", lang)} value={products.length} accent={C.brand} icon={<Package size={16} />} size="hero" />
+            <MetricCard label={t("active", lang)} value={activeCount} accent={C.success} icon={<Check size={16} />} />
+            <MetricCard label={t("inactiveProducts", lang)} value={inactiveCount} accent={C.muted} icon={<X size={16} />} />
+            <MetricCard label={t("featuredProducts", lang)} value={featuredCount} accent={C.warning} icon={<Star size={16} />} />
+          </BentoGrid>
+        </div>
+      )}
 
       {loading ? (
         <LoadingState />

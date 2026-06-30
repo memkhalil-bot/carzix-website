@@ -196,6 +196,14 @@ export const T = {
   whatsappClicksLabel:  { ar: "نقرات واتساب",                en: "WhatsApp Clicks" },
   topViewedProducts:    { ar: "الأكثر مشاهدة",               en: "Top Viewed Products" },
   topRequestedProducts: { ar: "الأكثر طلباً (عروض الأسعار)", en: "Top Requested Products" },
+
+  // Products / Clients summary strips
+  totalProducts:     { ar: "إجمالي المنتجات",         en: "Total Products" },
+  inactiveProducts:  { ar: "منتجات غير نشطة",          en: "Inactive Products" },
+  featuredProducts:  { ar: "منتجات مميزة",             en: "Featured Products" },
+  totalClients:      { ar: "إجمالي العملاء",           en: "Total Clients" },
+  activeClients:     { ar: "عملاء نشطون",              en: "Active Clients" },
+  hiddenClients:     { ar: "عملاء مخفيون",             en: "Hidden Clients" },
 } as const;
 
 export function t(key: keyof typeof T, lang: Lang): string {
